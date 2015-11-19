@@ -228,6 +228,7 @@ def render_experiment_as_table(experiment):
     table.set_cols_valign(["m", "m"])
     table.header(["Experiment field", "Value"])
     table.add_row(["ID", experiment.id])
+    table.add_row(["Institution", experiment.institution_name])
     table.add_row(["Title", experiment.title])
     table.add_row(["Description", experiment.description])
     return heading + table.draw() + "\n"
@@ -261,11 +262,12 @@ def render_experiments_as_table(experiments):
            experiments.limit, experiments.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l"])
-    table.set_cols_valign(["m", "m"])
-    table.header(["ID", "Title"])
+    table.set_cols_align(["r", "l", "l"])
+    table.set_cols_valign(["m", "m", "m"])
+    table.header(["ID", "Institution", "Title"])
     for experiment in experiments:
-        table.add_row([experiment.id, experiment.title])
+        table.add_row([experiment.id, experiment.institution_name,
+                       experiment.title])
     return heading + table.draw() + "\n"
 
 # Dataset render functions

@@ -22,6 +22,7 @@ class Experiment(object):
         self.id = experiment_json['id']  # pylint: disable=invalid-name
         self.title = experiment_json['title']
         self.description = experiment_json['description']
+        self.institution_name = experiment_json['institution_name']
 
     @staticmethod
     def list(config, limit=None, offset=None, order_by=None):
