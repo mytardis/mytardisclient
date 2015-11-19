@@ -14,6 +14,7 @@ from datetime import datetime
 from .replica import Replica
 from .resultset import ResultSet
 # from mytardisclient.logs import logger
+from mytardisclient.utils.exceptions import DoesNotExist
 
 
 class DataFile(object):
@@ -93,6 +94,9 @@ class DataFile(object):
             raise Exception(message)
 
         datafiles_json = response.json()
+        if datafiles_json['meta']['total_count'] == 0:
+            message = "DataFile matching filter doesn't exist."
+            raise DoesNotExist(message, url, response, DataFile)
         return DataFile(config=config,
                         datafile_json=datafiles_json['objects'][0])
 

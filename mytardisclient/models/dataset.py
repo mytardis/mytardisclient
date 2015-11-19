@@ -9,6 +9,7 @@ import json
 from .resultset import ResultSet
 from .instrument import Instrument
 # from mytardisclient.logs import logger
+from mytardisclient.utils.exceptions import DoesNotExist
 
 
 class Dataset(object):
@@ -66,6 +67,9 @@ class Dataset(object):
             raise Exception(message)
 
         datasets_json = response.json()
+        if datasets_json['meta']['total_count'] == 0:
+            message = "Dataset matching filter doesn't exist."
+            raise DoesNotExist(message, url, response, Dataset)
         return Dataset(config=config, dataset_json=datasets_json['objects'][0])
 
     @staticmethod

@@ -8,6 +8,7 @@ import json
 
 from .resultset import ResultSet
 # from mytardisclient.logs import logger
+from mytardisclient.utils.exceptions import DoesNotExist
 
 
 class Experiment(object):
@@ -57,6 +58,9 @@ class Experiment(object):
             raise Exception(message)
 
         experiments_json = response.json()
+        if experiments_json['meta']['total_count'] == 0:
+            message = "Experiment matching filter doesn't exist."
+            raise DoesNotExist(message, url, response, Experiment)
         return Experiment(config=config, experiment_json=experiments_json['objects'][0])
 
     @staticmethod

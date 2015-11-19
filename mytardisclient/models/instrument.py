@@ -9,6 +9,7 @@ import json
 from .facility import Facility
 from .resultset import ResultSet
 # from mytardisclient.logs import logger
+from mytardisclient.utils.exceptions import DoesNotExist
 
 
 class Instrument(object):
@@ -57,13 +58,19 @@ class Instrument(object):
         """
         Get instruments with id instrument_id
         """
-        url = config.mytardis_url + "/api/v1/instrument/?format=json" + "&id=%s" % instrument_id
+        url = "%s/api/v1/instrument/?format=json&id=%s" % \
+            (config.mytardis_url, instrument_id)
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
 
-        return Instrument(config=config, instrument_json=response.json()['objects'][0])
+        instruments_json = response.json()
+        if instruments_json['meta']['total_count'] == 0:
+            message = "Instrument matching filter doesn't exist."
+            raise DoesNotExist(message, url, response, Instrument)
+        return Instrument(config=config,
+                          instrument_json=instruments_json['objects'][0])
 
     @staticmethod
     def create(config, facility_id, name):

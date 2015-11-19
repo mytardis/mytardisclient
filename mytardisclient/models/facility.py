@@ -8,6 +8,7 @@ import requests
 from .resultset import ResultSet
 # from mytardisclient.logs import logger
 from .group import Group
+from mytardisclient.utils.exceptions import DoesNotExist
 
 
 class Facility(object):
@@ -67,5 +68,9 @@ class Facility(object):
             message = response.text
             raise Exception(message)
 
+        facilities_json = response.json()
+        if facilities_json['meta']['total_count'] == 0:
+            message = "Facility matching filter doesn't exist."
+            raise DoesNotExist(message, url, response, Facility)
         return Facility(config=config,
-                        facility_json=response.json()['objects'][0])
+                        facility_json=facilities_json['objects'][0])
