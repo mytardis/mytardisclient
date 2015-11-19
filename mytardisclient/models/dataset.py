@@ -56,11 +56,11 @@ class Dataset(object):
             return ResultSet(Dataset, config, url, response.json())
 
     @staticmethod
-    def get(config, exp_id):
+    def get(config, dataset_id):
         """
-        Get dataset with id exp_id
+        Get dataset with id dataset_id
         """
-        url = config.mytardis_url + "/api/v1/dataset/?format=json" + "&id=%s" % exp_id
+        url = config.mytardis_url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
