@@ -5,6 +5,12 @@ Install:
 ```
 pip install -e git+https://github.com/wettenhj/mytardisclient.git#egg=mytardisclient
 ```
+```
+$ which mytardis
+/Library/Frameworks/Python.framework/Versions/2.7/bin/mytardis
+```
+
+The MyTardis URL, username and API key should be stored in ~/.mytardisclient.cfg:
 
 ```
 $ cat ~/.mytardisclient.cfg 
@@ -13,6 +19,8 @@ mytardis_url = http://mytardisdemo.erc.monash.edu.au
 username = demofacility
 api_key = 644be179cc6773c30fc471bad61b50c90897146c
 ```
+
+Let's list the experiments which user "demofacility" has access to:
 
 ```
 $ mytardis experiment list
@@ -50,6 +58,8 @@ Offset: 0
 +----+-----------------------------------------------------------+
 ```
 
+Now let's create a new experiment called "James Test Exp 001":
+
 ```
 $ mytardis experiment create "James Test Exp 001"
 MyTardis Client v0.0.1
@@ -71,6 +81,8 @@ Model: Experiment
 
 Experiment created successfully.
 ```
+
+Now let's create a dataset.  Note that when we run "mytardis dataset create" without the experiment ID and description arguments, we get a usage message telling us the names of the missing arguments.
 
 ```
 $ mytardis dataset create
@@ -100,6 +112,8 @@ Model: Dataset
 Dataset created successfully.
 ```
 
+Now's let's upload a file ('hello.txt') to the dataset we just created:
+
 ```
 $ mytardis datafile
 usage: mytardis datafile [-h] {list,download,upload} ...
@@ -114,7 +128,11 @@ Config: /Users/wettenhj/.mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
 Username: demofacility
 Uploaded: hello.txt
+```
 
+Now let's reload the dataset's datafile list to see the new datafile record:
+
+```
 $ mytardis dataset get 31
 MyTardis Client v0.0.1
 Config: /Users/wettenhj/.mytardisclient.cfg
@@ -147,9 +165,33 @@ Offset: 0
 +====+=====================+===========+==========+===========+==================================+
 | 99 | /api/v1/dataset/31/ | hello.txt | True     |  13 bytes | 9af2f8218b150c351ad802c6f3d66abe |
 +----+---------------------+-----------+----------+-----------+----------------------------------+
+```
 
+Note that the file has been verified already.  Now let's determine the file size and MD5 checksum locally and ensure that they match the values recorded in MyTardis:
+
+```
 $ ls -l hello.txt
 -rw-r--r--  1 wettenhj  staff  13 19 Nov 11:23 hello.txt
 $ md5 hello.txt 
 MD5 (hello.txt) = 9af2f8218b150c351ad802c6f3d66abe
+```
+
+Now let's delete the local copy of 'hello.txt', and download it from MyTardis:
+
+```
+$ rm hello.txt 
+
+$ mytardis datafile download
+usage: mytardis datafile download [-h] datafile_id
+mytardis datafile download: error: too few arguments
+
+$ mytardis datafile download 99
+MyTardis Client v0.0.1
+Config: /Users/wettenhj/.mytardisclient.cfg
+MyTardis URL: http://mytardisdemo.erc.monash.edu.au
+Username: demofacility
+Downloaded: hello.txt
+
+$ ls -l hello.txt 
+-rw-r--r--  1 wettenhj  staff  13 19 Nov 11:33 hello.txt
 ```
