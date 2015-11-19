@@ -3,6 +3,8 @@ Command Line Interface and Python classes for interacting with MyTardis's API.
 
 Install:
 ```
+mkdir ~/virtualenvs/mytardisclient
+source ~/virtualenvs/mytardisclient/bin/activate
 pip install -e git+https://github.com/wettenhj/mytardisclient.git#egg=mytardisclient
 ```
 ```
