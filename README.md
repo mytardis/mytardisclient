@@ -7,7 +7,7 @@ pip install -e git+https://github.com/wettenhj/mytardisclient.git#egg=mytardiscl
 ```
 ```
 $ which mytardis
-/Library/Frameworks/Python.framework/Versions/2.7/bin/mytardis
+/Users/wettenhj/virtualenvs/mytardisclient/bin/mytardis
 ```
 
 The MyTardis URL, username and API key should be stored in ~/.mytardisclient.cfg:
