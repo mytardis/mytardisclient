@@ -1,5 +1,5 @@
 """
-Custom exceptions to raise within MyData.
+Custom exceptions to raise within MyTardis Client.
 """
 
 
@@ -141,14 +141,6 @@ class InvalidFolderStructure(Exception):
     """
     def __init__(self, message):
         super(InvalidFolderStructure, self).__init__(message)
-
-
-class MissingMyDataAppOnMyTardisServer(Exception):
-    """
-    Missing MyData app on MyTardis server exception.
-    """
-    def __init__(self, message):
-        super(MissingMyDataAppOnMyTardisServer, self).__init__(message)
 
 
 class StorageBoxAttributeNotFound(Exception):
