@@ -199,3 +199,38 @@ Downloaded: hello.txt
 (mytardisclient) $ ls -l hello.txt 
 -rw-r--r--  1 wettenhj  staff  13 19 Nov 11:33 hello.txt
 ```
+Results can also be retrieved in JSON format.  Let's retrieve the JSON representation of the datafile record for the file
+'hello.txt' in dataset ID 31:
+
+```
+$ mytardis datafile get 31 "hello.txt" --json
+{
+  "created_time": "2015-11-19T11:23:53", 
+  "datafile": null, 
+  "dataset": "/api/v1/dataset/31/", 
+  "deleted": false, 
+  "deleted_time": null, 
+  "directory": "", 
+  "filename": "hello.txt", 
+  "id": 99, 
+  "md5sum": "9af2f8218b150c351ad802c6f3d66abe", 
+  "mimetype": "text/plain", 
+  "modification_time": null, 
+  "parameter_sets": [], 
+  "replicas": [
+    {
+      "created_time": "2015-11-19T11:24:23.486259", 
+      "datafile": "/api/v1/dataset_file/99/", 
+      "id": 98, 
+      "last_verified_time": "2015-11-19T11:24:28.548830", 
+      "resource_uri": "/api/v1/replica/98/", 
+      "uri": "James Test Dataset 001-31/hello.txt", 
+      "verified": true
+    }
+  ], 
+  "resource_uri": "/api/v1/dataset_file/99/", 
+  "sha512sum": "44c4f73161332b2b058360310640c6704796ece76593e22ca32f76ccbc2c469d5b26ae64b996c78165929ac1af7f9a0ae6132010c917f6b104196b8648e108d3", 
+  "size": "13", 
+  "version": 1
+}
+```
