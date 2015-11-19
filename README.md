@@ -15,11 +15,11 @@ $ source ~/virtualenvs/mytardisclient/bin/activate
 Configuration:
 
 ```
-$ mytardis config
-MyTardis Client v0.0.1
+(mytardisclient) $ mytardis config
 MyTardis URL? http://mytardisdemo.erc.monash.edu.au
 MyTardis Username? demofacility
 MyTardis API key? 644be179cc6773c30fc471bad61b50c90897146c
+
 Wrote settings to /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
 ```
 
@@ -27,38 +27,36 @@ Let's list the experiments which user "demofacility" has access to:
 
 ```
 (mytardisclient) $ mytardis experiment list
-MyTardis Client v0.0.1
-Config: /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
-MyTardis URL: http://mytardisdemo.erc.monash.edu.au
-Username: demofacility
 
 Model: Experiment
 Query: http://mytardisdemo.erc.monash.edu.au/api/v1/experiment/?format=json
-Total Count: 9
+Total Count: 10
 Limit: 20
 Offset: 0
 
-+----+-----------------------------------------------------------+
-| ID |                           Title                           |
-+====+===========================================================+
-| 15 | A's 2nd Test Instrument - Test User1                      |
-+----+-----------------------------------------------------------+
-| 12 | exp1                                                      |
-+----+-----------------------------------------------------------+
-| 17 | Steve's Macbook 12 - Test User1                           |
-+----+-----------------------------------------------------------+
-| 11 | Beamline - Test User2                                     |
-+----+-----------------------------------------------------------+
-| 19 | Manually created experiment to test filename length in UI |
-+----+-----------------------------------------------------------+
-| 13 | A's Test Instrument - Test User1                          |
-+----+-----------------------------------------------------------+
-| 16 | A's 2nd Test Instrument - Test User2                      |
-+----+-----------------------------------------------------------+
-| 18 | Steve's Macbook 12 - Test User2                           |
-+----+-----------------------------------------------------------+
-| 14 | A's Test Instrument - Test User2                          |
-+----+-----------------------------------------------------------+
++----+-------------------+-----------------------------------------------------------+
+| ID |    Institution    |                           Title                           |
++====+===================+===========================================================+
+| 20 | Monash University | James Exp 001                                             |
++----+-------------------+-----------------------------------------------------------+
+| 15 | Monash University | A's 2nd Test Instrument - Test User1                      |
++----+-------------------+-----------------------------------------------------------+
+| 12 | Monash University | exp1                                                      |
++----+-------------------+-----------------------------------------------------------+
+| 17 | Monash University | Steve's Macbook 12 - Test User1                           |
++----+-------------------+-----------------------------------------------------------+
+| 11 | Monash University | Beamline - Test User2                                     |
++----+-------------------+-----------------------------------------------------------+
+| 19 | Monash University | Manually created experiment to test filename length in UI |
++----+-------------------+-----------------------------------------------------------+
+| 13 | Monash University | A's Test Instrument - Test User1                          |
++----+-------------------+-----------------------------------------------------------+
+| 16 | Monash University | A's 2nd Test Instrument - Test User2                      |
++----+-------------------+-----------------------------------------------------------+
+| 18 | Monash University | Steve's Macbook 12 - Test User2                           |
++----+-------------------+-----------------------------------------------------------+
+| 14 | Monash University | A's Test Instrument - Test User2                          |
++----+-------------------+-----------------------------------------------------------+
 ```
 
 Now let's create a new experiment called "James Test Exp 001":
@@ -77,6 +75,8 @@ Model: Experiment
 +==================+====================+
 | ID               | 20                 |
 +------------------+--------------------+
+| Institution      | Monash University  |
++------------------+--------------------+
 | Title            | James Test Exp 001 |
 +------------------+--------------------+
 | Description      |                    |
@@ -84,6 +84,7 @@ Model: Experiment
 
 Experiment created successfully.
 ```
+The default institution ("Monash University") is set in MyTardis's settings.py (on the MyTardis server).
 
 Now let's create a dataset.  Note that when we run "mytardis dataset create" without the experiment ID and description arguments, we get a usage message telling us the names of the missing arguments.
 
@@ -164,11 +165,11 @@ Total Count: 1
 Limit: 20
 Offset: 0
 
-+-----+---------------------+-----------+------------+----------+-----------+----------------------------------+
-| ID  |       Dataset       | Directory |  Filename  | Verified |   Size    |             MD5 Sum              |
-+=====+=====================+===========+============+==========+===========+==================================+
-|  99 | /api/v1/dataset/31/ |           | hello.txt  | True     |  13 bytes | 9af2f8218b150c351ad802c6f3d66abe |
-+-----+---------------------+-----------+------------+----------+-----------+----------------------------------+
++-----+-----------+--------------+----------------------------------------------+----------+-----------+----------------------------------+
+| ID  | Directory |   Filename   |                     URI                      | Verified |   Size    |             MD5 Sum              |
++=====+===========+==============+==============================================+==========+===========+==================================+
+|  99 |           | hello.txt    | James Test Dataset 001-31/hello.txt          | True     |  13 bytes | 9af2f8218b150c351ad802c6f3d66abe |
++-----+-----------+--------------+----------------------------------------------+----------+-----------+----------------------------------+
 ```
 
 Note that the file has been verified already.  Now let's determine the file size and MD5 checksum locally and ensure that they match the values recorded in MyTardis:
@@ -206,21 +207,17 @@ Results can also be retrieved in JSON format.  Let's retrieve the JSON represent
 
 ```
 (mytardisclient) $ mytardis datafile get --help
-usage: mytardis datafile get [-h] [--directory DIRECTORY] [--json]
-                             dataset_id filename
+usage: mytardis datafile get [-h] [--json] datafile_id
 
 positional arguments:
-  dataset_id            The dataset ID.
-  filename              The datafile's name.
+  datafile_id  The datafile ID.
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --directory DIRECTORY
-                        The subdirectory within the dataset.
-  --json                Display results in JSON format.
+  -h, --help   show this help message and exit
+  --json       Display results in JSON format.
 ```
 ```
-(mytardisclient) $ mytardis datafile get 31 "hello.txt" --json
+(mytardisclient) $ mytardis datafile get 99 --json
 {
   "created_time": "2015-11-19T11:23:53", 
   "datafile": null, 
@@ -254,13 +251,13 @@ optional arguments:
 And if a lookup fails, we get a non-zero exit code:
 
 ```
-(mytardisclient) $ mytardis datafile get 31 "hello.txt" > /dev/null
+(mytardisclient) $ mytardis datafile get 99 > /dev/null
 (mytardisclient) $ echo $?
 0
 ```
 
 ```
-(mytardisclient) $ mytardis datafile get 31 "doesn't exist.txt" >& /dev/null
+(mytardisclient) $ mytardis datafile get -123 >& /dev/null
 (mytardisclient) $ echo $?
 1
 ```
