@@ -48,7 +48,7 @@ class DataFile(object):
         return True
 
     @staticmethod
-    def list(config, dataset_id=None, limit=None, offset=None):
+    def list(config, dataset_id=None, limit=None, offset=None, order_by=None):
         """
         Get datafiles I have access to
         """
@@ -59,11 +59,12 @@ class DataFile(object):
             url += "&limit=%s" % limit
         if offset:
             url += "&offset=%s" % offset
+        if order_by:
+            url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             print "url: %s" % url
             message = response.text
-            response.close()
             raise Exception(message)
 
         if dataset_id or limit or offset:
@@ -86,7 +87,6 @@ class DataFile(object):
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         datafiles_json = response.json()
@@ -106,7 +106,6 @@ class DataFile(object):
         if response.status_code != 200:
             print "url: %s" % url
             message = response.text
-            response.close()
             raise Exception(message)
         try:
             _, params = cgi.parse_header(
@@ -146,7 +145,6 @@ class DataFile(object):
             print "url: %s" % url
             print "HTTP %s" % response.status_code
             message = response.text
-            response.close()
             raise Exception(message)
         print "Uploaded: %s" % file_path
 

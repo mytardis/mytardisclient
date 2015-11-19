@@ -57,6 +57,9 @@ class ArgParser(object):
             "--offset",
             help="Skip this many records from the start of the result set.")
         facility_command_list_parser.add_argument(
+            "--order_by",
+            help="Order by this field.")
+        facility_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         facility_command_get_parser = \
             facility_command_parsers.add_parser("get")
@@ -82,6 +85,9 @@ class ArgParser(object):
         instrument_command_list_parser.add_argument(
             "--offset",
             help="Skip this many records from the start of the result set.")
+        instrument_command_list_parser.add_argument(
+            "--order_by",
+            help="Order by this field.")
         instrument_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         instrument_command_get_parser = \
@@ -117,6 +123,9 @@ class ArgParser(object):
         experiment_command_list_parser.add_argument(
             "--offset",
             help="Skip this many records from the start of the result set.")
+        experiment_command_list_parser.add_argument(
+            "--order_by",
+            help="Order by this field.")
         experiment_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         experiment_command_get_parser = \
@@ -155,6 +164,9 @@ class ArgParser(object):
             "--offset",
             help="Skip this many records from the start of the result set.")
         dataset_command_list_parser.add_argument(
+            "--order_by",
+            help="Order by this field.")
+        dataset_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         dataset_command_get_parser = dataset_command_parsers.add_parser("get")
         dataset_command_get_parser.add_argument("dataset_id",
@@ -192,6 +204,9 @@ class ArgParser(object):
         datafile_command_list_parser.add_argument(
             "--offset",
             help="Skip this many records from the start of the result set.")
+        datafile_command_list_parser.add_argument(
+            "--order_by",
+            help="Order by this field.")
         datafile_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         datafile_cmd_download_parser = datafile_command_parsers.add_parser("download")

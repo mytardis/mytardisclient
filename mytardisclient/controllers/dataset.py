@@ -28,7 +28,8 @@ class DatasetController(object):
             render_format = 'table'
         if command == "list":
             return self.list(args.exp, args.limit,
-                             args.offset, render_format)
+                             args.offset, args.order_by,
+                             render_format)
         elif command == "get":
             return self.get(args.dataset_id, render_format)
         elif command == "create":
@@ -38,12 +39,12 @@ class DatasetController(object):
             return self.update(args.dataset_id, args.description,
                                render_format)
 
-    def list(self, experiment_id, limit, offset, render_format):
+    def list(self, experiment_id, limit, offset, order_by, render_format):
         """
         Display list of dataset records.
         """
         datasets = Dataset.list(self.config, experiment_id,
-                                limit, offset)
+                                limit, offset, order_by)
         print render(datasets, render_format)
 
     def get(self, dataset_id, render_format):

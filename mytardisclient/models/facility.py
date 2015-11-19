@@ -27,7 +27,7 @@ class Facility(object):
         return self.name
 
     @staticmethod
-    def list(config, limit=None, offset=None):
+    def list(config, limit=None, offset=None, order_by=None):
         """
         Get facilities I have access to
         """
@@ -36,10 +36,11 @@ class Facility(object):
             url += "&limit=%s" % limit
         if offset:
             url += "&offset=%s" % offset
+        if order_by:
+            url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         if limit or offset:
@@ -64,7 +65,6 @@ class Facility(object):
         response = requests.get(url=url, headers=headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         return Facility(config=config,

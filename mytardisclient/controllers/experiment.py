@@ -27,7 +27,8 @@ class ExperimentController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.limit, args.offset, render_format)
+            return self.list(args.limit, args.offset, args.order_by,
+                             render_format)
         elif command == "get":
             return self.get(args.experiment_id, render_format)
         elif command == "create":
@@ -36,11 +37,11 @@ class ExperimentController(object):
             return self.update(args.experiment_id, args.title,
                                args.description, render_format)
 
-    def list(self, limit, offset, render_format):
+    def list(self, limit, offset, order_by, render_format):
         """
         Display list of experiment records.
         """
-        experiments = Experiment.list(self.config, limit, offset)
+        experiments = Experiment.list(self.config, limit, offset, order_by)
         print render(experiments, render_format)
 
     def get(self, experiment_id, render_format):

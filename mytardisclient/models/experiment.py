@@ -23,7 +23,7 @@ class Experiment(object):
         self.description = experiment_json['description']
 
     @staticmethod
-    def list(config, limit=None, offset=None):
+    def list(config, limit=None, offset=None, order_by=None):
         """
         Get experiments I have access to
         """
@@ -32,10 +32,11 @@ class Experiment(object):
             url += "&limit=%s" % limit
         if offset:
             url += "&offset=%s" % offset
+        if order_by:
+            url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         if limit or offset:
@@ -53,7 +54,6 @@ class Experiment(object):
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         experiments_json = response.json()
@@ -74,7 +74,6 @@ class Experiment(object):
                                  data=json.dumps(new_exp_json))
         if response.status_code != 201:
             message = response.text
-            response.close()
             raise Exception(message)
         experiment_json = response.json()
         return Experiment(config, experiment_json)
@@ -94,7 +93,6 @@ class Experiment(object):
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
             message = response.text
-            response.close()
             raise Exception(message)
         experiment_json = response.json()
         return Experiment(config, experiment_json)

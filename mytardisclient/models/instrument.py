@@ -27,7 +27,7 @@ class Instrument(object):
         return self.name
 
     @staticmethod
-    def list(config, facility_id=None, limit=None, offset=None):
+    def list(config, facility_id=None, limit=None, offset=None, order_by=None):
         """
         Get instruments in facility with ID facility_id.
         """
@@ -38,10 +38,11 @@ class Instrument(object):
             url += "&limit=%s" % limit
         if offset:
             url += "&offset=%s" % offset
+        if order_by:
+            url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         if facility_id or limit or offset:
@@ -60,7 +61,6 @@ class Instrument(object):
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         return Instrument(config=config, instrument_json=response.json()['objects'][0])
@@ -79,7 +79,6 @@ class Instrument(object):
                                  data=json.dumps(new_instrument_json))
         if response.status_code != 201:
             message = response.text
-            response.close()
             raise Exception(message)
         instrument_json = response.json()
         return Instrument(config, instrument_json)
@@ -99,7 +98,6 @@ class Instrument(object):
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
             message = response.text
-            response.close()
             raise Exception(message)
         instrument_json = response.json()
         return Instrument(config, instrument_json)

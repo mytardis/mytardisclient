@@ -27,7 +27,8 @@ class DataFileController(object):
             render_format = 'table'
         if command == "list":
             return self.list(args.dataset, args.limit,
-                             args.offset, render_format)
+                             args.offset, args.order_by,
+                             render_format)
         elif command == "download":
             return self.download(args.datafile_id)
         elif command == "upload":
@@ -35,12 +36,12 @@ class DataFileController(object):
         elif command == "update":
             return self.update(args.datafile_id, args.md5sum, render_format)
 
-    def list(self, dataset_id, limit, offset, render_format):
+    def list(self, dataset_id, limit, offset, order_by, render_format):
         """
         Display list of datafile records.
         """
         datafiles = DataFile.list(self.config, dataset_id,
-                                  limit, offset)
+                                  limit, offset, order_by)
         print render(datafiles, render_format)
 
     def download(self, datafile_id):

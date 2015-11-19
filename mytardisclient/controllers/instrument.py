@@ -27,7 +27,8 @@ class InstrumentController(object):
             render_format = 'table'
         if command == "list":
             return self.list(args.facility, args.limit,
-                             args.offset, render_format)
+                             args.offset, args.order_by,
+                             render_format)
         elif command == "get":
             return self.get(args.instrument_id, render_format)
         elif command == "create":
@@ -35,12 +36,12 @@ class InstrumentController(object):
         elif command == "update":
             return self.update(args.instrument_id, args.name, render_format)
 
-    def list(self, facility_id, limit, offset, render_format):
+    def list(self, facility_id, limit, offset, order_by, render_format):
         """
         Display list of instrument records.
         """
         instruments = Instrument.list(self.config, facility_id,
-                                      limit, offset)
+                                      limit, offset, order_by)
         print render(instruments, render_format)
 
     def get(self, instrument_id, render_format):

@@ -27,15 +27,16 @@ class FacilityController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.limit, args.offset, render_format)
+            return self.list(args.limit, args.offset, args.order_by,
+                             render_format)
         if command == "get":
             return self.get(args.facility_id, render_format)
 
-    def list(self, limit, offset, render_format):
+    def list(self, limit, offset, order_by, render_format):
         """
         Display list of facility records.
         """
-        facilities = Facility.list(self.config, limit, offset)
+        facilities = Facility.list(self.config, limit, offset, order_by)
         print render(facilities, render_format)
 
     def get(self, facility_id, render_format):
