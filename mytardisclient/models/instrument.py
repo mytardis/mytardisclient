@@ -56,7 +56,7 @@ class Instrument(object):
     @staticmethod
     def get(config, instrument_id):
         """
-        Get instruments with id instrument_id
+        Get instrument with id instrument_id
         """
         url = "%s/api/v1/instrument/?format=json&id=%s" % \
             (config.mytardis_url, instrument_id)

@@ -54,7 +54,7 @@ class Facility(object):
     @staticmethod
     def get(config, facility_id):
         """
-        Get facilities with id facility_id
+        Get facility with id facility_id
         """
         url = "%s/api/v1/facility/?format=json&id=%s" % (config.mytardis_url,
                                                          facility_id)
