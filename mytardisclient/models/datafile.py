@@ -14,7 +14,7 @@ from datetime import datetime
 from .replica import Replica
 from .dataset import Dataset
 from .resultset import ResultSet
-
+from mytardisclient.utils.exceptions import DoesNotExist
 
 class DataFile(object):
     """
@@ -88,6 +88,10 @@ class DataFile(object):
             (config.mytardis_url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
+            print "HTTP %s" % response.status_code
+            if response.status_code == 404:
+                message = "Datafile with ID %s doesn't exist." % datafile_id
+                raise DoesNotExist(message, url, response, DataFile)
             message = response.text
             raise Exception(message)
 
