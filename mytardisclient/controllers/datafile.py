@@ -26,12 +26,15 @@ class DataFileController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.dataset, args.limit,
-                             args.offset, args.order_by,
+            return self.list(args.dataset, args.directory, args.filename,
+                             args.limit, args.offset, args.order_by,
                              render_format)
         elif command == "get":
-            return self.get(args.dataset_id, args.directory,
-                            args.filename, render_format)
+            return self.get(args.datafile_id, render_format)
+        elif command == "create":
+            return self.create(args.dataset_id, args.directory,
+                               args.storagebox, args.file_path,
+                               render_format)
         elif command == "download":
             return self.download(args.datafile_id)
         elif command == "upload":
@@ -39,20 +42,31 @@ class DataFileController(object):
         elif command == "update":
             return self.update(args.datafile_id, args.md5sum, render_format)
 
-    def list(self, dataset_id, limit, offset, order_by, render_format):
+    def list(self, dataset_id, directory, filename,
+             limit, offset, order_by, render_format):
         """
         Display list of datafile records.
         """
-        datafiles = DataFile.list(self.config, dataset_id,
+        datafiles = DataFile.list(self.config, dataset_id, directory, filename,
                                   limit, offset, order_by)
         print render(datafiles, render_format)
 
-    def get(self, dataset_id, directory, filename, render_format):
+    def get(self, datafile_id, render_format):
         """
         Display datafile record.
         """
-        datafile = DataFile.get(self.config, dataset_id, directory, filename)
+        datafile = DataFile.get(self.config, datafile_id)
         print render(datafile, render_format)
+
+    def create(self, dataset_id, directory, storagebox, file_path,
+               render_format):
+        """
+        Create datafile record for an existing datafile.
+        """
+        datafile = DataFile.create(self.config, dataset_id, directory,
+                                   storagebox, file_path)
+        print render(datafile, render_format)
+        print "DataFile created successfully."
 
     def download(self, datafile_id):
         """

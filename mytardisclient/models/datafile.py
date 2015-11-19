@@ -12,9 +12,8 @@ import hashlib
 from datetime import datetime
 
 from .replica import Replica
+from .dataset import Dataset
 from .resultset import ResultSet
-# from mytardisclient.logs import logger
-from mytardisclient.utils.exceptions import DoesNotExist
 
 
 class DataFile(object):
@@ -49,13 +48,18 @@ class DataFile(object):
         return True
 
     @staticmethod
-    def list(config, dataset_id=None, limit=None, offset=None, order_by=None):
+    def list(config, dataset_id=None, directory=None, filename=None,
+             limit=None, offset=None, order_by=None):
         """
         Get datafiles I have access to
         """
         url = "%s/api/v1/dataset_file/?format=json" % config.mytardis_url
         if dataset_id:
             url += "&dataset__id=%s" % dataset_id
+        if directory:
+            url += "&directory=%s" % directory
+        if filename:
+            url += "&filename=%s" % filename
         if limit:
             url += "&limit=%s" % limit
         if offset:
@@ -76,28 +80,103 @@ class DataFile(object):
             return ResultSet(DataFile, config, url, response.json())
 
     @staticmethod
-    def get(config, dataset_id, directory, filename):
+    def get(config, datafile_id):
         """
         Get datafile record with id datafile_id
-
-        Not yet possible as the MyTardis API doesn't
-        allow filtering on the id field.
         """
-        url = "%s/api/v1/dataset_file/?format=json" % config.mytardis_url
-        url += "&dataset__id=%s" % dataset_id
-        url += "&directory=%s" % (directory or "")
-        url += "&filename=%s" % filename
+        url = "%s/api/v1/dataset_file/%s/?format=json" % \
+            (config.mytardis_url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
 
-        datafiles_json = response.json()
-        if datafiles_json['meta']['total_count'] == 0:
-            message = "DataFile matching filter doesn't exist."
-            raise DoesNotExist(message, url, response, DataFile)
-        return DataFile(config=config,
-                        datafile_json=datafiles_json['objects'][0])
+        datafile_json = response.json()
+        return DataFile(config=config, datafile_json=datafile_json)
+
+    @staticmethod
+    def create(config, dataset_id, directory, storagebox, file_path):
+        """
+        Create a datafile record.
+
+        See also: upload
+
+        Suppose someone with username james generates a file called
+        "results.dat" on a data analysis server called analyzer.example.com
+        in the directory ~james/analysis/dataset1/.  User james could grant
+        the MyTardis server temporary access to his account on
+        analyzer.example.com and then have MyTardis copy the file(s) into
+        a more permanent location.
+
+        If james agrees to allow the MyTardis server to do so, it could
+        SSHFS-mount james@analyzer.example.com:/home/james/analysis/,
+        e.g. at /mnt/sshfs/james-anaylzer/
+
+        Then user james doesn't need to upload results.dat, he just needs to
+        tell MyTardis how to access it, and tell MyTardis that it is not yet
+        in a permanent location.
+
+        MyTardis's default storage box model generates datafile object
+        identifiers which include a dataset description (e.g. 'dataset1')
+        and a unique ID, resulting in path like 'dataset1-123/results.dat'
+        for the datafile object.  Because user james doesn't want to have
+        to create the 'dataset1-123' folder himself, he could entrust the
+        MyTardis Client to do it for him.
+
+        The MyTardis administrator can create a storage box for james called
+        "james-analyzer" which is of type "receiving", meaning that it is a
+        temporary location.  The storage box record (which only needs to be
+        accessed by the MyTardis administrator) would include a StorageBoxOption
+        with key 'location' and value '/mnt/sshfs/james-analyzer'.
+
+        Once james knows the dataset ID of the dataset he wants to upload to
+        (123 in this case), he can create a datafile record as follows:
+
+        mytardis datafile create 123 --storagebox=james-analyzer ~/analysis/dataset1/results.dat
+
+        The file_path argument (set to ~/analysis/dataset1/results.dat)
+        specifies the location of 'results.dat' on the analysis server.  The
+        only problem with this approach is that when verifying and/or copying
+        the datafile, MyTardis will look for results.dat in
+        /mnt/sshfs/james-analyzer/dataset1-123/results.dat, when in fact it is in
+        /mnt/sshfs/james-analyzer/dataset1/results.dat
+
+        A solution to this is to have the MyTardis server SSHFS-mount
+        ~james/.mytardisclient/datasets/ instead, and have the MyTardis Client
+        create a symbolic link in ~james/.mytardisclient/datsets/ named
+        "dataset1-123" pointing to ~james/analysis/dataset1/.
+        """
+        if not directory:
+            directory = ""
+        dataset = Dataset.get(config, dataset_id)
+        uri = os.path.join("%s-%s" % (dataset.description, dataset_id),
+                           directory, os.path.basename(file_path))
+        md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
+        replicas = [{
+            "url": uri,
+            "location": storagebox,
+            "protocol": "file",
+            "verified": False
+        }]
+        new_datafile_json = {
+            'dataset': "/api/v1/dataset/%s/" % dataset_id,
+            'filename': os.path.basename(file_path),
+            'directory': directory or "",
+            'md5sum': md5sum,
+            'size': str(os.stat(file_path).st_size),
+            'mimetype': mimetypes.guess_type(file_path)[0],
+            'replicas': replicas,
+            'parameter_sets': []
+        }
+        url = "%s/api/v1/dataset_file/" % config.mytardis_url
+        response = requests.post(headers=config.default_headers, url=url,
+                                 data=json.dumps(new_datafile_json))
+        if response.status_code != 201:
+            message = response.text
+            raise Exception(message)
+        datafile_id = response.headers['location'].split("/")[-2]
+        new_datafile = DataFile.get(config, datafile_id)
+        return new_datafile
 
     @staticmethod
     def download(config, datafile_id):
@@ -130,7 +209,8 @@ class DataFile(object):
     @staticmethod
     def upload(config, dataset_id, directory, file_path):
         """
-        Upload datafile to dataset with ID dataset_id.
+        Upload datafile to dataset with ID dataset_id,
+        using HTTP POST.
         """
         url = "%s/api/v1/dataset_file/" % config.mytardis_url
         created_time = datetime.fromtimestamp(
