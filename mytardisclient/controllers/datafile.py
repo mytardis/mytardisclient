@@ -1,5 +1,5 @@
 """
-Controller class for running commands (list, download, upload, update)
+Controller class for running commands (list, get, download, upload, update)
 on datafile records.
 """
 
@@ -10,7 +10,7 @@ from mytardisclient.views import render
 
 class DataFileController(object):
     """
-    Controller class for running commands (list, download, upload, update)
+    Controller class for running commands (list, get, download, upload, update)
     on datafile records.
     """
     def __init__(self, config):
@@ -29,6 +29,9 @@ class DataFileController(object):
             return self.list(args.dataset, args.limit,
                              args.offset, args.order_by,
                              render_format)
+        elif command == "get":
+            return self.get(args.dataset_id, args.directory,
+                            args.filename, render_format)
         elif command == "download":
             return self.download(args.datafile_id)
         elif command == "upload":
@@ -43,6 +46,13 @@ class DataFileController(object):
         datafiles = DataFile.list(self.config, dataset_id,
                                   limit, offset, order_by)
         print render(datafiles, render_format)
+
+    def get(self, dataset_id, directory, filename, render_format):
+        """
+        Display datafile record.
+        """
+        datafile = DataFile.get(self.config, dataset_id, directory, filename)
+        print render(datafile, render_format)
 
     def download(self, datafile_id):
         """

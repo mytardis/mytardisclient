@@ -209,6 +209,15 @@ class ArgParser(object):
             help="Order by this field.")
         datafile_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+        datafile_command_get_parser = datafile_command_parsers.add_parser("get")
+        datafile_command_get_parser.add_argument("dataset_id",
+                                                 help="The dataset ID.")
+        datafile_command_get_parser.add_argument("--directory",
+                                                 help="The subdirectory within the dataset.")
+        datafile_command_get_parser.add_argument("filename",
+                                                 help="The datafile's name.")
+        datafile_command_get_parser.add_argument(
+            "--json", action='store_true', help="Display results in JSON format.")
         datafile_cmd_download_parser = datafile_command_parsers.add_parser("download")
         datafile_cmd_download_parser.add_argument("datafile_id",
                                                   help="The datafile ID.")

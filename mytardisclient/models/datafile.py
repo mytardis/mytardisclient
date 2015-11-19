@@ -75,22 +75,26 @@ class DataFile(object):
             return ResultSet(DataFile, config, url, response.json())
 
     @staticmethod
-    def get(config, datafile_id):
+    def get(config, dataset_id, directory, filename):
         """
         Get datafile record with id datafile_id
 
         Not yet possible as the MyTardis API doesn't
         allow filtering on the id field.
         """
-        url = "%s/api/v1/dataset_file/?format=json&id=%s" \
-            % (config.mytardis_url, datafile_id)
+        url = "%s/api/v1/dataset_file/?format=json" % config.mytardis_url
+        url += "&dataset__id=%s" % dataset_id
+        if directory:
+            url += "&directory=%s" % directory
+        url += "&filename=%s" % filename
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
 
         datafiles_json = response.json()
-        return DataFile(config=config, datafile_json=datafiles_json['objects'][0])
+        return DataFile(config=config,
+                        datafile_json=datafiles_json['objects'][0])
 
     @staticmethod
     def download(config, datafile_id):
