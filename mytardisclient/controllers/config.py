@@ -29,6 +29,9 @@ class ConfigController(object):
         username = raw_input("MyTardis Username? ")
         api_key = raw_input("MyTardis API key? ")
 
+        config_dir = os.path.dirname(self.config_path)
+        if not os.path.exists(config_dir):
+            os.makedirs(config_dir)
         cfgfile = open(self.config_path, 'w')
         cfgparser = ConfigParser()
         cfgparser.add_section('mytardisclient')
