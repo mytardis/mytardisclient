@@ -48,4 +48,3 @@ class FacilityController(object):
         if render_format == 'table':
             instruments = Instrument.list(self.config, facility_id)
             print render(instruments, render_format)
-
