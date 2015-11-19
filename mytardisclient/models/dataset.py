@@ -45,7 +45,6 @@ class Dataset(object):
         response = requests.get(url=url, headers=headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         if experiment_id or limit:
@@ -68,7 +67,6 @@ class Dataset(object):
         response = requests.get(url=url, headers=headers)
         if response.status_code != 200:
             message = response.text
-            response.close()
             raise Exception(message)
 
         datasets_json = response.json()
@@ -96,7 +94,28 @@ class Dataset(object):
                                  data=json.dumps(new_dataset_json))
         if response.status_code != 201:
             message = response.text
-            response.close()
+            raise Exception(message)
+        dataset_json = response.json()
+        return Dataset(config, dataset_json)
+
+    @staticmethod
+    def update(config, dataset_id, description):
+        """
+        Update an dataset record.
+        """
+        updated_fields_json = {'description': description}
+        headers = {
+            "Authorization": "ApiKey %s:%s" % (config.username,
+                                               config.api_key),
+            "Content-Type": "application/json",
+            "Accept": "application/json"}
+        url = "%s/api/v1/dataset/%s/" % \
+            (config.mytardis_url, dataset_id)
+        response = requests.patch(headers=headers, url=url,
+                                  data=json.dumps(updated_fields_json))
+        if response.status_code != 202:
+            print "HTTP %s" % response.status_code
+            message = response.text
             raise Exception(message)
         dataset_json = response.json()
         return Dataset(config, dataset_json)

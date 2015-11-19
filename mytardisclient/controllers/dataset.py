@@ -33,6 +33,9 @@ class DatasetController(object):
         elif command == "create":
             return self.create(args.experiment_id, args.description,
                                render_format)
+        elif command == "update":
+            return self.update(args.dataset_id, args.description,
+                               render_format)
 
     def list(self, experiment_id, limit, render_format):
         """
@@ -59,3 +62,11 @@ class DatasetController(object):
         dataset = Dataset.create(self.config, experiment_id, description)
         print render(dataset, render_format)
         print "Dataset created successfully."
+
+    def update(self, dataset_id, description, render_format):
+        """
+        Update dataset record.
+        """
+        dataset = Dataset.update(self.config, dataset_id, description)
+        print render(dataset, render_format)
+        print "Dataset updated successfully."

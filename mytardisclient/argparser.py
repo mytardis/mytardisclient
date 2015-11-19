@@ -157,6 +157,12 @@ class ArgParser(object):
             "description", help="The dataset description.")
         dataset_command_list_parser.add_argument("--instrument",
                                                  help="The instrument ID.")
+        dataset_cmd_update_parser = \
+            dataset_command_parsers.add_parser("update")
+        dataset_cmd_update_parser.add_argument(
+            "dataset_id", help="The ID of the dataset to update.")
+        dataset_cmd_update_parser.add_argument(
+            "--description", help="The new description of the dataset.")
 
     def build_datafile_parser(self):
         """
