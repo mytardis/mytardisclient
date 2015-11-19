@@ -151,7 +151,10 @@ class DataFile(object):
             print "HTTP %s" % response.status_code
             message = response.text
             raise Exception(message)
-        print "Uploaded: %s" % file_path
+        if directory:
+            print "Uploaded: %s/%s" % (directory, file_path)
+        else:
+            print "Uploaded: %s" % file_path
 
     @staticmethod
     def update(config, datafile_id, md5sum):
