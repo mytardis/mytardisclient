@@ -25,7 +25,10 @@ def run():
 
     args = ArgParser().get_args()
 
-    if not hasattr(args, 'json') or not args.json:
+    if args.model == 'version':
+        print "MyTardis Client v%s" % VERSION
+        sys.exit(0)
+    if args.verbose and (not hasattr(args, 'json') or not args.json):
         print "MyTardis Client v%s" % VERSION
 
     config_path = os.path.join(os.path.expanduser('~'),
@@ -40,12 +43,10 @@ def run():
             sys.exit(0)
     config = Config(config_path)
 
-    if not hasattr(args, 'json') or not args.json:
+    if args.verbose and (not hasattr(args, 'json') or not args.json):
         print "Config: %s" % config_path
         print "MyTardis URL: %s" % config.mytardis_url
         print "Username: %s" % config.username
-
-    # print "Model: %s" % args.model
 
     if args.model == 'facility':
         FacilityController(config).run_command(args)

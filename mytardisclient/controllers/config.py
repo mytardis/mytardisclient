@@ -2,6 +2,7 @@
 Controller class for setting up config file.
 """
 
+import os
 from ConfigParser import ConfigParser
 
 
@@ -17,6 +18,13 @@ class ConfigController(object):
         """
         Configure MyTardis Client settings.
         """
+        if os.path.exists(self.config_path):
+            print "A config file already exists at %s" % self.config_path
+            overwrite = raw_input("Are you sure you want to overwrite it? ")
+            if not overwrite.strip().lower().startswith('y'):
+                return
+            print ""
+
         mytardis_url = raw_input("MyTardis URL? ")
         username = raw_input("MyTardis Username? ")
         api_key = raw_input("MyTardis API key? ")

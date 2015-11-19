@@ -10,6 +10,8 @@ class ArgParser(object):
     """
     def __init__(self):
         self.parser = ArgumentParser(prog='mytardis', description="")
+        self.parser.add_argument(
+            "--verbose", action='store_true', help="More verbose output.")
         self.model_parsers = \
             self.parser.add_subparsers(help='available models', dest='model')
 
@@ -20,11 +22,13 @@ class ArgParser(object):
         self.build_parser()
         args = self.parser.parse_args()
 
-        if args.model not in ('config', 'facility', 'instrument',
+        if args.model not in ('config', 'version',
+                              'facility', 'instrument',
                               'experiment', 'dataset', 'datafile'):
             self.parser.error(
-                "model should be one of 'config', 'facility', "
-                "'instrument', 'experiment', 'dataset', 'datafile'.")
+                "model should be one of 'config', 'version', "
+                "'facility', 'instrument', "
+                "'experiment', 'dataset', 'datafile'.")
 
         return args
 
@@ -33,6 +37,7 @@ class ArgParser(object):
         Builds parsing rules for command-line interface arguments.
         """
         self.build_config_parser()
+        self.build_version_parser()
         self.build_facility_parser()
         self.build_instrument_parser()
         self.build_experiment_parser()
@@ -47,6 +52,12 @@ class ArgParser(object):
         ~/.config/mytardisclient/mytardisclient.cfg
         """
         self.model_parsers.add_parser("config")
+
+    def build_version_parser(self):
+        """
+        Displays the mytardisclient version
+        """
+        self.model_parsers.add_parser("version")
 
     def build_facility_parser(self):
         """
