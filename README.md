@@ -3,19 +3,19 @@ Command Line Interface and Python classes for interacting with MyTardis's API.
 
 Install:
 ```
-mkdir ~/virtualenvs/mytardisclient
-source ~/virtualenvs/mytardisclient/bin/activate
-pip install -e git+https://github.com/wettenhj/mytardisclient.git#egg=mytardisclient
+$ mkdir ~/virtualenvs/mytardisclient
+$ source ~/virtualenvs/mytardisclient/bin/activate
+(mytardisclient) $ pip install -e git+https://github.com/wettenhj/mytardisclient.git#egg=mytardisclient
 ```
 ```
-$ which mytardis
+(mytardisclient) $ which mytardis
 /Users/wettenhj/virtualenvs/mytardisclient/bin/mytardis
 ```
 
 The MyTardis URL, username and API key should be stored in ~/.mytardisclient.cfg:
 
 ```
-$ cat ~/.mytardisclient.cfg 
+(mytardisclient) $ cat ~/.mytardisclient.cfg 
 [mytardisclient]
 mytardis_url = http://mytardisdemo.erc.monash.edu.au
 username = demofacility
@@ -25,7 +25,7 @@ api_key = 644be179cc6773c30fc471bad61b50c90897146c
 Let's list the experiments which user "demofacility" has access to:
 
 ```
-$ mytardis experiment list
+(mytardisclient) $ mytardis experiment list
 MyTardis Client v0.0.1
 Config: /Users/wettenhj/.mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
@@ -63,7 +63,7 @@ Offset: 0
 Now let's create a new experiment called "James Test Exp 001":
 
 ```
-$ mytardis experiment create "James Test Exp 001"
+(mytardisclient) (mytardisclient) $ mytardis experiment create "James Test Exp 001"
 MyTardis Client v0.0.1
 Config: /Users/wettenhj/.mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
@@ -87,11 +87,11 @@ Experiment created successfully.
 Now let's create a dataset.  Note that when we run "mytardis dataset create" without the experiment ID and description arguments, we get a usage message telling us the names of the missing arguments.
 
 ```
-$ mytardis dataset create
+(mytardisclient) $ mytardis dataset create
 usage: mytardis dataset create [-h] experiment_id description
 mytardis dataset create: error: too few arguments
 
-$ mytardis dataset create 20 "James Test Dataset 001"
+(mytardisclient) $ mytardis dataset create 20 "James Test Dataset 001"
 MyTardis Client v0.0.1
 Config: /Users/wettenhj/.mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
@@ -117,15 +117,15 @@ Dataset created successfully.
 Now's let's upload a file ('hello.txt') to the dataset we just created:
 
 ```
-$ mytardis datafile
+(mytardisclient) $ mytardis datafile
 usage: mytardis datafile [-h] {list,download,upload} ...
 mytardis datafile: error: too few arguments
 
-$ mytardis datafile upload
+(mytardisclient) $ mytardis datafile upload
 usage: mytardis datafile upload [-h] dataset_id file_path
 mytardis datafile upload: error: too few arguments
 
-$ mytardis datafile upload 31 hello.txt
+(mytardisclient) $ mytardis datafile upload 31 hello.txt
 MyTardis Client v0.0.1
 Config: /Users/wettenhj/.mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
@@ -136,7 +136,7 @@ Uploaded: hello.txt
 Now let's reload the dataset's datafile list to see the new datafile record:
 
 ```
-$ mytardis dataset get 31
+(mytardisclient) $ mytardis dataset get 31
 MyTardis Client v0.0.1
 Config: /Users/wettenhj/.mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
@@ -173,28 +173,29 @@ Offset: 0
 Note that the file has been verified already.  Now let's determine the file size and MD5 checksum locally and ensure that they match the values recorded in MyTardis:
 
 ```
-$ ls -l hello.txt
+(mytardisclient) $ ls -l hello.txt
 -rw-r--r--  1 wettenhj  staff  13 19 Nov 11:23 hello.txt
-$ md5 hello.txt 
+
+(mytardisclient) $ md5 hello.txt 
 MD5 (hello.txt) = 9af2f8218b150c351ad802c6f3d66abe
 ```
 
 Now let's delete the local copy of 'hello.txt', and download it from MyTardis:
 
 ```
-$ rm hello.txt 
+(mytardisclient) $ rm hello.txt 
 
-$ mytardis datafile download
+(mytardisclient) $ mytardis datafile download
 usage: mytardis datafile download [-h] datafile_id
 mytardis datafile download: error: too few arguments
 
-$ mytardis datafile download 99
+(mytardisclient) $ mytardis datafile download 99
 MyTardis Client v0.0.1
 Config: /Users/wettenhj/.mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
 Username: demofacility
 Downloaded: hello.txt
 
-$ ls -l hello.txt 
+(mytardisclient) $ ls -l hello.txt 
 -rw-r--r--  1 wettenhj  staff  13 19 Nov 11:33 hello.txt
 ```
