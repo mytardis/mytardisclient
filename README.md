@@ -240,6 +240,9 @@ And if a lookup fails, we get a non-zero exit code:
 (mytardisclient) $ mytardis datafile get 31 "hello.txt" > /dev/null
 (mytardisclient) $ echo $?
 0
+```
+
+```
 (mytardisclient) $ mytardis datafile get 31 "doesn't exist.txt" >& /dev/null
 (mytardisclient) $ echo $?
 1
