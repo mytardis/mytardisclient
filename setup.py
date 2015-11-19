@@ -15,5 +15,5 @@ setup(name='mytardisclient',
               "mytardis = mytardisclient.client:run",
           ],
       },
-      install_requires=['requests>=2.3.0', 'ConfigParser'],
+      install_requires=['requests', 'ConfigParser', 'texttable'],
       zip_safe=False)
