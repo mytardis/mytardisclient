@@ -31,6 +31,8 @@ class InstrumentController(object):
             return self.get(args.instrument_id, render_format)
         elif command == "create":
             return self.create(args.facility_id, args.name, render_format)
+        elif command == "update":
+            return self.update(args.instrument_id, args.name, render_format)
 
     def list(self, facility_id, limit, render_format):
         """
@@ -54,3 +56,11 @@ class InstrumentController(object):
         instrument = Instrument.create(self.config, facility_id, name)
         print render(instrument, render_format)
         print "Instrument created successfully."
+
+    def update(self, instrument_id, name, render_format):
+        """
+        Update instrument record.
+        """
+        instrument = Instrument.update(self.config, instrument_id, name)
+        print render(instrument, render_format)
+        print "Instrument updated successfully."

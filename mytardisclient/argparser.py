@@ -90,6 +90,12 @@ class ArgParser(object):
             "facility_id", help="The ID of the new instrument's facility.")
         instrument_cmd_create_parser.add_argument(
             "name", help="The name of the instrument to create.")
+        instrument_cmd_update_parser = \
+            instrument_command_parsers.add_parser("update")
+        instrument_cmd_update_parser.add_argument(
+            "instrument_id", help="The ID of the instrument to update.")
+        instrument_cmd_update_parser.add_argument(
+            "--name", help="The new name of the instrument.")
 
     def build_experiment_parser(self):
         """

@@ -97,3 +97,27 @@ class Instrument(object):
         instrument_json = response.json()
         return Instrument(config, instrument_json)
 
+    @staticmethod
+    def update(config, instrument_id, name):
+        """
+        Update an instrument record.
+        """
+        updated_fields_json = {
+            "name": name,
+        }
+        headers = {
+            "Authorization": "ApiKey %s:%s" % (config.username,
+                                               config.api_key),
+            "Content-Type": "application/json",
+            "Accept": "application/json"}
+        url = "%s/api/v1/instrument/%s/" % \
+            (config.mytardis_url, instrument_id)
+        response = requests.patch(headers=headers, url=url,
+                                  data=json.dumps(updated_fields_json))
+        if response.status_code != 202:
+            print "HTTP %s" % response.status_code
+            message = response.text
+            response.close()
+            raise Exception(message)
+        instrument_json = response.json()
+        return Instrument(config, instrument_json)
