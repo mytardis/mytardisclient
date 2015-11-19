@@ -16,4 +16,5 @@ class Replica(object):
         self.config = config
         self.json = replica_json
         self.id = replica_json['id']  # pylint: disable=invalid-name
+        self.uri = replica_json['uri']
         self.verified = replica_json['verified']

@@ -363,6 +363,8 @@ def render_datafile_as_table(datafile):
     table.add_row(["ID", datafile.id])
     table.add_row(["Dataset", datafile.dataset])
     table.add_row(["Filename", datafile.filename])
+    uris = [replica.uri for replica in datafile.replicas]
+    table.add_row(["URI", "\n".join(uris)])
     table.add_row(["Verified", str(datafile.verified)])
     table.add_row(["Size", human_readable_size_string(datafile.size)])
     table.add_row(["MD5 Sum", datafile.md5sum])
@@ -399,11 +401,11 @@ def render_datafiles_as_table(datafiles):
     table = Texttable(max_width=0)
     table.set_cols_align(["r", "l", "l", "l", "l", "l", "l"])
     table.set_cols_valign(["m", "m", "m", "m", "m", "m", "m"])
-    table.header(["ID", "Dataset", "Directory", "Filename", "Verified", "Size", "MD5 Sum"])
+    table.header(["ID", "Directory", "Filename", "URI", "Verified", "Size", "MD5 Sum"])
     for datafile in datafiles:
-        table.add_row([datafile.id, datafile.dataset,
-                       datafile.directory, datafile.filename,
-                       str(datafile.verified),
+        uris = [replica.uri for replica in datafile.replicas]
+        table.add_row([datafile.id, datafile.directory, datafile.filename,
+                       "\n".join(uris), str(datafile.verified),
                        human_readable_size_string(datafile.size),
                        datafile.md5sum])
     return heading + table.draw() + "\n"
