@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+"""
+client.py
+"""
+import os
+
+from mytardisclient import __version__ as VERSION
+from mytardisclient.models.config import Config
+from mytardisclient.controllers.facility import FacilityController
+from mytardisclient.controllers.instrument import InstrumentController
+from mytardisclient.controllers.experiment import ExperimentController
+from mytardisclient.controllers.dataset import DatasetController
+from mytardisclient.controllers.datafile import DataFileController
+from mytardisclient.argparser import ArgParser
+
+
+def run():
+    """
+    Main function for command-line interface.
+    """
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-statements
+
+    args = ArgParser().get_args()
+
+    if not hasattr(args, 'json') or not args.json:
+        print "MyTardis Client v%s" % VERSION
+
+    config_path = os.path.join(os.path.expanduser('~'), '.mytardisclient.cfg')
+
+    if not os.path.exists(config_path):
+        raise Exception("%s not found." % config_path)
+    config = Config(config_path)
+
+    if not hasattr(args, 'json') or not args.json:
+        print "Config: %s" % config_path
+        print "MyTardis URL: %s" % config.mytardis_url
+        print "Username: %s" % config.username
+
+    # print "Model: %s" % args.model
+
+    if args.model == 'facility':
+        FacilityController(config).run_command(args)
+    elif args.model == 'instrument':
+        InstrumentController(config).run_command(args)
+    elif args.model == 'experiment':
+        ExperimentController(config).run_command(args)
+    elif args.model == 'dataset':
+        DatasetController(config).run_command(args)
+    elif args.model == 'datafile':
+        DataFileController(config).run_command(args)
+
+
+if __name__ == "__main__":
+    run()
