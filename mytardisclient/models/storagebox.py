@@ -18,6 +18,12 @@ class StorageBox(object):
         self.id = storage_box_json['id']  # pylint: disable=invalid-name
         self.name = storage_box_json['name']
         self.json = storage_box_json
+        self.attributes = []
+        for attribute_json in storage_box_json['attributes']:
+            self.attributes.append(StorageBoxAttribute(config, attribute_json))
+        self.options = []
+        for option_json in storage_box_json['options']:
+            self.options.append(StorageBoxOption(config, option_json))
 
     def __str__(self):
         return self.name
@@ -67,3 +73,27 @@ class StorageBox(object):
 
         storage_box_json = response.json()
         return StorageBox(config=config, storage_box_json=storage_box_json)
+
+
+class StorageBoxAttribute(object):
+    """
+    Model class for MyTardis API v1's StorageBoxAttributeResource.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    def __init__(self, config, storage_box_attribute_json):
+        self.config = config
+        self.key = storage_box_attribute_json['key']
+        self.value = storage_box_attribute_json['value']
+        self.json = storage_box_attribute_json
+
+
+class StorageBoxOption(object):
+    """
+    Model class for MyTardis API v1's StorageBoxOptionResource.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    def __init__(self, config, storage_box_option_json):
+        self.config = config
+        self.key = storage_box_option_json['key']
+        self.value = storage_box_option_json['value']
+        self.json = storage_box_option_json

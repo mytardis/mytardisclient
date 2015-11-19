@@ -438,7 +438,10 @@ def render_storage_box_as_table(storage_box):
     """
     Returns ASCII table view of storage_box.
     """
+    storage_box_options_attributes = ""
+
     heading = "\nModel: StorageBox\n\n"
+    storage_box_options_attributes += heading
 
     table = Texttable()
     table.set_cols_align(["l", "l"])
@@ -446,7 +449,31 @@ def render_storage_box_as_table(storage_box):
     table.header(["StorageBox field", "Value"])
     table.add_row(["ID", storage_box.id])
     table.add_row(["Name", storage_box.name])
-    return heading + table.draw() + "\n"
+    storage_box_options_attributes += table.draw() + "\n"
+
+    heading = "\nModel: StorageBoxOptions\n\n"
+    storage_box_options_attributes += heading
+
+    table = Texttable(max_width=0)
+    table.set_cols_align(["r", "l"])
+    table.set_cols_valign(["m", "m"])
+    table.header(["Key", "Value"])
+    for option in storage_box.options:
+        table.add_row([option.key, option.value])
+    storage_box_options_attributes += table.draw() + "\n"
+
+    heading = "\nModel: StorageBoxAttributes\n\n"
+    storage_box_options_attributes += heading
+
+    table = Texttable(max_width=0)
+    table.set_cols_align(["r", "l"])
+    table.set_cols_valign(["m", "m"])
+    table.header(["Key", "Value"])
+    for attribute in storage_box.attributes:
+        table.add_row([attribute.key, attribute.value])
+    storage_box_options_attributes += table.draw() + "\n"
+
+    return storage_box_options_attributes
 
 def render_storage_boxes(storage_boxes, render_format):
     """
@@ -483,4 +510,3 @@ def render_storage_boxes_as_table(storage_boxes):
     for storage_box in storage_boxes:
         table.add_row([storage_box.id, storage_box.name])
     return heading + table.draw() + "\n"
-
