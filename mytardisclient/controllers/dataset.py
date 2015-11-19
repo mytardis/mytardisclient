@@ -11,7 +11,7 @@ from mytardisclient.views import render
 
 class DatasetController(object):
     """
-    Controller class for running commands (list, get, put, patch)
+    Controller class for running commands (list, get, create, update)
     on dataset records.
     """
     def __init__(self, config):
@@ -27,7 +27,8 @@ class DatasetController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.exp, args.limit, render_format)
+            return self.list(args.exp, args.limit,
+                             args.offset, render_format)
         elif command == "get":
             return self.get(args.dataset_id, render_format)
         elif command == "create":
@@ -37,12 +38,12 @@ class DatasetController(object):
             return self.update(args.dataset_id, args.description,
                                render_format)
 
-    def list(self, experiment_id, limit, render_format):
+    def list(self, experiment_id, limit, offset, render_format):
         """
         Display list of dataset records.
         """
-        datasets = Dataset.list(self.config, experiment_id=experiment_id,
-                                limit=limit)
+        datasets = Dataset.list(self.config, experiment_id,
+                                limit, offset)
         print render(datasets, render_format)
 
     def get(self, dataset_id, render_format):

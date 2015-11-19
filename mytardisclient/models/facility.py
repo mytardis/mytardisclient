@@ -27,22 +27,25 @@ class Facility(object):
         return self.name
 
     @staticmethod
-    def list(config, limit=None):
+    def list(config, limit=None, offset=None):
         """
         Get facilities I have access to
         """
         url = config.mytardis_url + "/api/v1/facility/?format=json"
         if limit:
             url += "&limit=%s" % limit
+        if offset:
+            url += "&offset=%s" % offset
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()
             raise Exception(message)
 
-        if limit:
+        if limit or offset:
+            filters = dict(limit=limit, offset=offset)
             return ResultSet(Facility, config, url, response.json(),
-                             limit=limit)
+                             **filters)
         else:
             return ResultSet(Facility, config, url, response.json())
 

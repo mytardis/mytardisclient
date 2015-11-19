@@ -23,21 +23,24 @@ class Experiment(object):
         self.description = experiment_json['description']
 
     @staticmethod
-    def list(config, limit=None):
+    def list(config, limit=None, offset=None):
         """
         Get experiments I have access to
         """
         url = config.mytardis_url + "/api/v1/experiment/?format=json"
         if limit:
             url += "&limit=%s" % limit
+        if offset:
+            url += "&offset=%s" % offset
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()
             raise Exception(message)
 
-        if limit:
-            return ResultSet(Experiment, config, url, response.json(), limit=limit)
+        if limit or offset:
+            filters = dict(limit=limit, offset=offset)
+            return ResultSet(Experiment, config, url, response.json(), **filters)
         else:
             return ResultSet(Experiment, config, url, response.json())
 

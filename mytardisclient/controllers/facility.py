@@ -11,7 +11,7 @@ from mytardisclient.views import render
 
 class FacilityController(object):
     """
-    Controller class for running commands (list, get, put, patch)
+    Controller class for running commands (list, get, create, update)
     on facility records.
     """
     def __init__(self, config):
@@ -27,15 +27,15 @@ class FacilityController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.limit, render_format)
+            return self.list(args.limit, args.offset, render_format)
         if command == "get":
             return self.get(args.facility_id, render_format)
 
-    def list(self, limit, render_format):
+    def list(self, limit, offset, render_format):
         """
         Display list of facility records.
         """
-        facilities = Facility.list(self.config, limit=limit)
+        facilities = Facility.list(self.config, limit, offset)
         print render(facilities, render_format)
 
     def get(self, facility_id, render_format):

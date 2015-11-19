@@ -10,7 +10,7 @@ from mytardisclient.views import render
 
 class InstrumentController(object):
     """
-    Controller class for running commands (list, get, put, patch)
+    Controller class for running commands (list, get, create, update)
     on instrument records.
     """
     def __init__(self, config):
@@ -26,7 +26,8 @@ class InstrumentController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.facility, args.limit, render_format)
+            return self.list(args.facility, args.limit,
+                             args.offset, render_format)
         elif command == "get":
             return self.get(args.instrument_id, render_format)
         elif command == "create":
@@ -34,12 +35,12 @@ class InstrumentController(object):
         elif command == "update":
             return self.update(args.instrument_id, args.name, render_format)
 
-    def list(self, facility_id, limit, render_format):
+    def list(self, facility_id, limit, offset, render_format):
         """
         Display list of instrument records.
         """
-        instruments = Instrument.list(self.config, facility_id=facility_id,
-                                      limit=limit)
+        instruments = Instrument.list(self.config, facility_id,
+                                      limit, offset)
         print render(instruments, render_format)
 
     def get(self, instrument_id, render_format):

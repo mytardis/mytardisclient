@@ -54,6 +54,9 @@ class ArgParser(object):
         facility_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
         facility_command_list_parser.add_argument(
+            "--offset",
+            help="Skip this many records from the start of the result set.")
+        facility_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         facility_command_get_parser = \
             facility_command_parsers.add_parser("get")
@@ -76,6 +79,9 @@ class ArgParser(object):
                                                     help="The facility ID.")
         instrument_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
+        instrument_command_list_parser.add_argument(
+            "--offset",
+            help="Skip this many records from the start of the result set.")
         instrument_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         instrument_command_get_parser = \
@@ -108,6 +114,9 @@ class ArgParser(object):
         experiment_command_list_parser = experiment_command_parsers.add_parser("list")
         experiment_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
+        experiment_command_list_parser.add_argument(
+            "--offset",
+            help="Skip this many records from the start of the result set.")
         experiment_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         experiment_command_get_parser = \
@@ -143,6 +152,9 @@ class ArgParser(object):
         dataset_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
         dataset_command_list_parser.add_argument(
+            "--offset",
+            help="Skip this many records from the start of the result set.")
+        dataset_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         dataset_command_get_parser = dataset_command_parsers.add_parser("get")
         dataset_command_get_parser.add_argument("dataset_id",
@@ -177,6 +189,9 @@ class ArgParser(object):
                                                   help="The dataset ID.")
         datafile_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
+        datafile_command_list_parser.add_argument(
+            "--offset",
+            help="Skip this many records from the start of the result set.")
         datafile_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
         datafile_cmd_download_parser = datafile_command_parsers.add_parser("download")

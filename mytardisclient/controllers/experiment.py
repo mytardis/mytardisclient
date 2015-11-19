@@ -11,7 +11,7 @@ from mytardisclient.views import render
 
 class ExperimentController(object):
     """
-    Controller class for running commands (list, get, put, patch)
+    Controller class for running commands (list, get, create, update)
     on experiment records.
     """
     def __init__(self, config):
@@ -27,7 +27,7 @@ class ExperimentController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.limit, render_format)
+            return self.list(args.limit, args.offset, render_format)
         elif command == "get":
             return self.get(args.experiment_id, render_format)
         elif command == "create":
@@ -36,11 +36,11 @@ class ExperimentController(object):
             return self.update(args.experiment_id, args.title,
                                args.description, render_format)
 
-    def list(self, limit, render_format):
+    def list(self, limit, offset, render_format):
         """
         Display list of experiment records.
         """
-        experiments = Experiment.list(self.config, limit=limit)
+        experiments = Experiment.list(self.config, limit, offset)
         print render(experiments, render_format)
 
     def get(self, experiment_id, render_format):

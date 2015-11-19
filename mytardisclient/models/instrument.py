@@ -27,7 +27,7 @@ class Instrument(object):
         return self.name
 
     @staticmethod
-    def list(config, facility_id=None, limit=None):
+    def list(config, facility_id=None, limit=None, offset=None):
         """
         Get instruments in facility with ID facility_id.
         """
@@ -36,14 +36,16 @@ class Instrument(object):
             url += "&facility__id=%s" % facility_id
         if limit:
             url += "&limit=%s" % limit
+        if offset:
+            url += "&offset=%s" % offset
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()
             raise Exception(message)
 
-        if facility_id or limit:
-            filters = dict(facility_id=facility_id, limit=limit)
+        if facility_id or limit or offset:
+            filters = dict(facility_id=facility_id, limit=limit, offset=offset)
             return ResultSet(Instrument, config, url, response.json(),
                              **filters)
         else:

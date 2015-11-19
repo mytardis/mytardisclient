@@ -48,7 +48,7 @@ class DataFile(object):
         return True
 
     @staticmethod
-    def list(config, dataset_id=None, limit=None):
+    def list(config, dataset_id=None, limit=None, offset=None):
         """
         Get datafiles I have access to
         """
@@ -57,6 +57,8 @@ class DataFile(object):
             url += "&dataset__id=%s" % dataset_id
         if limit:
             url += "&limit=%s" % limit
+        if offset:
+            url += "&offset=%s" % offset
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             print "url: %s" % url
@@ -64,8 +66,8 @@ class DataFile(object):
             response.close()
             raise Exception(message)
 
-        if dataset_id or limit:
-            filters = dict(dataset_id=dataset_id, limit=limit)
+        if dataset_id or limit or offset:
+            filters = dict(dataset_id=dataset_id, limit=limit, offset=offset)
             return ResultSet(DataFile, config, url, response.json(),
                              **filters)
         else:

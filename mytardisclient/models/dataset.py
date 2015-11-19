@@ -28,7 +28,7 @@ class Dataset(object):
         self.experiments = dataset_json['experiments']
 
     @staticmethod
-    def list(config, experiment_id=None, limit=None):
+    def list(config, experiment_id=None, limit=None, offset=None):
         """
         Get datasets I have access to
         """
@@ -37,13 +37,16 @@ class Dataset(object):
             url += "&experiments__id=%s"  % experiment_id
         if limit:
             url += "&limit=%s"  % limit
+        if offset:
+            url += "&offset=%s"  % offset
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
 
-        if experiment_id or limit:
-            filters = dict(experiment_id=experiment_id, limit=limit)
+        if experiment_id or limit or offset:
+            filters = dict(experiment_id=experiment_id,
+                           limit=limit, offset=offset)
             return ResultSet(Dataset, config, url, response.json(), **filters)
         else:
             return ResultSet(Dataset, config, url, response.json())
