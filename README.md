@@ -204,6 +204,20 @@ Results can also be retrieved in JSON format.  Let's retrieve the JSON represent
 'hello.txt' in dataset ID 31:
 
 ```
+(mytardisclient) $ mytardis datafile get --help
+usage: mytardis datafile get [-h] [--directory DIRECTORY] [--json]
+                             dataset_id filename
+
+positional arguments:
+  dataset_id            The dataset ID.
+  filename              The datafile's name.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY
+                        The subdirectory within the dataset.
+  --json                Display results in JSON format.
+  
 (mytardisclient) $ mytardis datafile get 31 "hello.txt" --json
 {
   "created_time": "2015-11-19T11:23:53", 
