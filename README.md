@@ -122,7 +122,8 @@ mytardis datafile: error: too few arguments
 $ mytardis datafile upload
 usage: mytardis datafile upload [-h] dataset_id file_path
 mytardis datafile upload: error: too few arguments
-MU00087002X:master wettenhj$ mytardis datafile upload 31 hello.txt
+
+$ mytardis datafile upload 31 hello.txt
 MyTardis Client v0.0.1
 Config: /Users/wettenhj/.mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
