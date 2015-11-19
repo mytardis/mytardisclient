@@ -24,11 +24,12 @@ class ArgParser(object):
 
         if args.model not in ('config', 'version',
                               'facility', 'instrument',
-                              'experiment', 'dataset', 'datafile'):
+                              'experiment', 'dataset', 'datafile',
+                              'storagebox'):
             self.parser.error(
                 "model should be one of 'config', 'version', "
                 "'facility', 'instrument', "
-                "'experiment', 'dataset', 'datafile'.")
+                "'experiment', 'dataset', 'datafile', 'storagebox'.")
 
         return args
 
@@ -43,6 +44,7 @@ class ArgParser(object):
         self.build_experiment_parser()
         self.build_dataset_parser()
         self.build_datafile_parser()
+        self.build_storagebox_parser()
 
         return self.parser
 
@@ -67,6 +69,7 @@ class ArgParser(object):
         facility_command_parsers = \
             facility_parser.add_subparsers(help='available commands',
                                            dest='command')
+
         facility_command_list_parser = facility_command_parsers.add_parser("list")
         facility_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
@@ -78,6 +81,7 @@ class ArgParser(object):
             help="Order by this field.")
         facility_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         facility_command_get_parser = \
             facility_command_parsers.add_parser("get")
         facility_command_get_parser.add_argument("facility_id",
@@ -93,6 +97,7 @@ class ArgParser(object):
         instrument_command_parsers = \
             instrument_parser.add_subparsers(help='available commands',
                                              dest='command')
+
         instrument_command_list_parser = \
             instrument_command_parsers.add_parser("list")
         instrument_command_list_parser.add_argument("--facility",
@@ -107,18 +112,21 @@ class ArgParser(object):
             help="Order by this field.")
         instrument_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         instrument_command_get_parser = \
             instrument_command_parsers.add_parser("get")
         instrument_command_get_parser.add_argument("instrument_id",
                                                    help="The instrument ID.")
         instrument_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         instrument_cmd_create_parser = \
             instrument_command_parsers.add_parser("create")
         instrument_cmd_create_parser.add_argument(
             "facility_id", help="The ID of the new instrument's facility.")
         instrument_cmd_create_parser.add_argument(
             "name", help="The name of the instrument to create.")
+
         instrument_cmd_update_parser = \
             instrument_command_parsers.add_parser("update")
         instrument_cmd_update_parser.add_argument(
@@ -134,6 +142,7 @@ class ArgParser(object):
         experiment_command_parsers = \
             experiment_parser.add_subparsers(help='available commands',
                                              dest='command')
+
         experiment_command_list_parser = experiment_command_parsers.add_parser("list")
         experiment_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
@@ -145,16 +154,19 @@ class ArgParser(object):
             help="Order by this field.")
         experiment_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         experiment_command_get_parser = \
             experiment_command_parsers.add_parser("get")
         experiment_command_get_parser.add_argument("experiment_id",
                                                    help="The experiment ID.")
         experiment_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         experiment_cmd_create_parser = \
             experiment_command_parsers.add_parser("create")
         experiment_cmd_create_parser.add_argument(
             "experiment_title", help="The experiment title to create.")
+
         experiment_cmd_update_parser = \
             experiment_command_parsers.add_parser("update")
         experiment_cmd_update_parser.add_argument(
@@ -172,6 +184,7 @@ class ArgParser(object):
         dataset_command_parsers = \
             dataset_parser.add_subparsers(help='available commands',
                                           dest='command')
+
         dataset_command_list_parser = dataset_command_parsers.add_parser("list")
         dataset_command_list_parser.add_argument("--exp",
                                                  help="The experiment ID.")
@@ -185,11 +198,13 @@ class ArgParser(object):
             help="Order by this field.")
         dataset_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         dataset_command_get_parser = dataset_command_parsers.add_parser("get")
         dataset_command_get_parser.add_argument("dataset_id",
                                                 help="The dataset ID.")
         dataset_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         dataset_command_create_parser = \
             dataset_command_parsers.add_parser("create")
         dataset_command_create_parser.add_argument(
@@ -198,6 +213,7 @@ class ArgParser(object):
             "description", help="The dataset description.")
         dataset_command_create_parser.add_argument("--instrument",
                                                    help="The instrument ID.")
+
         dataset_cmd_update_parser = \
             dataset_command_parsers.add_parser("update")
         dataset_cmd_update_parser.add_argument(
@@ -213,9 +229,14 @@ class ArgParser(object):
         datafile_command_parsers = \
             datafile_parser.add_subparsers(help='available commands',
                                            dest='command')
+
         datafile_command_list_parser = datafile_command_parsers.add_parser("list")
         datafile_command_list_parser.add_argument("--dataset",
                                                   help="The dataset ID.")
+        datafile_command_list_parser.add_argument("--directory",
+                                                  help="The subdirectory within the dataset.")
+        datafile_command_list_parser.add_argument("--filename",
+                                                  help="The datafile's name.")
         datafile_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
         datafile_command_list_parser.add_argument(
@@ -226,15 +247,13 @@ class ArgParser(object):
             help="Order by this field.")
         datafile_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         datafile_command_get_parser = datafile_command_parsers.add_parser("get")
-        datafile_command_get_parser.add_argument("dataset_id",
-                                                 help="The dataset ID.")
-        datafile_command_get_parser.add_argument("--directory",
-                                                 help="The subdirectory within the dataset.")
-        datafile_command_get_parser.add_argument("filename",
-                                                 help="The datafile's name.")
+        datafile_command_get_parser.add_argument("datafile_id",
+                                                 help="The datafile ID.")
         datafile_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
         datafile_command_create_parser = \
             datafile_command_parsers.add_parser("create")
         datafile_command_create_parser.add_argument(
@@ -245,9 +264,11 @@ class ArgParser(object):
             "--storagebox", help="The storage box containing the datafile.")
         datafile_command_create_parser.add_argument(
             "file_path", help="The file to be represented in the datafile record.")
+
         datafile_cmd_download_parser = datafile_command_parsers.add_parser("download")
         datafile_cmd_download_parser.add_argument("datafile_id",
                                                   help="The datafile ID.")
+
         datafile_cmd_upload_parser = datafile_command_parsers.add_parser("upload")
         datafile_cmd_upload_parser.add_argument("dataset_id",
                                                 help="The dataset ID.")
@@ -256,9 +277,39 @@ class ArgParser(object):
             help="The datafile's subdirectory within the dataset.")
         datafile_cmd_upload_parser.add_argument("file_path",
                                                 help="The file to upload.")
+
         datafile_cmd_update_parser = \
             datafile_command_parsers.add_parser("update")
         datafile_cmd_update_parser.add_argument(
             "datafile_id", help="The ID of the datafile to update.")
         datafile_cmd_update_parser.add_argument(
             "--md5sum", help="The new MD5 sum of the datafile.")
+
+    def build_storagebox_parser(self):
+        """
+        Builds parsing rules for storagebox-related
+        command-line interface arguments.
+        """
+        storagebox_parser = self.model_parsers.add_parser("storagebox")
+        storagebox_command_parsers = \
+            storagebox_parser.add_subparsers(help='available commands',
+                                             dest='command')
+
+        storagebox_command_list_parser = storagebox_command_parsers.add_parser("list")
+        storagebox_command_list_parser.add_argument(
+            "--limit", help="Maximum number of results to return.")
+        storagebox_command_list_parser.add_argument(
+            "--offset",
+            help="Skip this many records from the start of the result set.")
+        storagebox_command_list_parser.add_argument(
+            "--order_by",
+            help="Order by this field.")
+        storagebox_command_list_parser.add_argument(
+            "--json", action='store_true', help="Display results in JSON format.")
+
+        storagebox_command_get_parser = \
+            storagebox_command_parsers.add_parser("get")
+        storagebox_command_get_parser.add_argument("storage_box_id",
+                                                   help="The storage box ID.")
+        storagebox_command_get_parser.add_argument(
+            "--json", action='store_true', help="Display results in JSON format.")

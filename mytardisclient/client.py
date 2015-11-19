@@ -13,6 +13,7 @@ from mytardisclient.controllers.instrument import InstrumentController
 from mytardisclient.controllers.experiment import ExperimentController
 from mytardisclient.controllers.dataset import DatasetController
 from mytardisclient.controllers.datafile import DataFileController
+from mytardisclient.controllers.storagebox import StorageBoxController
 from mytardisclient.argparser import ArgParser
 
 
@@ -58,6 +59,8 @@ def run():
         DatasetController(config).run_command(args)
     elif args.model == 'datafile':
         DataFileController(config).run_command(args)
+    elif args.model == 'storagebox':
+        StorageBoxController(config).run_command(args)
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ from mytardisclient.models.instrument import Instrument
 from mytardisclient.models.experiment import Experiment
 from mytardisclient.models.dataset import Dataset
 from mytardisclient.models.datafile import DataFile
+from mytardisclient.models.storagebox import StorageBox
 from mytardisclient.models.resultset import ResultSet
 from mytardisclient.utils import human_readable_size_string
 # from mytardisclient.logs import logger
@@ -39,6 +40,8 @@ def render_single_record(data, render_format):
         return render_dataset(data, render_format)
     elif data.__class__ == DataFile:
         return render_datafile(data, render_format)
+    elif data.__class__ == StorageBox:
+        return render_storage_box(data, render_format)
     else:
         print "Class is " + data.__class__.__name__
 
@@ -56,6 +59,8 @@ def render_result_set(data, render_format):
         return render_datasets(data, render_format)
     elif data.model == DataFile:
         return render_datafiles(data, render_format)
+    elif data.model == StorageBox:
+        return render_storage_boxes(data, render_format)
     else:
         print "Class is " + data.model.__name__
 
@@ -408,5 +413,72 @@ def render_datafiles_as_table(datafiles):
                        "\n".join(uris), str(datafile.verified),
                        human_readable_size_string(datafile.size),
                        datafile.md5sum])
+    return heading + table.draw() + "\n"
+
+# StorageBox render functions
+
+def render_storage_box(storage_box, render_format):
+    """
+    Render storage box
+    """
+    if render_format == 'json':
+        return render_storage_box_as_json(storage_box)
+    else:
+        return render_storage_box_as_table(storage_box)
+
+def render_storage_box_as_json(storage_box, indent=2, sort_keys=True):
+    """
+    Returns JSON representation of storage_box.
+    """
+    return json.dumps(storage_box.json, indent=indent, sort_keys=sort_keys)
+
+def render_storage_box_as_table(storage_box):
+    """
+    Returns ASCII table view of storage_box.
+    """
+    heading = "\nModel: StorageBox\n\n"
+
+    table = Texttable()
+    table.set_cols_align(["l", "l"])
+    table.set_cols_valign(["m", "m"])
+    table.header(["StorageBox field", "Value"])
+    table.add_row(["ID", storage_box.id])
+    table.add_row(["Name", storage_box.name])
+    return heading + table.draw() + "\n"
+
+def render_storage_boxes(storage_boxes, render_format):
+    """
+    Render storage_boxes
+    """
+    if render_format == 'json':
+        return render_storage_boxes_as_json(storage_boxes)
+    else:
+        return render_storage_boxes_as_table(storage_boxes)
+
+def render_storage_boxes_as_json(storage_boxes, indent=2, sort_keys=True):
+    """
+    Returns JSON representation of storage_boxes.
+    """
+    return json.dumps(storage_boxes.json, indent=indent, sort_keys=sort_keys)
+
+def render_storage_boxes_as_table(storage_boxes):
+    """
+    Returns ASCII table view of storage_boxes..
+    """
+    heading = "\n" \
+        "Model: StorageBox\n" \
+        "Query: %s\n" \
+        "Total Count: %s\n" \
+        "Limit: %s\n" \
+        "Offset: %s\n\n" \
+        % (storage_boxes.url, storage_boxes.total_count,
+           storage_boxes.limit, storage_boxes.offset)
+
+    table = Texttable(max_width=0)
+    table.set_cols_align(["r", "l"])
+    table.set_cols_valign(["m", "m"])
+    table.header(["ID", "Name"])
+    for storage_box in storage_boxes:
+        table.add_row([storage_box.id, storage_box.name])
     return heading + table.draw() + "\n"
 
