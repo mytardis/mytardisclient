@@ -40,4 +40,4 @@ class ConfigController(object):
         cfgparser.set('mytardisclient', 'api_key', api_key)
         cfgparser.write(cfgfile)
         cfgfile.close()
-        print "Wrote settings to %s" % self.config_path
+        print "\nWrote settings to %s" % self.config_path
