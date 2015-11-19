@@ -217,7 +217,8 @@ optional arguments:
   --directory DIRECTORY
                         The subdirectory within the dataset.
   --json                Display results in JSON format.
-  
+```
+```
 (mytardisclient) $ mytardis datafile get 31 "hello.txt" --json
 {
   "created_time": "2015-11-19T11:23:53", 
