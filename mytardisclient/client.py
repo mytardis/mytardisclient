@@ -3,9 +3,11 @@
 client.py
 """
 import os
+import sys
 
 from mytardisclient import __version__ as VERSION
 from mytardisclient.models.config import Config
+from mytardisclient.controllers.config import ConfigController
 from mytardisclient.controllers.facility import FacilityController
 from mytardisclient.controllers.instrument import InstrumentController
 from mytardisclient.controllers.experiment import ExperimentController
@@ -26,10 +28,16 @@ def run():
     if not hasattr(args, 'json') or not args.json:
         print "MyTardis Client v%s" % VERSION
 
-    config_path = os.path.join(os.path.expanduser('~'), '.mytardisclient.cfg')
+    config_path = os.path.join(os.path.expanduser('~'),
+                               '.config',
+                               'mytardisclient',
+                               'mytardisclient.cfg')
 
-    if not os.path.exists(config_path):
-        raise Exception("%s not found." % config_path)
+    if not os.path.exists(config_path) or \
+            args.model == 'config':
+        ConfigController(config_path).configure()
+        if args.model == 'config':
+            sys.exit(0)
     config = Config(config_path)
 
     if not hasattr(args, 'json') or not args.json:

@@ -20,13 +20,11 @@ class ArgParser(object):
         self.build_parser()
         args = self.parser.parse_args()
 
-        if not args.model:
-            self.parser.error('model not given')
-
-        if args.model not in ('facility', 'instrument', 'experiment',
-                              'dataset', 'datafile'):
-            self.parser.error("model should be one of 'facility', 'instrument', "
-                              "'experiment', 'dataset', 'datafile'.")
+        if args.model not in ('config', 'facility', 'instrument',
+                              'experiment', 'dataset', 'datafile'):
+            self.parser.error(
+                "model should be one of 'config', 'facility', "
+                "'instrument', 'experiment', 'dataset', 'datafile'.")
 
         return args
 
@@ -34,6 +32,7 @@ class ArgParser(object):
         """
         Builds parsing rules for command-line interface arguments.
         """
+        self.build_config_parser()
         self.build_facility_parser()
         self.build_instrument_parser()
         self.build_experiment_parser()
@@ -41,6 +40,13 @@ class ArgParser(object):
         self.build_datafile_parser()
 
         return self.parser
+
+    def build_config_parser(self):
+        """
+        'mytardis config' prompts users for settings to write to
+        ~/.config/mytardisclient/mytardisclient.cfg
+        """
+        self.model_parsers.add_parser("config")
 
     def build_facility_parser(self):
         """
@@ -179,8 +185,8 @@ class ArgParser(object):
             "experiment_id", help="The experiment ID.")
         dataset_command_create_parser.add_argument(
             "description", help="The dataset description.")
-        dataset_command_list_parser.add_argument("--instrument",
-                                                 help="The instrument ID.")
+        dataset_command_create_parser.add_argument("--instrument",
+                                                   help="The instrument ID.")
         dataset_cmd_update_parser = \
             dataset_command_parsers.add_parser("update")
         dataset_cmd_update_parser.add_argument(
@@ -218,6 +224,16 @@ class ArgParser(object):
                                                  help="The datafile's name.")
         datafile_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+        datafile_command_create_parser = \
+            datafile_command_parsers.add_parser("create")
+        datafile_command_create_parser.add_argument(
+            "dataset_id", help="The dataset ID.")
+        datafile_command_create_parser.add_argument(
+            "--directory", help="The subdirectory within the dataset.")
+        datafile_command_create_parser.add_argument(
+            "--storagebox", help="The storage box containing the datafile.")
+        datafile_command_create_parser.add_argument(
+            "file_path", help="The file to be represented in the datafile record.")
         datafile_cmd_download_parser = datafile_command_parsers.add_parser("download")
         datafile_cmd_download_parser.add_argument("datafile_id",
                                                   help="The datafile ID.")

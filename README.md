@@ -12,14 +12,15 @@ $ source ~/virtualenvs/mytardisclient/bin/activate
 /Users/wettenhj/virtualenvs/mytardisclient/bin/mytardis
 ```
 
-The MyTardis URL, username and API key should be stored in ~/.mytardisclient.cfg:
+Configuration:
 
 ```
-(mytardisclient) $ cat ~/.mytardisclient.cfg 
-[mytardisclient]
-mytardis_url = http://mytardisdemo.erc.monash.edu.au
-username = demofacility
-api_key = 644be179cc6773c30fc471bad61b50c90897146c
+$ mytardis config
+MyTardis Client v0.0.1
+MyTardis URL? http://mytardisdemo.erc.monash.edu.au
+MyTardis Username? demofacility
+MyTardis API key? 644be179cc6773c30fc471bad61b50c90897146c
+Wrote settings to /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
 ```
 
 Let's list the experiments which user "demofacility" has access to:
@@ -27,7 +28,7 @@ Let's list the experiments which user "demofacility" has access to:
 ```
 (mytardisclient) $ mytardis experiment list
 MyTardis Client v0.0.1
-Config: /Users/wettenhj/.mytardisclient.cfg
+Config: /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
 Username: demofacility
 
@@ -65,7 +66,7 @@ Now let's create a new experiment called "James Test Exp 001":
 ```
 (mytardisclient) (mytardisclient) $ mytardis experiment create "James Test Exp 001"
 MyTardis Client v0.0.1
-Config: /Users/wettenhj/.mytardisclient.cfg
+Config: /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
 Username: demofacility
 
@@ -93,7 +94,7 @@ mytardis dataset create: error: too few arguments
 
 (mytardisclient) $ mytardis dataset create 20 "James Test Dataset 001"
 MyTardis Client v0.0.1
-Config: /Users/wettenhj/.mytardisclient.cfg
+Config: /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
 Username: demofacility
 
@@ -127,7 +128,7 @@ mytardis datafile upload: error: too few arguments
 
 (mytardisclient) $ mytardis datafile upload 31 hello.txt
 MyTardis Client v0.0.1
-Config: /Users/wettenhj/.mytardisclient.cfg
+Config: /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
 Username: demofacility
 Uploaded: hello.txt
@@ -138,7 +139,7 @@ Now let's reload the dataset's datafile list to see the new datafile record:
 ```
 (mytardisclient) $ mytardis dataset get 31
 MyTardis Client v0.0.1
-Config: /Users/wettenhj/.mytardisclient.cfg
+Config: /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
 Username: demofacility
 
@@ -191,7 +192,7 @@ mytardis datafile download: error: too few arguments
 
 (mytardisclient) $ mytardis datafile download 99
 MyTardis Client v0.0.1
-Config: /Users/wettenhj/.mytardisclient.cfg
+Config: /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
 MyTardis URL: http://mytardisdemo.erc.monash.edu.au
 Username: demofacility
 Downloaded: hello.txt
