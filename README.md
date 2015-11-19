@@ -203,7 +203,7 @@ Downloaded: hello.txt
 -rw-r--r--  1 wettenhj  staff  13 19 Nov 11:33 hello.txt
 ```
 Results can also be retrieved in JSON format.  Let's retrieve the JSON representation of the datafile record for the file
-'hello.txt' in dataset ID 31:
+'hello.txt' in dataset ID 31 (which has a datafile ID of 99):
 
 ```
 (mytardisclient) $ mytardis datafile get --help
