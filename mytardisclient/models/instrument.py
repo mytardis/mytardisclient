@@ -36,12 +36,7 @@ class Instrument(object):
             url += "&facility__id=%s" % facility_id
         if limit:
             url += "&limit=%s" % limit
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()
@@ -60,12 +55,7 @@ class Instrument(object):
         Get instruments with id instrument_id
         """
         url = config.mytardis_url + "/api/v1/instrument/?format=json" + "&id=%s" % instrument_id
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()
@@ -82,13 +72,8 @@ class Instrument(object):
             "name": name,
             "facility": "/api/v1/facility/%s/" % facility_id
         }
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
         url = config.mytardis_url + "/api/v1/instrument/"
-        response = requests.post(headers=headers, url=url,
+        response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_instrument_json))
         if response.status_code != 201:
             message = response.text
@@ -105,14 +90,9 @@ class Instrument(object):
         updated_fields_json = {
             "name": name,
         }
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
         url = "%s/api/v1/instrument/%s/" % \
             (config.mytardis_url, instrument_id)
-        response = requests.patch(headers=headers, url=url,
+        response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
             print "HTTP %s" % response.status_code

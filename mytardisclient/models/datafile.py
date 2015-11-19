@@ -57,12 +57,7 @@ class DataFile(object):
             url += "&dataset__id=%s" % dataset_id
         if limit:
             url += "&limit=%s" % limit
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             print "url: %s" % url
             message = response.text
@@ -86,12 +81,7 @@ class DataFile(object):
         """
         url = "%s/api/v1/dataset_file/?format=json&id=%s" \
             % (config.mytardis_url, datafile_id)
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()
@@ -135,10 +125,6 @@ class DataFile(object):
         Upload datafile to dataset with ID dataset_id.
         """
         url = "%s/api/v1/dataset_file/" % config.mytardis_url
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Accept": "application/json"}
         created_time = datetime.fromtimestamp(
             os.stat(file_path).st_ctime).isoformat()
         md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
@@ -150,7 +136,7 @@ class DataFile(object):
                      "mimetype": mimetypes.guess_type(file_path)[0],
                      "created_time": created_time}
         file_obj = open(file_path, 'rb')
-        response = requests.post(url, headers=headers,
+        response = requests.post(url, headers=config.default_headers,
                                  data={"json_data": json.dumps(file_data)},
                                  files={'attached_file': file_obj})
         file_obj.close()
@@ -161,3 +147,26 @@ class DataFile(object):
             response.close()
             raise Exception(message)
         print "Uploaded: %s" % file_path
+
+    @staticmethod
+    def update(config, datafile_id, md5sum):
+        """
+        Update a datafile record.
+
+        Only the md5sum field can be updated at present.
+        For a large file, its upload can commence before
+        the local MD5 sum calculation is complete, i.e.
+        the datafile record can be initially created with
+        a bogus checksum which is later corrected.
+        """
+        updated_fields_json = {'md5sum': md5sum}
+        url = "%s/api/v1/dataset_file/%s/" % \
+            (config.mytardis_url, datafile_id)
+        response = requests.patch(headers=config.default_headers, url=url,
+                                  data=json.dumps(updated_fields_json))
+        if response.status_code != 202:
+            print "HTTP %s" % response.status_code
+            message = response.text
+            raise Exception(message)
+        datafile_json = response.json()
+        return DataFile(config, datafile_json)

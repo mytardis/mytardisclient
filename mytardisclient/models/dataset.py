@@ -37,12 +37,7 @@ class Dataset(object):
             url += "&experiments__id=%s"  % experiment_id
         if limit:
             url += "&limit=%s"  % limit
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -59,12 +54,7 @@ class Dataset(object):
         Get dataset with id exp_id
         """
         url = config.mytardis_url + "/api/v1/dataset/?format=json" + "&id=%s" % exp_id
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -84,13 +74,8 @@ class Dataset(object):
         }
         if instrument_id:
             new_dataset_json['instrument'] = "/api/v1/instrument/%s/" % instrument_id
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
         url = config.mytardis_url + "/api/v1/dataset/"
-        response = requests.post(headers=headers, url=url,
+        response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_dataset_json))
         if response.status_code != 201:
             message = response.text
@@ -104,14 +89,9 @@ class Dataset(object):
         Update an dataset record.
         """
         updated_fields_json = {'description': description}
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
         url = "%s/api/v1/dataset/%s/" % \
             (config.mytardis_url, dataset_id)
-        response = requests.patch(headers=headers, url=url,
+        response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
             print "HTTP %s" % response.status_code

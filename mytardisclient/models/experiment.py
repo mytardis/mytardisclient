@@ -30,12 +30,7 @@ class Experiment(object):
         url = config.mytardis_url + "/api/v1/experiment/?format=json"
         if limit:
             url += "&limit=%s" % limit
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()
@@ -52,12 +47,7 @@ class Experiment(object):
         Get experiment with id exp_id
         """
         url = config.mytardis_url + "/api/v1/experiment/?format=json" + "&id=%s" % exp_id
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()
@@ -76,13 +66,8 @@ class Experiment(object):
             "description": description,
             "immutable": False
         }
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
         url = config.mytardis_url + "/api/v1/experiment/"
-        response = requests.post(headers=headers, url=url,
+        response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_exp_json))
         if response.status_code != 201:
             message = response.text
@@ -99,14 +84,9 @@ class Experiment(object):
         updated_fields_json = dict()
         updated_fields_json['title'] = title
         updated_fields_json['description'] = description
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
         url = "%s/api/v1/experiment/%s/" % \
             (config.mytardis_url, experiment_id)
-        response = requests.patch(headers=headers, url=url,
+        response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
             print "HTTP %s" % response.status_code

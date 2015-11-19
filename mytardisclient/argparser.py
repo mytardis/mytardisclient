@@ -187,3 +187,9 @@ class ArgParser(object):
                                                 help="The dataset ID.")
         datafile_cmd_upload_parser.add_argument("file_path",
                                                 help="The file to upload.")
+        datafile_cmd_update_parser = \
+            datafile_command_parsers.add_parser("update")
+        datafile_cmd_update_parser.add_argument(
+            "datafile_id", help="The ID of the datafile to update.")
+        datafile_cmd_update_parser.add_argument(
+            "--md5sum", help="The new MD5 sum of the datafile.")

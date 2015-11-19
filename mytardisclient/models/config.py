@@ -22,6 +22,7 @@ class Config(object):
         self.username = ""
         self.api_key = ""
         self.mytardis_user = None
+        self.default_headers = None
         self.load_config()
 
     def load_config(self, config_path=None):
@@ -50,6 +51,13 @@ class Config(object):
                             config_parser.get(section, field)
             except:
                 logger.error(traceback.format_exc())
+
+        self.default_headers = {
+            "Authorization": "ApiKey %s:%s" % (self.username,
+                                               self.api_key),
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
 
     def get_mytardis_user(self):
         if self.mytardis_user and \

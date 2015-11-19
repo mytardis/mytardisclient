@@ -34,12 +34,7 @@ class Facility(object):
         url = config.mytardis_url + "/api/v1/facility/?format=json"
         if limit:
             url += "&limit=%s" % limit
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key),
-            "Content-Type": "application/json",
-            "Accept": "application/json"}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
             response.close()

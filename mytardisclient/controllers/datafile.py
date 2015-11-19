@@ -31,6 +31,8 @@ class DataFileController(object):
             return self.download(args.datafile_id)
         elif command == "upload":
             return self.upload(args.dataset_id, args.file_path)
+        elif command == "update":
+            return self.update(args.datafile_id, args.md5sum, render_format)
 
     def list(self, dataset_id, limit, render_format):
         """
@@ -51,3 +53,11 @@ class DataFileController(object):
         Upload datafile.
         """
         DataFile.upload(self.config, dataset_id, file_path)
+
+    def update(self, datafile_id, md5sum, render_format):
+        """
+        Update datafile record.
+        """
+        datafile = DataFile.update(self.config, datafile_id, md5sum)
+        print render(datafile, render_format)
+        print "DataFile updated successfully."
