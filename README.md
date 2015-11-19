@@ -175,7 +175,8 @@ Note that the file has been verified already.  Now let's determine the file size
 ```
 (mytardisclient) $ ls -l hello.txt
 -rw-r--r--  1 wettenhj  staff  13 19 Nov 11:23 hello.txt
-
+```
+```
 (mytardisclient) $ md5 hello.txt 
 MD5 (hello.txt) = 9af2f8218b150c351ad802c6f3d66abe
 ```
