@@ -215,6 +215,9 @@ class ArgParser(object):
         datafile_cmd_upload_parser = datafile_command_parsers.add_parser("upload")
         datafile_cmd_upload_parser.add_argument("dataset_id",
                                                 help="The dataset ID.")
+        datafile_cmd_upload_parser.add_argument(
+            "--directory",
+            help="The datafile's subdirectory within the dataset.")
         datafile_cmd_upload_parser.add_argument("file_path",
                                                 help="The file to upload.")
         datafile_cmd_update_parser = \

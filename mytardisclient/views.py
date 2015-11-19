@@ -397,11 +397,12 @@ def render_datafiles_as_table(datafiles):
         % (datafiles.url, datafiles.total_count, datafiles.limit, datafiles.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l", "l", "l", "l", "l"])
-    table.set_cols_valign(["m", "m", "m", "m", "m", "m"])
-    table.header(["ID", "Dataset", "Filename", "Verified", "Size", "MD5 Sum"])
+    table.set_cols_align(["r", "l", "l", "l", "l", "l", "l"])
+    table.set_cols_valign(["m", "m", "m", "m", "m", "m", "m"])
+    table.header(["ID", "Dataset", "Directory", "Filename", "Verified", "Size", "MD5 Sum"])
     for datafile in datafiles:
-        table.add_row([datafile.id, datafile.dataset, datafile.filename,
+        table.add_row([datafile.id, datafile.dataset,
+                       datafile.directory, datafile.filename,
                        str(datafile.verified),
                        human_readable_size_string(datafile.size),
                        datafile.md5sum])

@@ -32,7 +32,7 @@ class DataFileController(object):
         elif command == "download":
             return self.download(args.datafile_id)
         elif command == "upload":
-            return self.upload(args.dataset_id, args.file_path)
+            return self.upload(args.dataset_id, args.directory, args.file_path)
         elif command == "update":
             return self.update(args.datafile_id, args.md5sum, render_format)
 
@@ -50,11 +50,11 @@ class DataFileController(object):
         """
         DataFile.download(self.config, datafile_id)
 
-    def upload(self, dataset_id, file_path):
+    def upload(self, dataset_id, directory, file_path):
         """
         Upload datafile.
         """
-        DataFile.upload(self.config, dataset_id, file_path)
+        DataFile.upload(self.config, dataset_id, directory, file_path)
 
     def update(self, datafile_id, md5sum, render_format):
         """

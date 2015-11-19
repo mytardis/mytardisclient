@@ -121,7 +121,7 @@ class DataFile(object):
         print "Downloaded: %s" % filename
 
     @staticmethod
-    def upload(config, dataset_id, file_path):
+    def upload(config, dataset_id, directory, file_path):
         """
         Upload datafile to dataset with ID dataset_id.
         """
@@ -136,8 +136,13 @@ class DataFile(object):
                      "size": str(os.stat(file_path).st_size),
                      "mimetype": mimetypes.guess_type(file_path)[0],
                      "created_time": created_time}
+        if directory:
+            file_data['directory'] = directory
         file_obj = open(file_path, 'rb')
-        response = requests.post(url, headers=config.default_headers,
+        headers = {
+            "Authorization": "ApiKey %s:%s" % (config.username,
+                                               config.api_key)}
+        response = requests.post(url, headers=headers,
                                  data={"json_data": json.dumps(file_data)},
                                  files={'attached_file': file_obj})
         file_obj.close()
