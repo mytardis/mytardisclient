@@ -85,8 +85,7 @@ class DataFile(object):
         """
         url = "%s/api/v1/dataset_file/?format=json" % config.mytardis_url
         url += "&dataset__id=%s" % dataset_id
-        if directory:
-            url += "&directory=%s" % directory
+        url += "&directory=%s" % (directory or "")
         url += "&filename=%s" % filename
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
