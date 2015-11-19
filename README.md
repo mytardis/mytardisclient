@@ -203,7 +203,7 @@ Results can also be retrieved in JSON format.  Let's retrieve the JSON represent
 'hello.txt' in dataset ID 31:
 
 ```
-$ mytardis datafile get 31 "hello.txt" --json
+(mytardisclient) $ mytardis datafile get 31 "hello.txt" --json
 {
   "created_time": "2015-11-19T11:23:53", 
   "datafile": null, 
@@ -233,4 +233,14 @@ $ mytardis datafile get 31 "hello.txt" --json
   "size": "13", 
   "version": 1
 }
+```
+And if a lookup fails, we get a non-zero exit code:
+
+```
+(mytardisclient) $ mytardis datafile get 31 "hello.txt" > /dev/null
+(mytardisclient) $ echo $?
+0
+(mytardisclient) $ mytardis datafile get 31 "doesn't exist.txt" >& /dev/null
+(mytardisclient) $ echo $?
+1
 ```
