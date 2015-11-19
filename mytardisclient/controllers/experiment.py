@@ -32,6 +32,9 @@ class ExperimentController(object):
             return self.get(args.experiment_id, render_format)
         elif command == "create":
             return self.create(args.experiment_title, render_format)
+        elif command == "update":
+            return self.update(args.experiment_id, args.title,
+                               args.description, render_format)
 
     def list(self, limit, render_format):
         """
@@ -57,3 +60,14 @@ class ExperimentController(object):
         experiment = Experiment.create(self.config, experiment_title)
         print render(experiment, render_format)
         print "Experiment created successfully."
+
+    def update(self, experiment_id, experiment_title,
+               experiment_description, render_format):
+        """
+        Update experiment record.
+        """
+        experiment = \
+            Experiment.update(self.config, experiment_id,
+                              experiment_title, experiment_description)
+        print render(experiment, render_format)
+        print "Experiment updated successfully."

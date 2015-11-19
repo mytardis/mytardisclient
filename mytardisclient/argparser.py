@@ -120,6 +120,14 @@ class ArgParser(object):
             experiment_command_parsers.add_parser("create")
         experiment_cmd_create_parser.add_argument(
             "experiment_title", help="The experiment title to create.")
+        experiment_cmd_update_parser = \
+            experiment_command_parsers.add_parser("update")
+        experiment_cmd_update_parser.add_argument(
+            "experiment_id", help="The ID of the experiment to update.")
+        experiment_cmd_update_parser.add_argument(
+            "--title", help="The new title of the experiment.")
+        experiment_cmd_update_parser.add_argument(
+            "--description", help="The new description of the experiment.")
 
     def build_dataset_parser(self):
         """

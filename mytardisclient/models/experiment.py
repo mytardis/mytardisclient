@@ -90,3 +90,28 @@ class Experiment(object):
             raise Exception(message)
         experiment_json = response.json()
         return Experiment(config, experiment_json)
+
+    @staticmethod
+    def update(config, experiment_id, title, description):
+        """
+        Update an experiment record.
+        """
+        updated_fields_json = dict()
+        updated_fields_json['title'] = title
+        updated_fields_json['description'] = description
+        headers = {
+            "Authorization": "ApiKey %s:%s" % (config.username,
+                                               config.api_key),
+            "Content-Type": "application/json",
+            "Accept": "application/json"}
+        url = "%s/api/v1/experiment/%s/" % \
+            (config.mytardis_url, experiment_id)
+        response = requests.patch(headers=headers, url=url,
+                                  data=json.dumps(updated_fields_json))
+        if response.status_code != 202:
+            print "HTTP %s" % response.status_code
+            message = response.text
+            response.close()
+            raise Exception(message)
+        experiment_json = response.json()
+        return Experiment(config, experiment_json)
