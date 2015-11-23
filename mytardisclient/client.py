@@ -8,6 +8,7 @@ import sys
 from mytardisclient import __version__ as VERSION
 from mytardisclient.models.config import Config
 from mytardisclient.models.config import DEFAULT_PATH
+from mytardisclient.controllers.api import ApiController
 from mytardisclient.controllers.config import ConfigController
 from mytardisclient.controllers.facility import FacilityController
 from mytardisclient.controllers.instrument import InstrumentController
@@ -47,7 +48,9 @@ def run():
         print "MyTardis URL: %s" % config.url
         print "Username: %s" % config.username
 
-    if args.model == 'facility':
+    if args.model == 'api':
+        ApiController().run_command(args)
+    elif args.model == 'facility':
         FacilityController().run_command(args)
     elif args.model == 'instrument':
         InstrumentController().run_command(args)

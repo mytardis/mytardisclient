@@ -22,12 +22,12 @@ class ArgParser(object):
         self.build_parser()
         args = self.parser.parse_args()
 
-        if args.model not in ('config', 'version',
+        if args.model not in ('api', 'config', 'version',
                               'facility', 'instrument',
                               'experiment', 'dataset', 'datafile',
                               'storagebox'):
             self.parser.error(
-                "model should be one of 'config', 'version', "
+                "model should be one of 'api', 'config', 'version', "
                 "'facility', 'instrument', "
                 "'experiment', 'dataset', 'datafile', 'storagebox'.")
 
@@ -37,6 +37,7 @@ class ArgParser(object):
         """
         Builds parsing rules for command-line interface arguments.
         """
+        self.build_api_parser()
         self.build_config_parser()
         self.build_version_parser()
         self.build_facility_parser()
@@ -47,6 +48,20 @@ class ArgParser(object):
         self.build_storagebox_parser()
 
         return self.parser
+
+    def build_api_parser(self):
+        """
+        'mytardis api' allows the user to list API endpoints
+        supported by the MyTardis API.
+        """
+        api_parser = self.model_parsers.add_parser("api")
+        api_command_parsers = \
+            api_parser.add_subparsers(help='available commands',
+                                      dest='command')
+
+        api_command_list_parser = api_command_parsers.add_parser("list")
+        api_command_list_parser.add_argument(
+            "--json", action='store_true', help="Display results in JSON format.")
 
     def build_config_parser(self):
         """

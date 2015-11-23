@@ -5,6 +5,8 @@ Views for MyTardis records.
 import json
 from texttable import Texttable
 
+from mytardisclient.models.api import ApiEndpoints
+from mytardisclient.models.api import ApiEndpoint
 from mytardisclient.models.facility import Facility
 from mytardisclient.models.instrument import Instrument
 from mytardisclient.models.experiment import Experiment
@@ -23,6 +25,8 @@ def render(data, render_format='table'):
     """
     if data.__class__ == ResultSet:
         return render_result_set(data, render_format)
+    elif data.__class__ == ApiEndpoints:
+        return render_api_endpoints(data, render_format)
     else:
         return render_single_record(data, render_format)
 
@@ -30,7 +34,9 @@ def render_single_record(data, render_format):
     """
     Render single record.
     """
-    if data.__class__ == Facility:
+    if data.__class__ == ApiEndpoint:
+        return render_api_endpoint(data, render_format)
+    elif data.__class__ == Facility:
         return render_facility(data, render_format)
     elif data.__class__ == Instrument:
         return render_instrument(data, render_format)
@@ -63,6 +69,68 @@ def render_result_set(data, render_format):
         return render_storage_boxes(data, render_format)
     else:
         print "Class is " + data.model.__name__
+
+# API endpoint render functions
+
+def render_api_endpoint(api_endpoint, render_format):
+    """
+    Render API endpoint
+    """
+    if render_format == 'json':
+        return render_api_endpoint_as_json(api_endpoint)
+    else:
+        return render_api_endpoint_as_table(api_endpoint)
+
+def render_api_endpoint_as_json(api_endpoint, indent=2, sort_keys=True):
+    """
+    Returns JSON representation of API endpoint.
+    """
+    return json.dumps(api_endpoint.json, indent=indent, sort_keys=sort_keys)
+
+def render_api_endpoint_as_table(api_endpoint):
+    """
+    Returns ASCII table view of API endpoint.
+    """
+    heading = "\nAPI Endpoint\n\n"
+
+    # print json.dumps(api_endpoint.json, indent=2)
+    table = Texttable()
+    table.set_cols_align(["l", "l"])
+    table.set_cols_valign(["m", "m"])
+    table.header(["API Endpoint field", "Value"])
+    table.add_row(["ID", api_endpoint.id])
+    table.add_row(["Name", api_endpoint.name])
+    return heading + table.draw() + "\n"
+
+def render_api_endpoints(api_endpoints, render_format):
+    """
+    Render API endpoints
+    """
+    if render_format == 'json':
+        return render_api_endpoints_as_json(api_endpoints)
+    else:
+        return render_api_endpoints_as_table(api_endpoints)
+
+def render_api_endpoints_as_json(api_endpoints, indent=2, sort_keys=True):
+    """
+    Returns JSON representation of api_endpoints.
+    """
+    return json.dumps(api_endpoints.json, indent=indent, sort_keys=sort_keys)
+
+def render_api_endpoints_as_table(api_endpoints):
+    """
+    Returns ASCII table view of api_endpoints..
+    """
+    heading = "\n" \
+        "API Endpoints\n"
+
+    table = Texttable(max_width=0)
+    table.set_cols_align(["r", "l", "l"])
+    table.set_cols_valign(["m", "m", "m"])
+    table.header(["Model", "List Endpoint", "Schema"])
+    for api_endpoint in api_endpoints:
+        table.add_row([api_endpoint.model, api_endpoint.list_endpoint, api_endpoint.schema])
+    return heading + table.draw() + "\n"
 
 # Facility render functions
 
