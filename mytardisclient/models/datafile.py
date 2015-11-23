@@ -11,18 +11,20 @@ import cgi
 import hashlib
 from datetime import datetime
 
+from mytardisclient.conf import config
 from .replica import Replica
 from .dataset import Dataset
 from .resultset import ResultSet
 from mytardisclient.utils.exceptions import DoesNotExist
+
 
 class DataFile(object):
     """
     Model class for MyTardis API v1's DataFileResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
-    def __init__(self, config, datafile_json):
-        self.config = config
+    # pylint: disable=too-many-instance-attributes
+    def __init__(self, datafile_json):
         self.json = datafile_json
         self.id = datafile_json['id']  # pylint: disable=invalid-name
         self.dataset = datafile_json['dataset']
@@ -32,7 +34,7 @@ class DataFile(object):
         self.md5sum = datafile_json['md5sum']
         self.replicas = []
         for replica_json in datafile_json['replicas']:
-            self.replicas.append(Replica(config, replica_json))
+            self.replicas.append(Replica(replica_json))
 
     @property
     def verified(self):
@@ -48,12 +50,13 @@ class DataFile(object):
         return True
 
     @staticmethod
-    def list(config, dataset_id=None, directory=None, filename=None,
+    def list(dataset_id=None, directory=None, filename=None,
              limit=None, offset=None, order_by=None):
         """
         Get datafiles I have access to
         """
-        url = "%s/api/v1/dataset_file/?format=json" % config.mytardis_url
+        # pylint: disable=too-many-arguments
+        url = "%s/api/v1/dataset_file/?format=json" % config.url
         if dataset_id:
             url += "&dataset__id=%s" % dataset_id
         if directory:
@@ -74,18 +77,18 @@ class DataFile(object):
 
         if dataset_id or limit or offset:
             filters = dict(dataset_id=dataset_id, limit=limit, offset=offset)
-            return ResultSet(DataFile, config, url, response.json(),
+            return ResultSet(DataFile, url, response.json(),
                              **filters)
         else:
-            return ResultSet(DataFile, config, url, response.json())
+            return ResultSet(DataFile, url, response.json())
 
     @staticmethod
-    def get(config, datafile_id):
+    def get(datafile_id):
         """
         Get datafile record with id datafile_id
         """
         url = "%s/api/v1/dataset_file/%s/?format=json" % \
-            (config.mytardis_url, datafile_id)
+            (config.url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
@@ -96,10 +99,10 @@ class DataFile(object):
             raise Exception(message)
 
         datafile_json = response.json()
-        return DataFile(config=config, datafile_json=datafile_json)
+        return DataFile(datafile_json=datafile_json)
 
     @staticmethod
-    def create(config, dataset_id, directory, storagebox, file_path):
+    def create(dataset_id, directory, storagebox, file_path):
         """
         Create a datafile record.
 
@@ -152,7 +155,7 @@ class DataFile(object):
         """
         if not directory:
             directory = ""
-        dataset = Dataset.get(config, dataset_id)
+        dataset = Dataset.get(dataset_id)
         uri = os.path.join("%s-%s" % (dataset.description, dataset_id),
                            directory, os.path.basename(file_path))
         md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
@@ -172,26 +175,26 @@ class DataFile(object):
             'replicas': replicas,
             'parameter_sets': []
         }
-        url = "%s/api/v1/dataset_file/" % config.mytardis_url
+        url = "%s/api/v1/dataset_file/" % config.url
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_datafile_json))
         if response.status_code != 201:
             message = response.text
             raise Exception(message)
         datafile_id = response.headers['location'].split("/")[-2]
-        new_datafile = DataFile.get(config, datafile_id)
+        new_datafile = DataFile.get(datafile_id)
         return new_datafile
 
     @staticmethod
-    def download(config, datafile_id):
+    def download(datafile_id):
         """
         Download datafile with id datafile_id
         """
         url = "%s/api/v1/dataset_file/%s/download/" \
-            % (config.mytardis_url, datafile_id)
+            % (config.url, datafile_id)
         headers = {
             "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key)}
+                                               config.apikey)}
         response = requests.get(url=url, headers=headers, stream=True)
         if response.status_code != 200:
             print "url: %s" % url
@@ -211,12 +214,12 @@ class DataFile(object):
         print "Downloaded: %s" % filename
 
     @staticmethod
-    def upload(config, dataset_id, directory, file_path):
+    def upload(dataset_id, directory, file_path):
         """
         Upload datafile to dataset with ID dataset_id,
         using HTTP POST.
         """
-        url = "%s/api/v1/dataset_file/" % config.mytardis_url
+        url = "%s/api/v1/dataset_file/" % config.url
         created_time = datetime.fromtimestamp(
             os.stat(file_path).st_ctime).isoformat()
         md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
@@ -232,7 +235,7 @@ class DataFile(object):
         file_obj = open(file_path, 'rb')
         headers = {
             "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key)}
+                                               config.apikey)}
         response = requests.post(url, headers=headers,
                                  data={"json_data": json.dumps(file_data)},
                                  files={'attached_file': file_obj})
@@ -248,7 +251,7 @@ class DataFile(object):
             print "Uploaded: %s" % file_path
 
     @staticmethod
-    def update(config, datafile_id, md5sum):
+    def update(datafile_id, md5sum):
         """
         Update a datafile record.
 
@@ -260,7 +263,7 @@ class DataFile(object):
         """
         updated_fields_json = {'md5sum': md5sum}
         url = "%s/api/v1/dataset_file/%s/" % \
-            (config.mytardis_url, datafile_id)
+            (config.url, datafile_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
@@ -268,4 +271,4 @@ class DataFile(object):
             message = response.text
             raise Exception(message)
         datafile_json = response.json()
-        return DataFile(config, datafile_json)
+        return DataFile(datafile_json)

@@ -3,7 +3,6 @@ Controller class for running commands (list, get, create, update)
 on dataset records.
 """
 
-# from mytardisclient.logs import logger
 from mytardisclient.models.dataset import Dataset
 from mytardisclient.models.datafile import DataFile
 from mytardisclient.views import render
@@ -14,8 +13,8 @@ class DatasetController(object):
     Controller class for running commands (list, get, create, update)
     on dataset records.
     """
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
+        pass
 
     def run_command(self, args):
         """
@@ -43,7 +42,9 @@ class DatasetController(object):
         """
         Display list of dataset records.
         """
-        datasets = Dataset.list(self.config, experiment_id,
+        # pylint: disable=too-many-arguments
+        # pylint: disable=no-self-use
+        datasets = Dataset.list(experiment_id,
                                 limit, offset, order_by)
         print render(datasets, render_format)
 
@@ -51,17 +52,19 @@ class DatasetController(object):
         """
         Display dataset record.
         """
-        dataset = Dataset.get(self.config, dataset_id)
+        # pylint: disable=no-self-use
+        dataset = Dataset.get(dataset_id)
         print render(dataset, render_format)
         if render_format == 'table':
-            datafiles = DataFile.list(self.config, dataset_id)
+            datafiles = DataFile.list(dataset_id)
             print render(datafiles, render_format)
 
     def create(self, experiment_id, description, render_format):
         """
         Create dataset record.
         """
-        dataset = Dataset.create(self.config, experiment_id, description)
+        # pylint: disable=no-self-use
+        dataset = Dataset.create(experiment_id, description)
         print render(dataset, render_format)
         print "Dataset created successfully."
 
@@ -69,6 +72,7 @@ class DatasetController(object):
         """
         Update dataset record.
         """
-        dataset = Dataset.update(self.config, dataset_id, description)
+        # pylint: disable=no-self-use
+        dataset = Dataset.update(dataset_id, description)
         print render(dataset, render_format)
         print "Dataset updated successfully."

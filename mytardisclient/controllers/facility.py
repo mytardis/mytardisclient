@@ -3,7 +3,6 @@ Controller class for running commands (list, get, create, update)
 on facility records.
 """
 
-# from mytardisclient.logs import logger
 from mytardisclient.models.facility import Facility
 from mytardisclient.models.instrument import Instrument
 from mytardisclient.views import render
@@ -14,8 +13,8 @@ class FacilityController(object):
     Controller class for running commands (list, get, create, update)
     on facility records.
     """
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
+        pass
 
     def run_command(self, args):
         """
@@ -36,15 +35,17 @@ class FacilityController(object):
         """
         Display list of facility records.
         """
-        facilities = Facility.list(self.config, limit, offset, order_by)
+        # pylint: disable=no-self-use
+        facilities = Facility.list(limit, offset, order_by)
         print render(facilities, render_format)
 
     def get(self, facility_id, render_format):
         """
         Display facility record.
         """
-        facility = Facility.get(self.config, facility_id)
+        # pylint: disable=no-self-use
+        facility = Facility.get(facility_id)
         print render(facility, render_format)
         if render_format == 'table':
-            instruments = Instrument.list(self.config, facility_id)
+            instruments = Instrument.list(facility_id)
             print render(instruments, render_format)

@@ -13,8 +13,8 @@ class InstrumentController(object):
     Controller class for running commands (list, get, create, update)
     on instrument records.
     """
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
+        pass
 
     def run_command(self, args):
         """
@@ -40,7 +40,9 @@ class InstrumentController(object):
         """
         Display list of instrument records.
         """
-        instruments = Instrument.list(self.config, facility_id,
+        # pylint: disable=too-many-arguments
+        # pylint: disable=no-self-use
+        instruments = Instrument.list(facility_id,
                                       limit, offset, order_by)
         print render(instruments, render_format)
 
@@ -48,14 +50,16 @@ class InstrumentController(object):
         """
         Display instrument record.
         """
-        instrument = Instrument.get(self.config, instrument_id)
+        # pylint: disable=no-self-use
+        instrument = Instrument.get(instrument_id)
         print render(instrument, render_format)
 
     def create(self, facility_id, name, render_format):
         """
         Create instrument record.
         """
-        instrument = Instrument.create(self.config, facility_id, name)
+        # pylint: disable=no-self-use
+        instrument = Instrument.create(facility_id, name)
         print render(instrument, render_format)
         print "Instrument created successfully."
 
@@ -63,6 +67,7 @@ class InstrumentController(object):
         """
         Update instrument record.
         """
-        instrument = Instrument.update(self.config, instrument_id, name)
+        # pylint: disable=no-self-use
+        instrument = Instrument.update(instrument_id, name)
         print render(instrument, render_format)
         print "Instrument updated successfully."

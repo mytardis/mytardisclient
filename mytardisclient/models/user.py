@@ -6,6 +6,7 @@ import requests
 import traceback
 import urllib2
 
+from mytardisclient.conf import config
 from .group import Group
 from mytardisclient.utils.exceptions import IncompatibleMyTardisVersion
 from mytardisclient.utils.exceptions import DoesNotExist
@@ -19,11 +20,10 @@ class User(object):
     """
     # pylint: disable=missing-docstring
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, config=None,
+    def __init__(self,
                  username=None, name=None,
                  email=None, user_record_json=None):
         # pylint: disable=too-many-arguments
-        self.config = config
         self.user_id = None
         self.username = username
         self.name = name
@@ -42,8 +42,7 @@ class User(object):
                 self.email = user_record_json['email']
             try:
                 for group in user_record_json['groups']:
-                    self.groups.append(Group(config=config,
-                                             group_json=group))
+                    self.groups.append(Group(group_json=group))
             except KeyError:
                 # 'groups' should be available in the user record's JSON
                 message = "Incompatible MyTardis version" \
@@ -63,13 +62,10 @@ class User(object):
         return "User: " + self.username
 
     @staticmethod
-    def get_user_by_username(config, username):
-        url = config.mytardis_url + "/api/v1/user/?format=json&username=" + username
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key)}
+    def get_user_by_username(username):
+        url = config.url + "/api/v1/user/?format=json&username=" + username
         try:
-            response = requests.get(url=url, headers=headers)
+            response = requests.get(url=url, headers=config.default_headers)
         except:
             raise Exception(traceback.format_exc())
         if response.status_code != 200:
@@ -88,18 +84,15 @@ class User(object):
                 url=url, response=response)
         else:
             logger.debug("Found user record for username '" + username + "'.")
-            return User(config=config, username=username,
+            return User(username=username,
                         user_record_json=user_records_json['objects'][0])
 
     @staticmethod
-    def get_user_by_email(config, email):
-        url = config.mytardis_url + "/api/v1/user/?format=json&email__iexact=" + \
+    def get_user_by_email(email):
+        url = config.url + "/api/v1/user/?format=json&email__iexact=" + \
             urllib2.quote(email)
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key)}
         try:
-            response = requests.get(url=url, headers=headers)
+            response = requests.get(url=url, headers=config.default_headers)
         except:
             raise Exception(traceback.format_exc())
         if response.status_code != 200:
@@ -120,8 +113,7 @@ class User(object):
                 url=url, response=response)
         else:
             logger.debug("Found user record for email '" + email + "'.")
-            return User(config=config,
-                        user_record_json=user_records_json['objects'][0])
+            return User(user_record_json=user_records_json['objects'][0])
 
 
 # pylint: disable=too-few-public-methods

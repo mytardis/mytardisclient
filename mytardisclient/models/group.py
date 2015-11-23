@@ -8,6 +8,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 import requests
 import urllib
 
+from mytardisclient.conf import config
 from mytardisclient.logs import logger
 from mytardisclient.utils.exceptions import DoesNotExist
 
@@ -18,8 +19,7 @@ class Group(object):
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, config=None, name=None, group_json=None):
-        self.config = config
+    def __init__(self, name=None, group_json=None):
         self.group_id = None
         self.name = name
         self.group_json = group_json
@@ -33,13 +33,10 @@ class Group(object):
         return self.name
 
     @staticmethod
-    def get_group_by_name(config, name):
-        url = config.mytardis_url + "/api/v1/group/?format=json&name=" + \
+    def get_group_by_name(name):
+        url = config.url + "/api/v1/group/?format=json&name=" + \
             urllib.quote(name)
-        headers = {
-            "Authorization": "ApiKey %s:%s" % (config.username,
-                                               config.api_key)}
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             logger.debug("Failed to look up group record for name \"" +
                          name + "\".")
@@ -54,5 +51,4 @@ class Group(object):
                 url=url, response=response)
         else:
             logger.debug("Found group record for name '" + name + "'.")
-            return Group(config=config, name=name,
-                         group_json=groups_json['objects'][0])
+            return Group(name=name, group_json=groups_json['objects'][0])

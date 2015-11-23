@@ -7,6 +7,7 @@ import sys
 
 from mytardisclient import __version__ as VERSION
 from mytardisclient.models.config import Config
+from mytardisclient.models.config import DEFAULT_PATH
 from mytardisclient.controllers.config import ConfigController
 from mytardisclient.controllers.facility import FacilityController
 from mytardisclient.controllers.instrument import InstrumentController
@@ -32,35 +33,32 @@ def run():
     if args.verbose and (not hasattr(args, 'json') or not args.json):
         print "MyTardis Client v%s" % VERSION
 
-    config_path = os.path.join(os.path.expanduser('~'),
-                               '.config',
-                               'mytardisclient',
-                               'mytardisclient.cfg')
-
+    config_path = DEFAULT_PATH
     if not os.path.exists(config_path) or \
             args.model == 'config':
         ConfigController(config_path).configure()
         if args.model == 'config':
             sys.exit(0)
     config = Config(config_path)
+    config.validate()
 
     if args.verbose and (not hasattr(args, 'json') or not args.json):
         print "Config: %s" % config_path
-        print "MyTardis URL: %s" % config.mytardis_url
+        print "MyTardis URL: %s" % config.url
         print "Username: %s" % config.username
 
     if args.model == 'facility':
-        FacilityController(config).run_command(args)
+        FacilityController().run_command(args)
     elif args.model == 'instrument':
-        InstrumentController(config).run_command(args)
+        InstrumentController().run_command(args)
     elif args.model == 'experiment':
-        ExperimentController(config).run_command(args)
+        ExperimentController().run_command(args)
     elif args.model == 'dataset':
-        DatasetController(config).run_command(args)
+        DatasetController().run_command(args)
     elif args.model == 'datafile':
-        DataFileController(config).run_command(args)
+        DataFileController().run_command(args)
     elif args.model == 'storagebox':
-        StorageBoxController(config).run_command(args)
+        StorageBoxController().run_command(args)
 
 
 if __name__ == "__main__":

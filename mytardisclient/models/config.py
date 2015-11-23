@@ -5,46 +5,69 @@ Model class for the configuration stored in ~/.mytardisclient.cfg
 # pylint: disable=missing-docstring
 
 import os
+import json
 import traceback
+from urlparse import urlparse
 from ConfigParser import ConfigParser
 
 from mytardisclient.logs import logger
-from mytardisclient.models.user import User
 
+DEFAULT_PATH = os.path.join(os.path.expanduser('~'), '.config',
+                            'mytardisclient', 'mytardisclient.cfg')
 
 class Config(object):
     """
-    Model class for the configuration stored in ~/.mytardisclient.cfg
+    Model class for the minimal MyTardis server configuration
+    (MyTardis URL, username and API key),
+    usually stored in ~/.mytardisclient.cfg
     """
-    def __init__(self, config_path):
-        self.config_path = config_path
-        self.mytardis_url = ""
+    def __init__(self, path=DEFAULT_PATH):
+        self.path = path
+        self.url = ""
         self.username = ""
-        self.api_key = ""
-        self.mytardis_user = None
+        self.apikey = ""
         self.default_headers = None
-        self.load_config()
+        if path:
+            self.load()
 
-    def load_config(self, config_path=None):
+    def __unicode__(self):
+        return json.dumps(self.__dict__, indent=2)
+
+    def __str__(self):
+        return self.__unicode__()
+
+    def __repr__(self):
+        return self.__unicode__()
+
+    def load(self, path=None):
         """
         Sets some default values for settings fields, then loads a config
-        file, usually ~/.mytardisclient.cfg
+        file, usually ~/.config/mytardisclient/mytardisclient.cfg
         """
-        self.mytardis_url = ""
+        self.url = ""
         self.username = ""
-        self.api_key = ""
+        self.apikey = ""
 
-        if config_path is None:
-            config_path = self.config_path
+        if path:
+            self.path = path
+        else:
+            path = self.path
 
-        if config_path is not None and os.path.exists(config_path):
-            logger.info("Reading settings from: " + config_path)
+        if path is not None and os.path.exists(path):
+            logger.info("Reading settings from: " + path)
             # pylint: disable=bare-except
             try:
                 config_parser = ConfigParser()
-                config_parser.read(config_path)
+                config_parser.read(path)
                 section = "mytardisclient"
-                fields = ["mytardis_url", "username", "api_key"]
+                fields = ["url", "username", "apikey"]
+
+                # For backwards compatibility:
+                if config_parser.has_option(section, "mytardis_url"):
+                    self.url = config_parser.get(section, "mytardis_url")
+                if config_parser.has_option(section, "api_key"):
+                    self.apikey = config_parser.get(section, "api_key")
+
                 for field in fields:
                     if config_parser.has_option(section, field):
                         self.__dict__[field] = \
@@ -54,24 +77,33 @@ class Config(object):
 
         self.default_headers = {
             "Authorization": "ApiKey %s:%s" % (self.username,
-                                               self.api_key),
+                                               self.apikey),
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
 
-    def get_mytardis_user(self):
-        if self.mytardis_user and \
-                self.mytardis_user.username == self.username:
-            return self.mytardis_user
-        self.mytardis_user = User.get_user_by_username(self, self.username)
-        return self.mytardis_user
+    def validate(self):
+        if self.username == "":
+            raise Exception("MyTardis username is missing from config.")
+        if self.apikey == "":
+            raise Exception("MyTardis API key is missing from config.")
+        if self.url == "":
+            raise Exception("MyTardis URL is missing from config.")
+        parsed_url = urlparse(self.url)
+        if parsed_url.scheme not in ('http', 'https') or parsed_url.netloc == '':
+            raise Exception("Invalid MyTardis URL found in config: %s", self.url)
 
-    def save_to_disk(self):
+    def save(self, path=None):
+        if path:
+            self.path = path
+        else:
+            path = self.path
+
         config_parser = ConfigParser()
-        with open(self.config_path, 'w') as config_file:
+        with open(self.path, 'w') as config_file:
             config_parser.add_section("mytardisclient")
-            fields = ["mytardis_url", "username", "api_key"]
+            fields = ["url", "username", "apikey"]
             for field in fields:
                 config_parser.set("mytardisclient", field, self.__dict__[field])
             config_parser.write(config_file)
-        logger.info("Saved settings to " + self.config_path)
+        logger.info("Saved settings to " + self.path)

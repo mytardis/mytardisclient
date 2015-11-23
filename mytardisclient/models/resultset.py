@@ -11,13 +11,13 @@ class ResultSet(object):
     retrieve.
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, model, config, url, json, **filters):
+    # pylint: disable=too-many-instance-attributes
+    def __init__(self, model, url, json, **filters):
         """
         Each record in the result set can be
         represented as an object of class model
         """
         self.model = model
-        self.config = config
         self.url = url
         self.json = json
         self.index = -1
@@ -36,7 +36,7 @@ class ResultSet(object):
         """
         Get a record from the query set.
         """
-        return self.model(self.config, self.json['objects'][key])
+        return self.model(self.json['objects'][key])
 
     def __iter__(self):
         """__iter__"""
@@ -47,4 +47,4 @@ class ResultSet(object):
         self.index += 1
         if self.index >= len(self):
             raise StopIteration
-        return self.model(self.config, self.json['objects'][self.index])
+        return self.model(self.json['objects'][self.index])

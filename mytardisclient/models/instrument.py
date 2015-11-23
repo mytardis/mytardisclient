@@ -6,9 +6,9 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 import requests
 import json
 
+from mytardisclient.conf import config
 from .facility import Facility
 from .resultset import ResultSet
-# from mytardisclient.logs import logger
 from mytardisclient.utils.exceptions import DoesNotExist
 
 
@@ -17,22 +17,21 @@ class Instrument(object):
     Model class for MyTardis API v1's InstrumentResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
-    def __init__(self, config, instrument_json):
-        self.config = config
+    def __init__(self, instrument_json):
         self.id = instrument_json['id']  # pylint: disable=invalid-name
         self.name = instrument_json['name']
         self.json = instrument_json
-        self.facility = Facility(config, instrument_json['facility'])
+        self.facility = Facility(instrument_json['facility'])
 
     def __str__(self):
         return self.name
 
     @staticmethod
-    def list(config, facility_id=None, limit=None, offset=None, order_by=None):
+    def list(facility_id=None, limit=None, offset=None, order_by=None):
         """
         Get instruments in facility with ID facility_id.
         """
-        url = "%s/api/v1/instrument/?format=json" % config.mytardis_url
+        url = "%s/api/v1/instrument/?format=json" % config.url
         if facility_id:
             url += "&facility__id=%s" % facility_id
         if limit:
@@ -48,18 +47,18 @@ class Instrument(object):
 
         if facility_id or limit or offset:
             filters = dict(facility_id=facility_id, limit=limit, offset=offset)
-            return ResultSet(Instrument, config, url, response.json(),
+            return ResultSet(Instrument, url, response.json(),
                              **filters)
         else:
-            return ResultSet(Instrument, config, url, response.json())
+            return ResultSet(Instrument, url, response.json())
 
     @staticmethod
-    def get(config, instrument_id):
+    def get(instrument_id):
         """
         Get instrument with id instrument_id
         """
         url = "%s/api/v1/instrument/?format=json&id=%s" % \
-            (config.mytardis_url, instrument_id)
+            (config.url, instrument_id)
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
@@ -69,11 +68,10 @@ class Instrument(object):
         if instruments_json['meta']['total_count'] == 0:
             message = "Instrument matching filter doesn't exist."
             raise DoesNotExist(message, url, response, Instrument)
-        return Instrument(config=config,
-                          instrument_json=instruments_json['objects'][0])
+        return Instrument(instrument_json=instruments_json['objects'][0])
 
     @staticmethod
-    def create(config, facility_id, name):
+    def create(facility_id, name):
         """
         Create an instrument.
         """
@@ -81,25 +79,24 @@ class Instrument(object):
             "name": name,
             "facility": "/api/v1/facility/%s/" % facility_id
         }
-        url = config.mytardis_url + "/api/v1/instrument/"
+        url = config.url + "/api/v1/instrument/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_instrument_json))
         if response.status_code != 201:
             message = response.text
             raise Exception(message)
         instrument_json = response.json()
-        return Instrument(config, instrument_json)
+        return Instrument(instrument_json)
 
     @staticmethod
-    def update(config, instrument_id, name):
+    def update(instrument_id, name):
         """
         Update an instrument record.
         """
         updated_fields_json = {
             "name": name,
         }
-        url = "%s/api/v1/instrument/%s/" % \
-            (config.mytardis_url, instrument_id)
+        url = "%s/api/v1/instrument/%s/" % (config.url, instrument_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
@@ -107,4 +104,4 @@ class Instrument(object):
             message = response.text
             raise Exception(message)
         instrument_json = response.json()
-        return Instrument(config, instrument_json)
+        return Instrument(instrument_json)

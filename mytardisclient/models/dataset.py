@@ -6,9 +6,9 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 import requests
 import json
 
+from mytardisclient.conf import config
 from .resultset import ResultSet
 from .instrument import Instrument
-# from mytardisclient.logs import logger
 from mytardisclient.utils.exceptions import DoesNotExist
 
 
@@ -17,24 +17,26 @@ class Dataset(object):
     Model class for MyTardis API v1's DatasetResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
-    def __init__(self, config, dataset_json):
-        self.config = config
+    def __init__(self, dataset_json=None):
         self.json = dataset_json
-        self.id = dataset_json['id']  # pylint: disable=invalid-name
-        self.description = dataset_json['description']
-        if dataset_json['instrument']:
-            self.instrument = Instrument(config, dataset_json['instrument'])
-        else:
-            self.instrument = None
-        self.experiments = dataset_json['experiments']
+        self.id = None  # pylint: disable=invalid-name
+        self.description = None
+        self.instrument = None
+        self.experiments = []
+        if dataset_json:
+            for key in self.__dict__.keys():
+                if key in dataset_json:
+                    self.__dict__[key] = dataset_json[key]
+            if dataset_json['instrument']:
+                self.instrument = Instrument(dataset_json['instrument'])
 
     @staticmethod
-    def list(config, experiment_id=None,
+    def list(experiment_id=None,
              limit=None, offset=None, order_by=None):
         """
         Get datasets I have access to
         """
-        url = "%s/api/v1/dataset/?format=json" % config.mytardis_url
+        url = "%s/api/v1/dataset/?format=json" % config.url
         if experiment_id:
             url += "&experiments__id=%s"  % experiment_id
         if limit:
@@ -51,16 +53,16 @@ class Dataset(object):
         if experiment_id or limit or offset:
             filters = dict(experiment_id=experiment_id,
                            limit=limit, offset=offset)
-            return ResultSet(Dataset, config, url, response.json(), **filters)
+            return ResultSet(Dataset, url, response.json(), **filters)
         else:
-            return ResultSet(Dataset, config, url, response.json())
+            return ResultSet(Dataset, url, response.json())
 
     @staticmethod
-    def get(config, dataset_id):
+    def get(dataset_id):
         """
         Get dataset with id dataset_id
         """
-        url = config.mytardis_url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
+        url = config.url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
@@ -70,10 +72,10 @@ class Dataset(object):
         if datasets_json['meta']['total_count'] == 0:
             message = "Dataset matching filter doesn't exist."
             raise DoesNotExist(message, url, response, Dataset)
-        return Dataset(config=config, dataset_json=datasets_json['objects'][0])
+        return Dataset(dataset_json=datasets_json['objects'][0])
 
     @staticmethod
-    def create(config, experiment_id, description, instrument_id=None):
+    def create(experiment_id, description, instrument_id=None):
         """
         Create a dataset.
         """
@@ -84,23 +86,22 @@ class Dataset(object):
         }
         if instrument_id:
             new_dataset_json['instrument'] = "/api/v1/instrument/%s/" % instrument_id
-        url = config.mytardis_url + "/api/v1/dataset/"
+        url = config.url + "/api/v1/dataset/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_dataset_json))
         if response.status_code != 201:
             message = response.text
             raise Exception(message)
         dataset_json = response.json()
-        return Dataset(config, dataset_json)
+        return Dataset(dataset_json)
 
     @staticmethod
-    def update(config, dataset_id, description):
+    def update(dataset_id, description):
         """
         Update an dataset record.
         """
         updated_fields_json = {'description': description}
-        url = "%s/api/v1/dataset/%s/" % \
-            (config.mytardis_url, dataset_id)
+        url = "%s/api/v1/dataset/%s/" % (config.url, dataset_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
@@ -108,4 +109,4 @@ class Dataset(object):
             message = response.text
             raise Exception(message)
         dataset_json = response.json()
-        return Dataset(config, dataset_json)
+        return Dataset(dataset_json)

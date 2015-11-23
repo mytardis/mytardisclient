@@ -3,7 +3,6 @@ Controller class for running commands (list, get, download, upload, update)
 on datafile records.
 """
 
-# from mytardisclient.logs import logger
 from mytardisclient.models.datafile import DataFile
 from mytardisclient.views import render
 
@@ -13,8 +12,8 @@ class DataFileController(object):
     Controller class for running commands (list, get, download, upload, update)
     on datafile records.
     """
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
+        pass
 
     def run_command(self, args):
         """
@@ -47,7 +46,9 @@ class DataFileController(object):
         """
         Display list of datafile records.
         """
-        datafiles = DataFile.list(self.config, dataset_id, directory, filename,
+        # pylint: disable=too-many-arguments
+        # pylint: disable=no-self-use
+        datafiles = DataFile.list(dataset_id, directory, filename,
                                   limit, offset, order_by)
         print render(datafiles, render_format)
 
@@ -55,7 +56,8 @@ class DataFileController(object):
         """
         Display datafile record.
         """
-        datafile = DataFile.get(self.config, datafile_id)
+        # pylint: disable=no-self-use
+        datafile = DataFile.get(datafile_id)
         print render(datafile, render_format)
 
     def create(self, dataset_id, directory, storagebox, file_path,
@@ -63,7 +65,9 @@ class DataFileController(object):
         """
         Create datafile record for an existing datafile.
         """
-        datafile = DataFile.create(self.config, dataset_id, directory,
+        # pylint: disable=too-many-arguments
+        # pylint: disable=no-self-use
+        datafile = DataFile.create(dataset_id, directory,
                                    storagebox, file_path)
         print render(datafile, render_format)
         print "DataFile created successfully."
@@ -72,18 +76,21 @@ class DataFileController(object):
         """
         Download datafile.
         """
-        DataFile.download(self.config, datafile_id)
+        # pylint: disable=no-self-use
+        DataFile.download(datafile_id)
 
     def upload(self, dataset_id, directory, file_path):
         """
         Upload datafile.
         """
-        DataFile.upload(self.config, dataset_id, directory, file_path)
+        # pylint: disable=no-self-use
+        DataFile.upload(dataset_id, directory, file_path)
 
     def update(self, datafile_id, md5sum, render_format):
         """
         Update datafile record.
         """
-        datafile = DataFile.update(self.config, datafile_id, md5sum)
+        # pylint: disable=no-self-use
+        datafile = DataFile.update(datafile_id, md5sum)
         print render(datafile, render_format)
         print "DataFile updated successfully."

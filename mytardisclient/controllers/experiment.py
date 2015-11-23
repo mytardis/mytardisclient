@@ -3,7 +3,6 @@ Controller class for running commands (list, get, create, update)
 on experiment records.
 """
 
-# from mytardisclient.logs import logger
 from mytardisclient.models.dataset import Dataset
 from mytardisclient.models.experiment import Experiment
 from mytardisclient.views import render
@@ -14,8 +13,8 @@ class ExperimentController(object):
     Controller class for running commands (list, get, create, update)
     on experiment records.
     """
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
+        pass
 
     def run_command(self, args):
         """
@@ -41,24 +40,27 @@ class ExperimentController(object):
         """
         Display list of experiment records.
         """
-        experiments = Experiment.list(self.config, limit, offset, order_by)
+        # pylint: disable=no-self-use
+        experiments = Experiment.list(limit, offset, order_by)
         print render(experiments, render_format)
 
     def get(self, experiment_id, render_format):
         """
         Display experiment record.
         """
-        experiment = Experiment.get(self.config, experiment_id)
+        # pylint: disable=no-self-use
+        experiment = Experiment.get(experiment_id)
         print render(experiment, render_format)
         if render_format == 'table':
-            datasets = Dataset.list(self.config, experiment_id=experiment_id)
+            datasets = Dataset.list(experiment_id=experiment_id)
             print render(datasets, render_format)
 
     def create(self, experiment_title, render_format):
         """
         Create experiment record.
         """
-        experiment = Experiment.create(self.config, experiment_title)
+        # pylint: disable=no-self-use
+        experiment = Experiment.create(experiment_title)
         print render(experiment, render_format)
         print "Experiment created successfully."
 
@@ -67,8 +69,9 @@ class ExperimentController(object):
         """
         Update experiment record.
         """
+        # pylint: disable=no-self-use
         experiment = \
-            Experiment.update(self.config, experiment_id,
-                              experiment_title, experiment_description)
+            Experiment.update(experiment_id, experiment_title,
+                              experiment_description)
         print render(experiment, render_format)
         print "Experiment updated successfully."

@@ -3,8 +3,6 @@ Model class for MyTardis API v1's ReplicaResource.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 
-# from mytardisclient.logs import logger
-
 
 class Replica(object):
     """
@@ -12,8 +10,7 @@ class Replica(object):
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, config, replica_json):
-        self.config = config
+    def __init__(self, replica_json):
         self.json = replica_json
         self.id = replica_json['id']  # pylint: disable=invalid-name
         self.uri = replica_json['uri']

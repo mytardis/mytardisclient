@@ -161,3 +161,19 @@ class StorageBoxOptionNotFound(Exception):
         message = "Key '%s' not found in options for storage box '%s'" \
             % (key, storageBox.GetName())
         super(StorageBoxOptionNotFound, self).__init__(message)
+
+
+class InvalidConfig(Exception):
+    """
+    Invalid config.
+    """
+    def __init__(self, message):
+        super(InvalidConfig, self).__init__(message)
+
+
+class MissingConfig(Exception):
+    """
+    Missing config.
+    """
+    def __init__(self, message):
+        super(MissingConfig, self).__init__(message)
