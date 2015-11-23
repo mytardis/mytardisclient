@@ -25,11 +25,12 @@ class ArgParser(object):
         if args.model not in ('api', 'config', 'version',
                               'facility', 'instrument',
                               'experiment', 'dataset', 'datafile',
-                              'storagebox'):
+                              'storagebox', 'schema'):
             self.parser.error(
                 "model should be one of 'api', 'config', 'version', "
                 "'facility', 'instrument', "
-                "'experiment', 'dataset', 'datafile', 'storagebox'.")
+                "'experiment', 'dataset', 'datafile', 'storagebox', "
+                "'schema'.")
 
         return args
 
@@ -46,6 +47,7 @@ class ArgParser(object):
         self.build_dataset_parser()
         self.build_datafile_parser()
         self.build_storagebox_parser()
+        self.build_schema_parser()
 
         return self.parser
 
@@ -332,4 +334,32 @@ class ArgParser(object):
         storagebox_command_get_parser.add_argument("storage_box_id",
                                                    help="The storage box ID.")
         storagebox_command_get_parser.add_argument(
+            "--json", action='store_true', help="Display results in JSON format.")
+
+    def build_schema_parser(self):
+        """
+        Builds parsing rules for schema-related
+        command-line interface arguments.
+        """
+        schema_parser = self.model_parsers.add_parser("schema")
+        schema_command_parsers = \
+            schema_parser.add_subparsers(help='available commands',
+                                         dest='command')
+
+        schema_command_list_parser = schema_command_parsers.add_parser("list")
+        schema_command_list_parser.add_argument(
+            "--limit", help="Maximum number of results to return.")
+        schema_command_list_parser.add_argument(
+            "--offset",
+            help="Skip this many records from the start of the result set.")
+        schema_command_list_parser.add_argument(
+            "--order_by",
+            help="Order by this field.")
+        schema_command_list_parser.add_argument(
+            "--json", action='store_true', help="Display results in JSON format.")
+
+        schema_command_get_parser = \
+            schema_command_parsers.add_parser("get")
+        schema_command_get_parser.add_argument("schema_id", help="The schema ID.")
+        schema_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")

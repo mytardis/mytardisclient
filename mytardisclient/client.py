@@ -16,6 +16,7 @@ from mytardisclient.controllers.experiment import ExperimentController
 from mytardisclient.controllers.dataset import DatasetController
 from mytardisclient.controllers.datafile import DataFileController
 from mytardisclient.controllers.storagebox import StorageBoxController
+from mytardisclient.controllers.schema import SchemaController
 from mytardisclient.argparser import ArgParser
 
 
@@ -25,6 +26,7 @@ def run():
     """
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-branches
 
     args = ArgParser().get_args()
 
@@ -62,6 +64,8 @@ def run():
         DataFileController().run_command(args)
     elif args.model == 'storagebox':
         StorageBoxController().run_command(args)
+    elif args.model == 'schema':
+        SchemaController().run_command(args)
 
 
 if __name__ == "__main__":

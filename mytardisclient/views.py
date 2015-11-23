@@ -13,6 +13,7 @@ from mytardisclient.models.experiment import Experiment
 from mytardisclient.models.dataset import Dataset
 from mytardisclient.models.datafile import DataFile
 from mytardisclient.models.storagebox import StorageBox
+from mytardisclient.models.schema import Schema
 from mytardisclient.models.resultset import ResultSet
 from mytardisclient.utils import human_readable_size_string
 # from mytardisclient.logs import logger
@@ -49,6 +50,8 @@ def render_single_record(data, render_format):
         return render_datafile(data, render_format)
     elif data.__class__ == StorageBox:
         return render_storage_box(data, render_format)
+    elif data.__class__ == Schema:
+        return render_schema(data, render_format)
     else:
         print "Class is " + data.__class__.__name__
 
@@ -56,6 +59,7 @@ def render_result_set(data, render_format):
     """
     Render result set.
     """
+    # pylint: disable=too-many-return-statements
     if data.model == Facility:
         return render_facilities(data, render_format)
     elif data.model == Instrument:
@@ -68,6 +72,8 @@ def render_result_set(data, render_format):
         return render_datafiles(data, render_format)
     elif data.model == StorageBox:
         return render_storage_boxes(data, render_format)
+    elif data.model == Schema:
+        return render_schemas(data, render_format)
     else:
         print "Class is " + data.model.__name__
 
@@ -585,4 +591,79 @@ def render_storage_boxes_as_table(storage_boxes):
     table.header(["ID", "Name"])
     for storage_box in storage_boxes:
         table.add_row([storage_box.id, storage_box.name])
+    return heading + table.draw() + "\n"
+
+# Schema render functions
+
+def render_schema(schema, render_format):
+    """
+    Render schema
+    """
+    if render_format == 'json':
+        return render_schema_as_json(schema)
+    else:
+        return render_schema_as_table(schema)
+
+def render_schema_as_json(schema, indent=2, sort_keys=True):
+    """
+    Returns JSON representation of schema.
+    """
+    return json.dumps(schema.json, indent=indent, sort_keys=sort_keys)
+
+def render_schema_as_table(schema):
+    """
+    Returns ASCII table view of schema.
+    """
+    heading = "\nModel: Schema\n\n"
+
+    table = Texttable()
+    table.set_cols_align(["l", "l"])
+    table.set_cols_valign(["m", "m"])
+    table.header(["Schema field", "Value"])
+    table.add_row(["ID", schema.id])
+    table.add_row(["Name", schema.name])
+    table.add_row(["Namespace", schema.namespace])
+    table.add_row(["Type", schema.type])
+    table.add_row(["Subtype", schema.subtype])
+    table.add_row(["Immutable", str(bool(schema.immutable))])
+    table.add_row(["Hidden", str(bool(schema.hidden))])
+    return heading + table.draw() + "\n"
+
+def render_schemas(schemas, render_format):
+    """
+    Render schemas
+    """
+    if render_format == 'json':
+        return render_schemas_as_json(schemas)
+    else:
+        return render_schemas_as_table(schemas)
+
+def render_schemas_as_json(schemas, indent=2, sort_keys=True):
+    """
+    Returns JSON representation of schemas.
+    """
+    return json.dumps(schemas.json, indent=indent, sort_keys=sort_keys)
+
+def render_schemas_as_table(schemas):
+    """
+    Returns ASCII table view of schemas..
+    """
+    heading = "\n" \
+        "Model: Schema\n" \
+        "Query: %s\n" \
+        "Total Count: %s\n" \
+        "Limit: %s\n" \
+        "Offset: %s\n\n" \
+        % (schemas.url, schemas.total_count,
+           schemas.limit, schemas.offset)
+
+    table = Texttable(max_width=0)
+    table.set_cols_align(["r", "l", "l", "l", "l", "l", "l"])
+    table.set_cols_valign(["m", "m", "m", "m", "m", "m", "m"])
+    table.header(["ID", "Name", "Namespace", "Type", "Subtype", "Immutable",
+                  "Hidden"])
+    for schema in schemas:
+        table.add_row([schema.id, schema.name, schema.namespace,
+                       schema.type, schema.subtype,
+                       str(bool(schema.immutable)), str(bool(schema.hidden))])
     return heading + table.draw() + "\n"
