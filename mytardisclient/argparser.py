@@ -63,6 +63,11 @@ class ArgParser(object):
         api_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
 
+        api_command_get_parser = api_command_parsers.add_parser("get")
+        api_command_get_parser.add_argument("api_model", help="The model name.")
+        api_command_get_parser.add_argument(
+            "--json", action='store_true', help="Display results in JSON format.")
+
     def build_config_parser(self):
         """
         'mytardis config' prompts users for settings to write to

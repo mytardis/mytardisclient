@@ -6,7 +6,7 @@ import json
 from texttable import Texttable
 
 from mytardisclient.models.api import ApiEndpoints
-from mytardisclient.models.api import ApiEndpoint
+from mytardisclient.models.api import ApiSchema
 from mytardisclient.models.facility import Facility
 from mytardisclient.models.instrument import Instrument
 from mytardisclient.models.experiment import Experiment
@@ -34,8 +34,9 @@ def render_single_record(data, render_format):
     """
     Render single record.
     """
-    if data.__class__ == ApiEndpoint:
-        return render_api_endpoint(data, render_format)
+    # pylint: disable=too-many-return-statements
+    if data.__class__ == ApiSchema:
+        return render_api_schema(data, render_format)
     elif data.__class__ == Facility:
         return render_facility(data, render_format)
     elif data.__class__ == Instrument:
@@ -72,34 +73,41 @@ def render_result_set(data, render_format):
 
 # API endpoint render functions
 
-def render_api_endpoint(api_endpoint, render_format):
+def render_api_schema(api_schema, render_format):
     """
-    Render API endpoint
+    Render API schema
     """
     if render_format == 'json':
-        return render_api_endpoint_as_json(api_endpoint)
+        return render_api_schema_as_json(api_schema)
     else:
-        return render_api_endpoint_as_table(api_endpoint)
+        return render_api_schema_as_table(api_schema)
 
-def render_api_endpoint_as_json(api_endpoint, indent=2, sort_keys=True):
+def render_api_schema_as_json(api_schema, indent=2, sort_keys=True):
     """
-    Returns JSON representation of API endpoint.
+    Returns JSON representation of API schema.
     """
-    return json.dumps(api_endpoint.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(api_schema.json, indent=indent, sort_keys=sort_keys)
 
-def render_api_endpoint_as_table(api_endpoint):
+def render_api_schema_as_table(api_schema):
     """
-    Returns ASCII table view of API endpoint.
+    Returns ASCII table view of API schema.
     """
-    heading = "\nAPI Endpoint\n\n"
+    heading = "\nAPI Schema:\n\n"
 
-    # print json.dumps(api_endpoint.json, indent=2)
     table = Texttable()
     table.set_cols_align(["l", "l"])
-    table.set_cols_valign(["m", "m"])
-    table.header(["API Endpoint field", "Value"])
-    table.add_row(["ID", api_endpoint.id])
-    table.add_row(["Name", api_endpoint.name])
+    table.set_cols_valign(["t", "t"])
+    table.header(["API Schema field", "Value"])
+    table.add_row(["Model", api_schema.model])
+    table.add_row(["Fields", "\n".join(sorted([field for field in api_schema.fields]))])
+    table.add_row(["Filtering", json.dumps(api_schema.filtering, indent=2, sort_keys=True)])
+    table.add_row(["Ordering", json.dumps(api_schema.ordering, indent=2, sort_keys=True)])
+    # table.add_row(["Allowed List HTTP Methods",
+                   # "\n".join(api_schema.allowed_list_http_methods).upper()])
+    # table.add_row(["Allowed Detail HTTP Methods",
+                   # "\n".join(api_schema.allowed_detail_http_methods).upper()])
+    # table.add_row(["Default Format", api_schema.default_format])
+    # table.add_row(["Default Limit", api_schema.default_limit])
     return heading + table.draw() + "\n"
 
 def render_api_endpoints(api_endpoints, render_format):

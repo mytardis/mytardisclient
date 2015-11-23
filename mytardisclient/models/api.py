@@ -51,6 +51,47 @@ class ApiEndpoint(object):
         endpoints_json = response.json()
         return ApiEndpoints(endpoints_json)
 
+class ApiSchema(object):
+    """
+    Model class for MyTardis API v1's schemas.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-few-public-methods
+    def __init__(self, model, schema_json):
+        self.model = model
+        self.json = schema_json
+        self.fields = schema_json['fields']
+        self.filtering = schema_json['filtering'] if 'filtering' in schema_json else {}
+        for key, val in self.filtering.iteritems():
+            if val == 1:
+                self.filtering[key] = "ALL"
+            elif val == 2:
+                self.filtering[key] = "ALL_WITH_RELATIONS"
+        self.ordering = schema_json['ordering'] if 'ordering' in schema_json else {}
+        self.allowed_list_http_methods = schema_json['allowed_list_http_methods']
+        self.allowed_detail_http_methods = schema_json['allowed_detail_http_methods']
+        self.default_format = schema_json['default_format']
+        self.default_limit = schema_json['default_limit']
+
+    @staticmethod
+    def get(model):
+        """
+        Get a list of API-accessible functionality for a particular model.
+        """
+        if model == "datafile":
+            model = "dataset_file"
+        url = "%s/api/v1/%s/schema/?format=json" % (config.url, model)
+        response = requests.get(url=url, headers=config.default_headers)
+        if response.status_code != 200:
+            print "HTTP %d" % response.status_code
+            print "url: " + url
+            message = response.text
+            raise Exception(message)
+
+        api_schema = response.json()
+        return ApiSchema(model, api_schema)
+
 
 class ApiEndpoints(object):
     """
