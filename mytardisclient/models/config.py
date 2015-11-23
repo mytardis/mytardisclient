@@ -1,5 +1,6 @@
 """
-Model class for the configuration stored in ~/.mytardisclient.cfg
+Model class for the configuration,
+usually stored in ~/.config/mytardisclient/mytardisclient.cfg
 """
 
 # pylint: disable=missing-docstring
@@ -19,7 +20,7 @@ class Config(object):
     """
     Model class for the minimal MyTardis server configuration
     (MyTardis URL, username and API key),
-    usually stored in ~/.mytardisclient.cfg
+    usually stored in ~/.config/mytardisclient/mytardisclient.cfg
     """
     def __init__(self, path=DEFAULT_PATH):
         self.path = path
