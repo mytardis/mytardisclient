@@ -7,6 +7,8 @@ import requests
 import json
 
 from .resultset import ResultSet
+from .schema import Schema
+from .schema import ParameterName
 from mytardisclient.conf import config
 from mytardisclient.utils.exceptions import DoesNotExist
 
@@ -26,6 +28,9 @@ class Experiment(object):
             for key in self.__dict__.keys():
                 if key in experiment_json:
                     self.__dict__[key] = experiment_json[key]
+        self.parameter_sets = []
+        for exp_param_set_json in experiment_json['parameter_sets']:
+            self.parameter_sets.append(ExperimentParameterSet(exp_param_set_json))
 
     @staticmethod
     def list(limit=None, offset=None, order_by=None):
@@ -104,3 +109,61 @@ class Experiment(object):
             raise Exception(message)
         experiment_json = response.json()
         return Experiment(experiment_json)
+
+
+class ExperimentParameterSet(object):
+    """
+    Model class for MyTardis API v1's ExperimentParameterSetResource.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    # pylint: disable=too-few-public-methods
+    def __init__(self, expparamset_json):
+        self.json = expparamset_json
+        self.id = expparamset_json['id']  # pylint: disable=invalid-name
+        self.experiment = expparamset_json['experiment']
+        self.schema = Schema(expparamset_json['schema'])
+        self.parameters = []
+        for exp_param_json in expparamset_json['parameters']:
+            self.parameters.append(ExperimentParameter(exp_param_json))
+
+    @staticmethod
+    def list(experiment_id):
+        """
+        List experiment parameter sets associated with experiment ID
+        experiment_id.
+        """
+        url = "%s/api/v1/experimentparameterset/?format=json" % config.url
+        url += "&experiments__id=%s"  % experiment_id
+        response = requests.get(url=url, headers=config.default_headers)
+        if response.status_code != 200:
+            message = response.text
+            raise Exception(message)
+
+        filters = dict(experiment_id=experiment_id)
+        return ResultSet(ExperimentParameterSet, url, response.json(),
+                         **filters)
+
+
+class ExperimentParameter(object):
+    """
+    Model class for MyTardis API v1's ExperimentParameterResource.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-many-instance-attributes
+    def __init__(self, expparam_json):
+        self.json = expparam_json
+        self.id = expparam_json['id']  # pylint: disable=invalid-name
+        self.name = ParameterName.get(expparam_json['name'].split('/')[-2])
+        self.string_value = expparam_json['string_value']
+        self.numerical_value = expparam_json['numerical_value']
+        self.datetime_value = expparam_json['datetime_value']
+        self.link_id = expparam_json['link_id']
+        self.value = expparam_json['value']
+
+    @staticmethod
+    def list(exp_param_set):
+        """
+        List experiment parameter records in parameter set.
+        """
+        pass

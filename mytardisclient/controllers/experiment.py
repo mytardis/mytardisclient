@@ -53,7 +53,7 @@ class ExperimentController(object):
         print render(experiment, render_format)
         if render_format == 'table':
             datasets = Dataset.list(experiment_id=experiment_id)
-            print render(datasets, render_format)
+            print render(datasets, render_format, display_heading=False)
 
     def create(self, experiment_title, render_format):
         """

@@ -105,8 +105,14 @@ class ParameterName(object):
         self.comparison_type = \
             _comparison_types[parametername_json['comparison_type']]
 
+    def __unicode__(self):
+        return self.full_name
+
     def __str__(self):
-        return self.name
+        return self.__unicode__()
+
+    def __repr__(self):
+        return self.__unicode__()
 
     @staticmethod
     def list(schema):
@@ -150,3 +156,21 @@ class ParameterName(object):
             parameter_names_json['objects'].extend(parameter_names_page_json['objects'])
 
         return ResultSet(ParameterName, url, parameter_names_json)
+
+    @staticmethod
+    def get(parametername_id):
+        """
+        Get parameter name with id parametername_id
+        """
+        url = "%s/api/v1/parametername/%s/?format=json" % (config.url,
+                                                           parametername_id)
+        response = requests.get(url=url, headers=config.default_headers)
+        if response.status_code != 200:
+            if response.status_code == 404:
+                message = "Parameter Name ID %s doesn't exist." % parametername_id
+                raise DoesNotExist(message, url, response, ParameterName)
+            message = response.text
+            raise Exception(message)
+
+        parametername_json = response.json()
+        return ParameterName(parametername_json=parametername_json)
