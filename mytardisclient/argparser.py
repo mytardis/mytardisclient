@@ -187,7 +187,13 @@ class ArgParser(object):
         experiment_cmd_create_parser = \
             experiment_command_parsers.add_parser("create")
         experiment_cmd_create_parser.add_argument(
-            "experiment_title", help="The experiment title to create.")
+            "title", help="The experiment title to create.")
+        experiment_cmd_create_parser.add_argument(
+            "--description", help="A description of the experiment.")
+        experiment_cmd_create_parser.add_argument(
+            "--institution", help="The institution of the experiment.")
+        experiment_cmd_create_parser.add_argument(
+            "--params", help="A JSON file containing experiment parameters.")
 
         experiment_cmd_update_parser = \
             experiment_command_parsers.add_parser("update")

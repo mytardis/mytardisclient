@@ -5,6 +5,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 
 import requests
 import json
+import os
 
 from .resultset import ResultSet
 from .schema import Schema
@@ -30,7 +31,8 @@ class Experiment(object):
                     self.__dict__[key] = experiment_json[key]
         self.parameter_sets = []
         for exp_param_set_json in experiment_json['parameter_sets']:
-            self.parameter_sets.append(ExperimentParameterSet(exp_param_set_json))
+            self.parameter_sets.append(
+                ExperimentParameterSet(exp_param_set_json))
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
@@ -62,7 +64,8 @@ class Experiment(object):
         """
         Get experiment with id exp_id
         """
-        url = config.url + "/api/v1/experiment/?format=json" + "&id=%s" % exp_id
+        url = "%s/api/v1/experiment/?format=json&id=%s" \
+            % (config.url, exp_id)
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text
@@ -75,15 +78,21 @@ class Experiment(object):
         return Experiment(experiment_json=experiments_json['objects'][0])
 
     @staticmethod
-    def create(experiment_title, description=""):
+    def create(title, description="", institution=None, params_file_json=None):
         """
         Create an experiment.
         """
         new_exp_json = {
-            "title": experiment_title,
+            "title": title,
             "description": description,
             "immutable": False
         }
+        if institution:
+            new_exp_json['institution'] = institution
+        if params_file_json:
+            assert os.path.exists(params_file_json)
+            with open(params_file_json) as params_file:
+                new_exp_json['parameter_sets'] = json.load(params_file)
         url = config.url + "/api/v1/experiment/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_exp_json))
@@ -136,7 +145,7 @@ class ExperimentParameterSet(object):
         experiment_id.
         """
         url = "%s/api/v1/experimentparameterset/?format=json" % config.url
-        url += "&experiments__id=%s"  % experiment_id
+        url += "&experiments__id=%s" % experiment_id
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             message = response.text

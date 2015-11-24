@@ -289,3 +289,69 @@ Model: DataFile
 
 DataFile created successfully.
 ```
+
+We can create an experiment record with parameters as follows:
+```
+(mytardisclient) $ cat << EOF > experiment_params.json
+[
+    {
+        "schema": "https://mytardis.org/sample-experiment-schema",
+        "parameters": [
+            {
+                "name": "sample_parameter_name",
+                "value": "Sample Parameter Value"
+            }
+        ]
+    }
+]
+EOF
+
+(mytardisclient) $ mytardis experiment create --params experiment_params.json "Experiment With Params"
++------------------+------------------------------+
+| Experiment field |            Value             |
++==================+==============================+
+| ID               | 27                           |
++------------------+------------------------------+
+| Institution      | Monash University            |
++------------------+------------------------------+
+| Title            | Experiment With Params       |
++------------------+------------------------------+
+| Description      |                              |
++------------------+------------------------------+
+
++------------------------+--------------------------+-----------------------+------------------------+-----------------+----------------+---------+
+| ExperimentParameter ID |          Schema          |    Parameter Name     |      String Value      | Numerical Value | Datetime Value | Link ID |
++========================+==========================+=======================+========================+=================+================+=========+
+|                     34 | Sample Experiment Schema | Sample Parameter Name | Sample Parameter Value |                 |                |         |
++------------------------+--------------------------+-----------------------+------------------------+-----------------+----------------+---------+
+
+Experiment created successfully.
+
+We are used an experiment schema which is defined as follows:
+
+(mytardisclient) $ mytardis schema get 12
++--------------+-----------------------------------------------+
+| Schema field |                     Value                     |
++==============+===============================================+
+| ID           | 12                                            |
++--------------+-----------------------------------------------+
+| Name         | Sample Experiment Schema                      |
++--------------+-----------------------------------------------+
+| Namespace    | https://mytardis.org/sample-experiment-schema |
++--------------+-----------------------------------------------+
+| Type         | Experiment schema                             |
++--------------+-----------------------------------------------+
+| Subtype      |                                               |
++--------------+-----------------------------------------------+
+| Immutable    | False                                         |
++--------------+-----------------------------------------------+
+| Hidden       | False                                         |
++--------------+-----------------------------------------------+
+
++------------------+-----------------------+-----------------------+-----------+-------+-----------+---------------+-------+---------+-----------------+
+| ParameterName ID |       Full Name       |         Name          | Data Type | Units | Immutable | Is Searchable | Order | Choices | Comparison Type |
++==================+=======================+=======================+===========+=======+===========+===============+=======+=========+=================+
+|               33 | Sample Parameter Name | sample_parameter_name | String    |       | False     | False         | 9999  |         | Exact value     |
++------------------+-----------------------+-----------------------+-----------+-------+-----------+---------------+-------+---------+-----------------+
+```
+
