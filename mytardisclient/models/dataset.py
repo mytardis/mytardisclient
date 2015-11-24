@@ -31,6 +31,7 @@ class Dataset(object):
                 self.instrument = Instrument(dataset_json['instrument'])
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Dataset")
     def list(experiment_id=None,
              limit=None, offset=None, order_by=None):
         """
@@ -58,6 +59,7 @@ class Dataset(object):
             return ResultSet(Dataset, url, response.json())
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Dataset")
     def get(dataset_id):
         """
         Get dataset with id dataset_id

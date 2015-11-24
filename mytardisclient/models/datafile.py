@@ -50,6 +50,7 @@ class DataFile(object):
         return True
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="DataFile")
     def list(dataset_id=None, directory=None, filename=None,
              limit=None, offset=None, order_by=None):
         """
@@ -83,6 +84,7 @@ class DataFile(object):
             return ResultSet(DataFile, url, response.json())
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="DataFile")
     def get(datafile_id):
         """
         Get datafile record with id datafile_id

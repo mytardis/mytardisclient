@@ -10,11 +10,15 @@ import json
 import traceback
 from urlparse import urlparse
 from ConfigParser import ConfigParser
+from dogpile.cache import make_region  # pylint: disable=import-error
 
 from mytardisclient.logs import logger
 
-DEFAULT_PATH = os.path.join(os.path.expanduser('~'), '.config',
-                            'mytardisclient', 'mytardisclient.cfg')
+DEFAULT_CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.config',
+                                   'mytardisclient', 'mytardisclient.cfg')
+DEFAULT_CACHE_PATH = os.path.join(os.path.expanduser('~'), '.cache',
+                                  'mytardisclient', 'mytardisclient.cache')
+
 
 class Config(object):
     """
@@ -22,12 +26,29 @@ class Config(object):
     (MyTardis URL, username and API key),
     usually stored in ~/.config/mytardisclient/mytardisclient.cfg
     """
-    def __init__(self, path=DEFAULT_PATH):
+    def __init__(self, path=DEFAULT_CONFIG_PATH):
         self.path = path
         self.url = ""
         self.username = ""
         self.apikey = ""
         self.default_headers = None
+        def key_generator(namespace, function):
+            # pylint: disable=unused-argument
+            def generate_key(*args, **kwargs):
+                return "%s(%s,%s)" % \
+                    (function.__name__, str(args), str(kwargs))
+            return generate_key
+        self.cache_path = DEFAULT_CACHE_PATH
+        if not os.path.exists(os.path.dirname(self.cache_path)):
+            os.makedirs(os.path.dirname(self.cache_path))
+        self.region = \
+            make_region(function_key_generator=key_generator) \
+                .configure(
+                    'dogpile.cache.dbm',
+                    expiration_time=30,
+                    arguments={
+                        "filename": self.cache_path
+                    })
         if path:
             self.load()
 
@@ -99,6 +120,8 @@ class Config(object):
             self.path = path
         else:
             path = self.path
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
 
         config_parser = ConfigParser()
         with open(self.path, 'w') as config_file:

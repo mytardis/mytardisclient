@@ -27,6 +27,7 @@ class Instrument(object):
         return self.name
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Instrument")
     def list(facility_id=None, limit=None, offset=None, order_by=None):
         """
         Get instruments in facility with ID facility_id.
@@ -53,6 +54,7 @@ class Instrument(object):
             return ResultSet(Instrument, url, response.json())
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Instrument")
     def get(instrument_id):
         """
         Get instrument with id instrument_id

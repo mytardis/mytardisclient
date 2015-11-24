@@ -73,7 +73,7 @@ class ArgParser(object):
     def build_config_parser(self):
         """
         'mytardis config' prompts users for settings to write to
-        mytardisclient.models.config.DEFAULT_PATH
+        mytardisclient.models.config.DEFAULT_CONFIG_PATH
         """
         self.model_parsers.add_parser("config")
 

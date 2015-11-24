@@ -328,16 +328,17 @@ def render_experiment_as_table(experiment, display_heading=True):
     exp_and_param_sets += table.draw() + "\n"
 
     for exp_param_set in experiment.parameter_sets:
-        heading = "\nExperiment Parameter Set: %s\n\n" \
-            % str(exp_param_set.schema) if display_heading else ""
-        exp_and_param_sets += heading
+        exp_and_param_sets += "\n"
         table = Texttable(max_width=0)
-        table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l'])
-        table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm'])
-        table.header(["ID", "Parameter Name", "String Value",
-                      "Numerical Value", "Datetime Value", "Link ID"])
+        table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l'])
+        table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm'])
+        table.header(["ExperimentParameter ID", "Schema", "Parameter Name",
+                      "String Value", "Numerical Value", "Datetime Value",
+                      "Link ID"])
         for exp_param in exp_param_set.parameters:
-            table.add_row([exp_param.id, exp_param.name,
+            table.add_row([exp_param.id,
+                           exp_param.name.schema,
+                           exp_param.name,
                            exp_param.string_value,
                            exp_param.numerical_value or '',
                            exp_param.datetime_value or '',
@@ -740,6 +741,6 @@ def render_schemas_as_table(schemas, display_heading=True):
                   "Hidden"])
     for schema in schemas:
         table.add_row([schema.id, schema.name, schema.namespace,
-                       schema.type, schema.subtype,
+                       schema.type, schema.subtype or '',
                        str(bool(schema.immutable)), str(bool(schema.hidden))])
     return heading + table.draw() + "\n"

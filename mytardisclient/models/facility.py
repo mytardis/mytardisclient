@@ -27,6 +27,7 @@ class Facility(object):
         return self.name
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Facility")
     def list(limit=None, offset=None, order_by=None):
         """
         Get facilities I have access to
@@ -51,6 +52,7 @@ class Facility(object):
             return ResultSet(Facility, url, response.json())
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Facility")
     def get(facility_id):
         """
         Get facility with id facility_id

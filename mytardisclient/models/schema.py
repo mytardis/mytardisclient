@@ -35,6 +35,7 @@ class Schema(object):
         return self.name
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Schema")
     def list(limit=None, offset=None, order_by=None):
         """
         Get schemas I have access to
@@ -60,6 +61,7 @@ class Schema(object):
             return ResultSet(Schema, url, response.json())
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Schema")
     def get(schema_id):
         """
         Get schema with id schema_id
@@ -86,7 +88,7 @@ class ParameterName(object):
     # pylint: disable=too-many-instance-attributes
     def __init__(self, parametername_json):
         self.json = parametername_json
-        self.schema = parametername_json['schema']
+        self.schema = Schema.get(parametername_json['schema'].split('/')[-2])
         self.id = parametername_json['id']  # pylint: disable=invalid-name
         self.name = parametername_json['name']
         self.full_name = parametername_json['full_name']
@@ -115,6 +117,7 @@ class ParameterName(object):
         return self.__unicode__()
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="ParameterName")
     def list(schema):
         """
         List parameter name records in schema.
@@ -158,6 +161,7 @@ class ParameterName(object):
         return ResultSet(ParameterName, url, parameter_names_json)
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="ParameterName")
     def get(parametername_id):
         """
         Get parameter name with id parametername_id

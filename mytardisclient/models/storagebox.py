@@ -29,6 +29,7 @@ class StorageBox(object):
         return self.name
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="StorageBox")
     def list(limit=None, offset=None, order_by=None):
         """
         Get storage_boxes I have access to
@@ -55,6 +56,7 @@ class StorageBox(object):
             return ResultSet(StorageBox, url, response.json())
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="StorageBox")
     def get(storage_box_id):
         """
         Get storage_box with id storage_box_id

@@ -33,6 +33,7 @@ class Experiment(object):
             self.parameter_sets.append(ExperimentParameterSet(exp_param_set_json))
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Experiment")
     def list(limit=None, offset=None, order_by=None):
         """
         Get experiments I have access to
@@ -56,6 +57,7 @@ class Experiment(object):
             return ResultSet(Experiment, url, response.json())
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="Experiment")
     def get(exp_id):
         """
         Get experiment with id exp_id
@@ -127,6 +129,7 @@ class ExperimentParameterSet(object):
             self.parameters.append(ExperimentParameter(exp_param_json))
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="ExperimentParameterSet")
     def list(experiment_id):
         """
         List experiment parameter sets associated with experiment ID
@@ -162,6 +165,7 @@ class ExperimentParameter(object):
         self.value = expparam_json['value']
 
     @staticmethod
+    @config.region.cache_on_arguments(namespace="ExperimentParameter")
     def list(exp_param_set):
         """
         List experiment parameter records in parameter set.

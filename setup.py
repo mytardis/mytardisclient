@@ -15,5 +15,6 @@ setup(name='mytardisclient',
               "mytardis = mytardisclient.client:run",
           ],
       },
-      install_requires=['requests', 'ConfigParser', 'texttable'],
+      install_requires=['requests', 'ConfigParser', 'texttable',
+                        'dogpile.cache'],
       zip_safe=False)

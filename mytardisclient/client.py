@@ -7,7 +7,7 @@ import sys
 
 from mytardisclient import __version__ as VERSION
 from mytardisclient.models.config import Config
-from mytardisclient.models.config import DEFAULT_PATH
+from mytardisclient.models.config import DEFAULT_CONFIG_PATH
 from mytardisclient.controllers.api import ApiController
 from mytardisclient.controllers.config import ConfigController
 from mytardisclient.controllers.facility import FacilityController
@@ -36,7 +36,7 @@ def run():
     if args.verbose and (not hasattr(args, 'json') or not args.json):
         print "MyTardis Client v%s" % VERSION
 
-    config_path = DEFAULT_PATH
+    config_path = DEFAULT_CONFIG_PATH
     if not os.path.exists(config_path) or \
             args.model == 'config':
         ConfigController(config_path).configure()
