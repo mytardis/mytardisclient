@@ -454,7 +454,7 @@ def render_datasets_as_table(datasets, display_heading=True):
     table = Texttable(max_width=0)
     table.set_cols_align(["r", 'l', 'l', 'l'])
     table.set_cols_valign(['m', 'm', 'm', 'm'])
-    table.header(["ID", "Experiment(s)", "Description", "Instrument"])
+    table.header(["Dataset ID", "Experiment(s)", "Description", "Instrument"])
     for dataset in datasets:
         table.add_row([dataset.id, "\n".join(dataset.experiments),
                        dataset.description, dataset.instrument])
