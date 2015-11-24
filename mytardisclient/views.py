@@ -508,7 +508,27 @@ def render_datafile_as_table(datafile):
     table.add_row(["Verified", str(datafile.verified)])
     table.add_row(["Size", human_readable_size_string(datafile.size)])
     table.add_row(["MD5 Sum", datafile.md5sum])
-    return table.draw() + "\n"
+    datafile_and_param_sets = table.draw() + "\n"
+
+    for datafile_param_set in datafile.parameter_sets:
+        datafile_and_param_sets += "\n"
+        table = Texttable(max_width=0)
+        table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l'])
+        table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm'])
+        table.header(["DataFileParameter ID", "Schema", "Parameter Name",
+                      "String Value", "Numerical Value", "Datetime Value",
+                      "Link ID"])
+        for datafile_param in datafile_param_set.parameters:
+            table.add_row([datafile_param.id,
+                           datafile_param.name.schema,
+                           datafile_param.name,
+                           datafile_param.string_value,
+                           datafile_param.numerical_value or '',
+                           datafile_param.datetime_value or '',
+                           datafile_param.link_id or ''])
+        datafile_and_param_sets += table.draw() + "\n"
+
+    return datafile_and_param_sets
 
 
 def render_datafiles(datafiles, render_format, display_heading=True):

@@ -15,6 +15,8 @@ from mytardisclient.conf import config
 from .replica import Replica
 from .dataset import Dataset
 from .resultset import ResultSet
+from .schema import Schema
+from .schema import ParameterName
 from mytardisclient.utils.exceptions import DoesNotExist
 
 
@@ -35,6 +37,10 @@ class DataFile(object):
         self.replicas = []
         for replica_json in datafile_json['replicas']:
             self.replicas.append(Replica(replica_json))
+        self.parameter_sets = []
+        for datafile_param_set_json in datafile_json['parameter_sets']:
+            self.parameter_sets.append(
+                DataFileParameterSet(datafile_param_set_json))
 
     @property
     def verified(self):
@@ -211,7 +217,7 @@ class DataFile(object):
             raise
         fileobj = open(filename, 'wb')
         for chunk in response.iter_content(chunk_size=1024):
-            if chunk: # filter out keep-alive new chunks
+            if chunk:  # filter out keep-alive new chunks
                 fileobj.write(chunk)
         print "Downloaded: %s" % filename
 
@@ -274,3 +280,62 @@ class DataFile(object):
             raise Exception(message)
         datafile_json = response.json()
         return DataFile(datafile_json)
+
+
+class DataFileParameterSet(object):
+    """
+    Model class for MyTardis API v1's DataFileParameterSetResource.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    # pylint: disable=too-few-public-methods
+    def __init__(self, datafile_paramset_json):
+        self.json = datafile_paramset_json
+        self.id = datafile_paramset_json['id']  # pylint: disable=invalid-name
+        self.datafile = datafile_paramset_json['datafile']
+        self.schema = Schema(datafile_paramset_json['schema'])
+        self.parameters = []
+        for datafile_param_json in datafile_paramset_json['parameters']:
+            self.parameters.append(DataFileParameter(datafile_param_json))
+
+    @staticmethod
+    @config.region.cache_on_arguments(namespace="DataFileParameterSet")
+    def list(datafile_id):
+        """
+        List datafile parameter sets associated with datafile ID
+        datafile_id.
+        """
+        url = "%s/api/v1/datafileparameterset/?format=json" % config.url
+        url += "&datafiles__id=%s" % datafile_id
+        response = requests.get(url=url, headers=config.default_headers)
+        if response.status_code != 200:
+            message = response.text
+            raise Exception(message)
+
+        filters = dict(datafile_id=datafile_id)
+        return ResultSet(DataFileParameterSet, url, response.json(), **filters)
+
+
+class DataFileParameter(object):
+    """
+    Model class for MyTardis API v1's DataFileParameterResource.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-many-instance-attributes
+    def __init__(self, datafile_param_json):
+        self.json = datafile_param_json
+        self.id = datafile_param_json['id']  # pylint: disable=invalid-name
+        self.name = ParameterName.get(datafile_param_json['name'].split('/')[-2])
+        self.string_value = datafile_param_json['string_value']
+        self.numerical_value = datafile_param_json['numerical_value']
+        self.datetime_value = datafile_param_json['datetime_value']
+        self.link_id = datafile_param_json['link_id']
+        self.value = datafile_param_json['value']
+
+    @staticmethod
+    @config.region.cache_on_arguments(namespace="DataFileParameter")
+    def list(datafile_param_set):
+        """
+        List datafile parameter records in parameter set.
+        """
+        pass
