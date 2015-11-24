@@ -29,7 +29,6 @@ class Schema(object):
         self.type = _schema_types[type_index]  # pylint: disable=invalid-name
         self.subtype = schema_json['subtype']
 
-        # self.json['parameter_names'] = ParameterName.list(schema=self).json
         self.parameter_names = ParameterName.list(schema=self)
 
     def __str__(self):
