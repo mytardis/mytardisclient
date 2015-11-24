@@ -14,9 +14,14 @@ class StorageBox(object):
     Model class for MyTardis API v1's StorageBoxResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, storage_box_json):
         self.id = storage_box_json['id']  # pylint: disable=invalid-name
         self.name = storage_box_json['name']
+        self.description = storage_box_json['description']
+        self.django_storage_class = storage_box_json['django_storage_class']
+        self.max_size = storage_box_json['max_size']
+        self.status = storage_box_json['status']
         self.json = storage_box_json
         self.attributes = []
         for attribute_json in storage_box_json['attributes']:

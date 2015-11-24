@@ -558,12 +558,16 @@ def render_storage_box_as_table(storage_box):
     """
     storage_box_options_attributes = ""
 
-    table = Texttable()
+    table = Texttable(max_width=0)
     table.set_cols_align(['l', 'l'])
     table.set_cols_valign(['m', 'm'])
     table.header(["StorageBox field", "Value"])
     table.add_row(["ID", storage_box.id])
     table.add_row(["Name", storage_box.name])
+    table.add_row(["Description", storage_box.description])
+    table.add_row(["Django Storage Class", storage_box.django_storage_class])
+    table.add_row(["Max Size", storage_box.max_size])
+    table.add_row(["Status", storage_box.status])
     storage_box_options_attributes += table.draw() + "\n"
 
     storage_box_options_attributes += "\n"
@@ -619,11 +623,12 @@ def render_storage_boxes_as_table(storage_boxes, display_heading=True):
            storage_boxes.offset) if display_heading else ""
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", 'l'])
-    table.set_cols_valign(['m', 'm'])
-    table.header(["ID", "Name"])
+    table.set_cols_align(["r", 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm'])
+    table.header(["ID", "Name", "Description"])
     for storage_box in storage_boxes:
-        table.add_row([storage_box.id, storage_box.name])
+        table.add_row([storage_box.id, storage_box.name,
+                       storage_box.description])
     return heading + table.draw() + "\n"
 
 
@@ -662,7 +667,6 @@ def render_schema_as_table(schema):
     table.add_row(["Immutable", str(bool(schema.immutable))])
     table.add_row(["Hidden", str(bool(schema.hidden))])
     schema_parameter_names += table.draw() + "\n"
-
 
     schema_parameter_names += "\n"
     table = Texttable(max_width=0)
