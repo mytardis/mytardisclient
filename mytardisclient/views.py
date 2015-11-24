@@ -27,30 +27,30 @@ def render(data, render_format='table', display_heading=True):
     elif data.__class__ == ApiEndpoints:
         return render_api_endpoints(data, render_format, display_heading)
     else:
-        return render_single_record(data, render_format, display_heading)
+        return render_single_record(data, render_format)
 
 
-def render_single_record(data, render_format, display_heading=True):
+def render_single_record(data, render_format):
     """
     Render single record.
     """
     # pylint: disable=too-many-return-statements
     if data.__class__ == ApiSchema:
-        return render_api_schema(data, render_format, display_heading)
+        return render_api_schema(data, render_format)
     elif data.__class__ == Facility:
-        return render_facility(data, render_format, display_heading)
+        return render_facility(data, render_format)
     elif data.__class__ == Instrument:
-        return render_instrument(data, render_format, display_heading)
+        return render_instrument(data, render_format)
     elif data.__class__ == Experiment:
-        return render_experiment(data, render_format, display_heading)
+        return render_experiment(data, render_format)
     elif data.__class__ == Dataset:
-        return render_dataset(data, render_format, display_heading)
+        return render_dataset(data, render_format)
     elif data.__class__ == DataFile:
-        return render_datafile(data, render_format, display_heading)
+        return render_datafile(data, render_format)
     elif data.__class__ == StorageBox:
-        return render_storage_box(data, render_format, display_heading)
+        return render_storage_box(data, render_format)
     elif data.__class__ == Schema:
-        return render_schema(data, render_format, display_heading)
+        return render_schema(data, render_format)
     else:
         print "Class is " + data.__class__.__name__
 
@@ -78,14 +78,14 @@ def render_result_set(data, render_format, display_heading=True):
         print "Class is " + data.model.__name__
 
 
-def render_api_schema(api_schema, render_format, display_heading=True):
+def render_api_schema(api_schema, render_format):
     """
     Render API schema
     """
     if render_format == 'json':
         return render_api_schema_as_json(api_schema)
     else:
-        return render_api_schema_as_table(api_schema, display_heading)
+        return render_api_schema_as_table(api_schema)
 
 
 def render_api_schema_as_json(api_schema, indent=2, sort_keys=True):
@@ -95,12 +95,10 @@ def render_api_schema_as_json(api_schema, indent=2, sort_keys=True):
     return json.dumps(api_schema.json, indent=indent, sort_keys=sort_keys)
 
 
-def render_api_schema_as_table(api_schema, display_heading=True):
+def render_api_schema_as_table(api_schema):
     """
     Returns ASCII table view of API schema.
     """
-    heading = "\nAPI Schema:\n\n" if display_heading else ""
-
     table = Texttable()
     table.set_cols_align(['l', 'l'])
     table.set_cols_valign(["t", "t"])
@@ -112,7 +110,7 @@ def render_api_schema_as_table(api_schema, display_heading=True):
                    json.dumps(api_schema.filtering, indent=2, sort_keys=True)])
     table.add_row(["Ordering",
                    json.dumps(api_schema.ordering, indent=2, sort_keys=True)])
-    return heading + table.draw() + "\n"
+    return table.draw() + "\n"
 
 
 def render_api_endpoints(api_endpoints, render_format, display_heading=True):
@@ -221,14 +219,14 @@ def render_facilities_as_table(facilities, display_heading=True):
     return heading + table.draw() + "\n"
 
 
-def render_instrument(instrument, render_format, display_heading=True):
+def render_instrument(instrument, render_format):
     """
     Render instrument
     """
     if render_format == 'json':
         return render_instrument_as_json(instrument)
     else:
-        return render_instrument_as_table(instrument, display_heading)
+        return render_instrument_as_table(instrument)
 
 
 def render_instrument_as_json(instrument, indent=2, sort_keys=True):
@@ -238,12 +236,10 @@ def render_instrument_as_json(instrument, indent=2, sort_keys=True):
     return json.dumps(instrument.json, indent=indent, sort_keys=sort_keys)
 
 
-def render_instrument_as_table(instrument, display_heading=True):
+def render_instrument_as_table(instrument):
     """
     Returns ASCII table view of instrument.
     """
-    heading = "\nModel: Instrument\n\n" if display_heading else ""
-
     instrument_table = Texttable()
     instrument_table.set_cols_align(['l', 'l'])
     instrument_table.set_cols_valign(['m', 'm'])
@@ -251,7 +247,7 @@ def render_instrument_as_table(instrument, display_heading=True):
     instrument_table.add_row(["ID", instrument.id])
     instrument_table.add_row(["Name", instrument.name])
     instrument_table.add_row(["Facility", instrument.facility])
-    return heading + instrument_table.draw() + "\n"
+    return instrument_table.draw() + "\n"
 
 
 def render_instruments(instruments, render_format, display_heading=True):
@@ -293,14 +289,14 @@ def render_instruments_as_table(instruments, display_heading=True):
     return heading + table.draw() + "\n"
 
 
-def render_experiment(experiment, render_format, display_heading=True):
+def render_experiment(experiment, render_format):
     """
     Render experiment
     """
     if render_format == 'json':
         return render_experiment_as_json(experiment)
     else:
-        return render_experiment_as_table(experiment, display_heading)
+        return render_experiment_as_table(experiment)
 
 
 def render_experiment_as_json(experiment, indent=2, sort_keys=True):
@@ -310,12 +306,11 @@ def render_experiment_as_json(experiment, indent=2, sort_keys=True):
     return json.dumps(experiment.json, indent=indent, sort_keys=sort_keys)
 
 
-def render_experiment_as_table(experiment, display_heading=True):
+def render_experiment_as_table(experiment):
     """
     Returns ASCII table view of experiment.
     """
-    heading = "\nModel: Experiment\n\n" if display_heading else ""
-    exp_and_param_sets = heading
+    exp_and_param_sets = ""
 
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -388,14 +383,14 @@ def render_experiments_as_table(experiments, display_heading=True):
     return heading + table.draw() + "\n"
 
 
-def render_dataset(dataset, render_format, display_heading=True):
+def render_dataset(dataset, render_format):
     """
     Render dataset
     """
     if render_format == 'json':
         return render_dataset_as_json(dataset)
     else:
-        return render_dataset_as_table(dataset, display_heading)
+        return render_dataset_as_table(dataset)
 
 
 def render_dataset_as_json(dataset, indent=2, sort_keys=True):
@@ -405,12 +400,10 @@ def render_dataset_as_json(dataset, indent=2, sort_keys=True):
     return json.dumps(dataset.json, indent=indent, sort_keys=sort_keys)
 
 
-def render_dataset_as_table(dataset, display_heading=True):
+def render_dataset_as_table(dataset):
     """
     Returns ASCII table view of dataset.
     """
-    heading = "\nModel: Dataset\n\n" if display_heading else ""
-
     table = Texttable()
     table.set_cols_align(['l', 'l'])
     table.set_cols_valign(['m', 'm'])
@@ -419,7 +412,7 @@ def render_dataset_as_table(dataset, display_heading=True):
     table.add_row(["Experiment(s)", "\n".join(dataset.experiments)])
     table.add_row(["Description", dataset.description])
     table.add_row(["Instrument", dataset.instrument])
-    return heading + table.draw() + "\n"
+    return table.draw() + "\n"
 
 
 def render_datasets(datasets, render_format, display_heading=True):
@@ -462,14 +455,14 @@ def render_datasets_as_table(datasets, display_heading=True):
     return heading + table.draw() + "\n"
 
 
-def render_datafile(datafile, render_format, display_heading=True):
+def render_datafile(datafile, render_format):
     """
     Render datafile
     """
     if render_format == 'json':
         return render_datafile_as_json(datafile)
     else:
-        return render_datafile_as_table(datafile, display_heading)
+        return render_datafile_as_table(datafile)
 
 
 def render_datafile_as_json(datafile, indent=2, sort_keys=True):
@@ -479,12 +472,10 @@ def render_datafile_as_json(datafile, indent=2, sort_keys=True):
     return json.dumps(datafile.json, indent=indent, sort_keys=sort_keys)
 
 
-def render_datafile_as_table(datafile, display_heading=True):
+def render_datafile_as_table(datafile):
     """
     Returns ASCII table view of datafile.
     """
-    heading = "\nModel: DataFile\n\n" if display_heading else ""
-
     table = Texttable()
     table.set_cols_align(['l', 'l'])
     table.set_cols_valign(['m', 'm'])
@@ -497,7 +488,7 @@ def render_datafile_as_table(datafile, display_heading=True):
     table.add_row(["Verified", str(datafile.verified)])
     table.add_row(["Size", human_readable_size_string(datafile.size)])
     table.add_row(["MD5 Sum", datafile.md5sum])
-    return heading + table.draw() + "\n"
+    return table.draw() + "\n"
 
 
 def render_datafiles(datafiles, render_format, display_heading=True):
@@ -544,14 +535,14 @@ def render_datafiles_as_table(datafiles, display_heading=True):
     return heading + table.draw() + "\n"
 
 
-def render_storage_box(storage_box, render_format, display_heading=True):
+def render_storage_box(storage_box, render_format):
     """
     Render storage box
     """
     if render_format == 'json':
         return render_storage_box_as_json(storage_box)
     else:
-        return render_storage_box_as_table(storage_box, display_heading)
+        return render_storage_box_as_table(storage_box)
 
 
 def render_storage_box_as_json(storage_box, indent=2, sort_keys=True):
@@ -561,14 +552,11 @@ def render_storage_box_as_json(storage_box, indent=2, sort_keys=True):
     return json.dumps(storage_box.json, indent=indent, sort_keys=sort_keys)
 
 
-def render_storage_box_as_table(storage_box, display_heading=True):
+def render_storage_box_as_table(storage_box):
     """
     Returns ASCII table view of storage_box.
     """
     storage_box_options_attributes = ""
-
-    heading = "\nModel: StorageBox\n\n" if display_heading else ""
-    storage_box_options_attributes += heading
 
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -578,24 +566,20 @@ def render_storage_box_as_table(storage_box, display_heading=True):
     table.add_row(["Name", storage_box.name])
     storage_box_options_attributes += table.draw() + "\n"
 
-    heading = "\nModel: StorageBoxOptions\n\n" if display_heading else ""
-    storage_box_options_attributes += heading
-
+    storage_box_options_attributes += "\n"
     table = Texttable(max_width=0)
     table.set_cols_align(["r", 'l'])
     table.set_cols_valign(['m', 'm'])
-    table.header(["Key", "Value"])
+    table.header(["StorageBoxOption Key", "StorageBoxOption Value"])
     for option in storage_box.options:
         table.add_row([option.key, option.value])
     storage_box_options_attributes += table.draw() + "\n"
 
-    heading = "\nModel: StorageBoxAttributes\n\n" if display_heading else ""
-    storage_box_options_attributes += heading
-
+    storage_box_options_attributes += "\n"
     table = Texttable(max_width=0)
     table.set_cols_align(["r", 'l'])
     table.set_cols_valign(['m', 'm'])
-    table.header(["Key", "Value"])
+    table.header(["StorageBoxAttribute Key", "StorageBoxAttribute Value"])
     for attribute in storage_box.attributes:
         table.add_row([attribute.key, attribute.value])
     storage_box_options_attributes += table.draw() + "\n"
@@ -643,14 +627,14 @@ def render_storage_boxes_as_table(storage_boxes, display_heading=True):
     return heading + table.draw() + "\n"
 
 
-def render_schema(schema, render_format, display_heading=True):
+def render_schema(schema, render_format):
     """
     Render schema
     """
     if render_format == 'json':
         return render_schema_as_json(schema)
     else:
-        return render_schema_as_table(schema, display_heading)
+        return render_schema_as_table(schema)
 
 
 def render_schema_as_json(schema, indent=2, sort_keys=True):
@@ -660,12 +644,11 @@ def render_schema_as_json(schema, indent=2, sort_keys=True):
     return json.dumps(schema.json, indent=indent, sort_keys=sort_keys)
 
 
-def render_schema_as_table(schema, display_heading=True):
+def render_schema_as_table(schema):
     """
     Returns ASCII table view of schema.
     """
-    heading = "\nModel: Schema\n\n" if display_heading else ""
-    schema_parameter_names = heading
+    schema_parameter_names = ""
 
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -680,13 +663,12 @@ def render_schema_as_table(schema, display_heading=True):
     table.add_row(["Hidden", str(bool(schema.hidden))])
     schema_parameter_names += table.draw() + "\n"
 
-    heading = "\nModel: ParameterName\n\n" if display_heading else ""
-    schema_parameter_names += heading
 
+    schema_parameter_names += "\n"
     table = Texttable(max_width=0)
     table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l'])
     table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm'])
-    table.header(["ID", "Full Name", "Name", "Data Type",
+    table.header(["ParameterName ID", "Full Name", "Name", "Data Type",
                   "Units", "Immutable", "Is Searchable", "Order", "Choices",
                   "Comparison Type"])
     for parameter_name in schema.parameter_names:
