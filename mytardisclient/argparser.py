@@ -353,8 +353,7 @@ class ArgParser(object):
             "--offset",
             help="Skip this many records from the start of the result set.")
         schema_command_list_parser.add_argument(
-            "--order_by",
-            help="Order by this field.")
+            "--order_by", help="Order by this field.")
         schema_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
 

@@ -101,7 +101,7 @@ def render_api_schema_as_table(api_schema):
     heading = "\nAPI Schema:\n\n"
 
     table = Texttable()
-    table.set_cols_align(["l", "l"])
+    table.set_cols_align(['l', 'l'])
     table.set_cols_valign(["t", "t"])
     table.header(["API Schema field", "Value"])
     table.add_row(["Model", api_schema.model])
@@ -139,8 +139,8 @@ def render_api_endpoints_as_table(api_endpoints):
         "API Endpoints\n"
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l", "l"])
-    table.set_cols_valign(["m", "m", "m"])
+    table.set_cols_align(["r", 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm'])
     table.header(["Model", "List Endpoint", "Schema"])
     for api_endpoint in api_endpoints:
         table.add_row([api_endpoint.model, api_endpoint.list_endpoint, api_endpoint.schema])
@@ -170,8 +170,8 @@ def render_facility_as_table(facility):
     heading = "\nModel: Facility\n\n"
 
     table = Texttable()
-    table.set_cols_align(["l", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(['l', 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["Facility field", "Value"])
     table.add_row(["ID", facility.id])
     table.add_row(["Name", facility.name])
@@ -207,8 +207,8 @@ def render_facilities_as_table(facilities):
            facilities.limit, facilities.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l", "l"])
-    table.set_cols_valign(["m", "m", "m"])
+    table.set_cols_align(["r", 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm'])
     table.header(["ID", "Name", "Manager Group"])
     for facility in facilities:
         table.add_row([facility.id, facility.name, facility.manager_group])
@@ -238,8 +238,8 @@ def render_instrument_as_table(instrument):
     heading = "\nModel: Instrument\n\n"
 
     instrument_table = Texttable()
-    instrument_table.set_cols_align(["l", "l"])
-    instrument_table.set_cols_valign(["m", "m"])
+    instrument_table.set_cols_align(['l', 'l'])
+    instrument_table.set_cols_valign(['m', 'm'])
     instrument_table.header(["Instrument field", "Value"])
     instrument_table.add_row(["ID", instrument.id])
     instrument_table.add_row(["Name", instrument.name])
@@ -275,8 +275,8 @@ def render_instruments_as_table(instruments):
            instruments.limit, instruments.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l", "l"])
-    table.set_cols_valign(["m", "m", "m"])
+    table.set_cols_align(["r", 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm'])
     table.header(["ID", "Name", "Facility"])
     for instrument in instruments:
         table.add_row([instrument.id, instrument.name, instrument.facility])
@@ -306,8 +306,8 @@ def render_experiment_as_table(experiment):
     heading = "\nModel: Experiment\n\n"
 
     table = Texttable()
-    table.set_cols_align(["l", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(['l', 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["Experiment field", "Value"])
     table.add_row(["ID", experiment.id])
     table.add_row(["Institution", experiment.institution_name])
@@ -344,8 +344,8 @@ def render_experiments_as_table(experiments):
            experiments.limit, experiments.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l", "l"])
-    table.set_cols_valign(["m", "m", "m"])
+    table.set_cols_align(["r", 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm'])
     table.header(["ID", "Institution", "Title"])
     for experiment in experiments:
         table.add_row([experiment.id, experiment.institution_name,
@@ -376,8 +376,8 @@ def render_dataset_as_table(dataset):
     heading = "\nModel: Dataset\n\n"
 
     table = Texttable()
-    table.set_cols_align(["l", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(['l', 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["Dataset field", "Value"])
     table.add_row(["ID", dataset.id])
     table.add_row(["Experiments", "\n".join(dataset.experiments)])
@@ -414,8 +414,8 @@ def render_datasets_as_table(datasets):
            datasets.limit, datasets.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l", "l", "l"])
-    table.set_cols_valign(["m", "m", "m", "m"])
+    table.set_cols_align(["r", 'l', 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm', 'm'])
     table.header(["ID", "Experiments", "Description", "Instrument"])
     for dataset in datasets:
         table.add_row([dataset.id, "\n".join(dataset.experiments),
@@ -446,8 +446,8 @@ def render_datafile_as_table(datafile):
     heading = "\nModel: DataFile\n\n"
 
     table = Texttable()
-    table.set_cols_align(["l", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(['l', 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["DataFile field", "Value"])
     table.add_row(["ID", datafile.id])
     table.add_row(["Dataset", datafile.dataset])
@@ -488,8 +488,8 @@ def render_datafiles_as_table(datafiles):
         % (datafiles.url, datafiles.total_count, datafiles.limit, datafiles.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l", "l", "l", "l", "l", "l"])
-    table.set_cols_valign(["m", "m", "m", "m", "m", "m", "m"])
+    table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm'])
     table.header(["ID", "Directory", "Filename", "URI", "Verified", "Size", "MD5 Sum"])
     for datafile in datafiles:
         uris = [replica.uri for replica in datafile.replicas]
@@ -526,8 +526,8 @@ def render_storage_box_as_table(storage_box):
     storage_box_options_attributes += heading
 
     table = Texttable()
-    table.set_cols_align(["l", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(['l', 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["StorageBox field", "Value"])
     table.add_row(["ID", storage_box.id])
     table.add_row(["Name", storage_box.name])
@@ -537,8 +537,8 @@ def render_storage_box_as_table(storage_box):
     storage_box_options_attributes += heading
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(["r", 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["Key", "Value"])
     for option in storage_box.options:
         table.add_row([option.key, option.value])
@@ -548,8 +548,8 @@ def render_storage_box_as_table(storage_box):
     storage_box_options_attributes += heading
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(["r", 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["Key", "Value"])
     for attribute in storage_box.attributes:
         table.add_row([attribute.key, attribute.value])
@@ -586,8 +586,8 @@ def render_storage_boxes_as_table(storage_boxes):
            storage_boxes.limit, storage_boxes.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(["r", 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["ID", "Name"])
     for storage_box in storage_boxes:
         table.add_row([storage_box.id, storage_box.name])
@@ -615,10 +615,11 @@ def render_schema_as_table(schema):
     Returns ASCII table view of schema.
     """
     heading = "\nModel: Schema\n\n"
+    schema_parameter_names = heading
 
     table = Texttable()
-    table.set_cols_align(["l", "l"])
-    table.set_cols_valign(["m", "m"])
+    table.set_cols_align(['l', 'l'])
+    table.set_cols_valign(['m', 'm'])
     table.header(["Schema field", "Value"])
     table.add_row(["ID", schema.id])
     table.add_row(["Name", schema.name])
@@ -627,7 +628,30 @@ def render_schema_as_table(schema):
     table.add_row(["Subtype", schema.subtype])
     table.add_row(["Immutable", str(bool(schema.immutable))])
     table.add_row(["Hidden", str(bool(schema.hidden))])
-    return heading + table.draw() + "\n"
+    schema_parameter_names += table.draw() + "\n"
+
+    heading = "\nModel: ParameterName\n\n"
+    schema_parameter_names += heading
+
+    table = Texttable(max_width=0)
+    table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm', 'm'])
+    table.header(["ID", "Full Name", "Name", "Data Type",
+                  "Units", "Immutable", "Is Searchable", "Order", "Choices",
+                  "Comparison Type"])
+    for parameter_name in schema.parameter_names:
+        table.add_row([parameter_name.id,
+                       parameter_name.full_name.encode('utf8', 'ignore'),
+                       parameter_name.name, parameter_name.data_type,
+                       parameter_name.units.encode('utf8', 'ignore'),
+                       str(bool(parameter_name.immutable)),
+                       str(bool(parameter_name.is_searchable)),
+                       parameter_name.order,
+                       parameter_name.choices,
+                       parameter_name.comparison_type])
+    schema_parameter_names += table.draw() + "\n"
+
+    return schema_parameter_names
 
 def render_schemas(schemas, render_format):
     """
@@ -658,8 +682,8 @@ def render_schemas_as_table(schemas):
            schemas.limit, schemas.offset)
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", "l", "l", "l", "l", "l", "l"])
-    table.set_cols_valign(["m", "m", "m", "m", "m", "m", "m"])
+    table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm'])
     table.header(["ID", "Name", "Namespace", "Type", "Subtype", "Immutable",
                   "Hidden"])
     for schema in schemas:
