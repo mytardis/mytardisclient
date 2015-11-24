@@ -412,7 +412,27 @@ def render_dataset_as_table(dataset):
     table.add_row(["Experiment(s)", "\n".join(dataset.experiments)])
     table.add_row(["Description", dataset.description])
     table.add_row(["Instrument", dataset.instrument])
-    return table.draw() + "\n"
+    dataset_and_param_sets = table.draw() + "\n"
+
+    for dataset_param_set in dataset.parameter_sets:
+        dataset_and_param_sets += "\n"
+        table = Texttable(max_width=0)
+        table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l'])
+        table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm'])
+        table.header(["DatasetParameter ID", "Schema", "Parameter Name",
+                      "String Value", "Numerical Value", "Datetime Value",
+                      "Link ID"])
+        for dataset_param in dataset_param_set.parameters:
+            table.add_row([dataset_param.id,
+                           dataset_param.name.schema,
+                           dataset_param.name,
+                           dataset_param.string_value,
+                           dataset_param.numerical_value or '',
+                           dataset_param.datetime_value or '',
+                           dataset_param.link_id or ''])
+        dataset_and_param_sets += table.draw() + "\n"
+
+    return dataset_and_param_sets
 
 
 def render_datasets(datasets, render_format, display_heading=True):

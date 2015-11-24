@@ -8,6 +8,8 @@ import json
 
 from mytardisclient.conf import config
 from .resultset import ResultSet
+from .schema import Schema
+from .schema import ParameterName
 from .instrument import Instrument
 from mytardisclient.utils.exceptions import DoesNotExist
 
@@ -23,12 +25,16 @@ class Dataset(object):
         self.description = None
         self.instrument = None
         self.experiments = []
+        self.parameter_sets = []
         if dataset_json:
             for key in self.__dict__.keys():
                 if key in dataset_json:
                     self.__dict__[key] = dataset_json[key]
             if dataset_json['instrument']:
                 self.instrument = Instrument(dataset_json['instrument'])
+            self.parameter_sets = []
+            for dataset_param_set_json in dataset_json['parameter_sets']:
+                self.parameter_sets.append(DatasetParameterSet(dataset_param_set_json))
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
@@ -112,3 +118,62 @@ class Dataset(object):
             raise Exception(message)
         dataset_json = response.json()
         return Dataset(dataset_json)
+
+
+class DatasetParameterSet(object):
+    """
+    Model class for MyTardis API v1's DatasetParameterSetResource.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    # pylint: disable=too-few-public-methods
+    def __init__(self, dataset_paramset_json):
+        self.json = dataset_paramset_json
+        self.id = dataset_paramset_json['id']  # pylint: disable=invalid-name
+        self.dataset = dataset_paramset_json['dataset']
+        self.schema = Schema(dataset_paramset_json['schema'])
+        self.parameters = []
+        for dataset_param_json in dataset_paramset_json['parameters']:
+            self.parameters.append(DatasetParameter(dataset_param_json))
+
+    @staticmethod
+    @config.region.cache_on_arguments(namespace="DatasetParameterSet")
+    def list(dataset_id):
+        """
+        List dataset parameter sets associated with dataset ID
+        dataset_id.
+        """
+        url = "%s/api/v1/datasetparameterset/?format=json" % config.url
+        url += "&datasets__id=%s"  % dataset_id
+        response = requests.get(url=url, headers=config.default_headers)
+        if response.status_code != 200:
+            message = response.text
+            raise Exception(message)
+
+        filters = dict(dataset_id=dataset_id)
+        return ResultSet(DatasetParameterSet, url, response.json(), **filters)
+
+
+class DatasetParameter(object):
+    """
+    Model class for MyTardis API v1's DatasetParameterResource.
+    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
+    """
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-many-instance-attributes
+    def __init__(self, dataset_param_json):
+        self.json = dataset_param_json
+        self.id = dataset_param_json['id']  # pylint: disable=invalid-name
+        self.name = ParameterName.get(dataset_param_json['name'].split('/')[-2])
+        self.string_value = dataset_param_json['string_value']
+        self.numerical_value = dataset_param_json['numerical_value']
+        self.datetime_value = dataset_param_json['datetime_value']
+        self.link_id = dataset_param_json['link_id']
+        self.value = dataset_param_json['value']
+
+    @staticmethod
+    @config.region.cache_on_arguments(namespace="DatasetParameter")
+    def list(dataset_param_set):
+        """
+        List dataset parameter records in parameter set.
+        """
+        pass
