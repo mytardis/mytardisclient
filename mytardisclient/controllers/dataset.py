@@ -33,7 +33,7 @@ class DatasetController(object):
             return self.get(args.dataset_id, render_format)
         elif command == "create":
             return self.create(args.experiment_id, args.description,
-                               render_format)
+                               args.instrument, args.params, render_format)
         elif command == "update":
             return self.update(args.dataset_id, args.description,
                                render_format)
@@ -59,12 +59,15 @@ class DatasetController(object):
             datafiles = DataFile.list(dataset_id)
             print render(datafiles, render_format)
 
-    def create(self, experiment_id, description, render_format):
+    def create(self, experiment_id, description, instrument_id, params,
+               render_format):
         """
         Create dataset record.
         """
+        # pylint: disable=too-many-arguments
         # pylint: disable=no-self-use
-        dataset = Dataset.create(experiment_id, description)
+        dataset = Dataset.create(experiment_id, description, instrument_id,
+                                 params)
         print render(dataset, render_format)
         print "Dataset created successfully."
 

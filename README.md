@@ -295,7 +295,7 @@ We can create an experiment record with parameters as follows:
 (mytardisclient) $ cat << EOF > experiment_params.json
 [
     {
-        "schema": "https://mytardis.org/sample-experiment-schema",
+        "schema": "https://mytardis.org/schemas/sample-experiment-schema",
         "parameters": [
             {
                 "name": "sample_parameter_name",
@@ -330,23 +330,23 @@ Experiment created successfully.
 We are used an experiment schema which is defined as follows:
 
 (mytardisclient) $ mytardis schema get 12
-+--------------+-----------------------------------------------+
-| Schema field |                     Value                     |
-+==============+===============================================+
-| ID           | 12                                            |
-+--------------+-----------------------------------------------+
-| Name         | Sample Experiment Schema                      |
-+--------------+-----------------------------------------------+
-| Namespace    | https://mytardis.org/sample-experiment-schema |
-+--------------+-----------------------------------------------+
-| Type         | Experiment schema                             |
-+--------------+-----------------------------------------------+
-| Subtype      |                                               |
-+--------------+-----------------------------------------------+
-| Immutable    | False                                         |
-+--------------+-----------------------------------------------+
-| Hidden       | False                                         |
-+--------------+-----------------------------------------------+
++--------------+-------------------------------------------------------+
+| Schema field |                     Value                             |
++==============+=======================================================+
+| ID           | 12                                                    |
++--------------+-------------------------------------------------------+
+| Name         | Sample Experiment Schema                              |
++--------------+-------------------------------------------------------+
+| Namespace    | https://mytardis.org/schemas/sample-experiment-schema |
++--------------+-------------------------------------------------------+
+| Type         | Experiment schema                                     |
++--------------+-------------------------------------------------------+
+| Subtype      |                                                       |
++--------------+-------------------------------------------------------+
+| Immutable    | False                                                 |
++--------------+-------------------------------------------------------+
+| Hidden       | False                                                 |
++--------------+-------------------------------------------------------+
 
 +------------------+-----------------------+-----------------------+-----------+-------+-----------+---------------+-------+---------+-----------------+
 | ParameterName ID |       Full Name       |         Name          | Data Type | Units | Immutable | Is Searchable | Order | Choices | Comparison Type |
@@ -355,3 +355,42 @@ We are used an experiment schema which is defined as follows:
 +------------------+-----------------------+-----------------------+-----------+-------+-----------+---------------+-------+---------+-----------------+
 ```
 
+We can also create a dataset with parameters:
+```
+(mytardisclient) $ mytardis dataset create --help
+usage: mytardis dataset create [-h] [--instrument INSTRUMENT]
+                               [--params PARAMS]
+                               experiment_id description
+
+positional arguments:
+  experiment_id         The experiment ID.
+  description           The dataset description.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --instrument INSTRUMENT
+                        The instrument ID.
+  --params PARAMS       A JSON file containing dataset parameters.
+
+(mytardisclient) $ mytardis dataset create --params dataset_params.json 12 "Dataset With Params"
++---------------+------------------------+
+| Dataset field |         Value          |
++===============+========================+
+| ID            | 38                     |
++---------------+------------------------+
+| Experiment(s) | /api/v1/experiment/12/ |
++---------------+------------------------+
+| Description   | Dataset With Params    |
++---------------+------------------------+
+| Instrument    | None                   |
++---------------+------------------------+
+
++---------------------+-----------------------+-----------------------+------------------------+-----------------+----------------+---------+
+| DatasetParameter ID |        Schema         |    Parameter Name     |      String Value      | Numerical Value | Datetime Value | Link ID |
++=====================+=======================+=======================+========================+=================+================+=========+
+|                   2 | Sample Dataset Schema | Sample Parameter Name | Sample Parameter Value |                 |                |         |
++---------------------+-----------------------+-----------------------+------------------------+-----------------+----------------+---------+
+
+Dataset created successfully.
+
+```

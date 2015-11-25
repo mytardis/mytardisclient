@@ -5,6 +5,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 
 import requests
 import json
+import os
 
 from mytardisclient.conf import config
 from .resultset import ResultSet
@@ -83,7 +84,8 @@ class Dataset(object):
         return Dataset(dataset_json=datasets_json['objects'][0])
 
     @staticmethod
-    def create(experiment_id, description, instrument_id=None):
+    def create(experiment_id, description, instrument_id=None,
+               params_file_json=None):
         """
         Create a dataset.
         """
@@ -93,7 +95,12 @@ class Dataset(object):
             "immutable": False
         }
         if instrument_id:
-            new_dataset_json['instrument'] = "/api/v1/instrument/%s/" % instrument_id
+            new_dataset_json['instrument'] = "/api/v1/instrument/%s/" \
+                % instrument_id
+        if params_file_json:
+            assert os.path.exists(params_file_json)
+            with open(params_file_json) as params_file:
+                new_dataset_json['parameter_sets'] = json.load(params_file)
         url = config.url + "/api/v1/dataset/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_dataset_json))

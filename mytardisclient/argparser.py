@@ -241,6 +241,8 @@ class ArgParser(object):
             "description", help="The dataset description.")
         dataset_command_create_parser.add_argument("--instrument",
                                                    help="The instrument ID.")
+        dataset_command_create_parser.add_argument(
+            "--params", help="A JSON file containing dataset parameters.")
 
         dataset_cmd_update_parser = \
             dataset_command_parsers.add_parser("update")
