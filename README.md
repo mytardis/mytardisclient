@@ -1,5 +1,5 @@
 # MyTardis Client
-Command Line Interface and Python classes for interacting with MyTardis's API.
+Command Line Interface and Python classes for interacting with MyTardis's REST API.
 
 Install:
 ```

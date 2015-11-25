@@ -2,6 +2,7 @@
 argparser.py
 """
 from argparse import ArgumentParser
+import textwrap
 
 
 class ArgParser(object):
@@ -9,7 +10,8 @@ class ArgParser(object):
     Defines parsing rules for command-line interface arguments.
     """
     def __init__(self):
-        self.parser = ArgumentParser(prog='mytardis', description="")
+        description = "Command-line interface for MyTardis REST API."
+        self.parser = ArgumentParser(prog='mytardis', description=description)
         self.parser.add_argument(
             "--verbose", action='store_true', help="More verbose output.")
         self.model_parsers = \
@@ -56,16 +58,77 @@ class ArgParser(object):
         'mytardis api' allows the user to list API endpoints
         supported by the MyTardis API.
         """
-        api_parser = self.model_parsers.add_parser("api")
+        api_help = "List models accessible via MyTardis's REST API."
+        api_parser = self.model_parsers.add_parser("api", help=api_help)
         api_command_parsers = \
             api_parser.add_subparsers(help='available commands',
                                       dest='command')
 
-        api_command_list_parser = api_command_parsers.add_parser("list")
+        api_list_help = "List models accessible via MyTardis's REST API."
+        api_list_usage = textwrap.dedent("""\
+            mytardis api list [-h] [--json]
+
+              EXAMPLE
+
+              $ mytardis api list
+
+              API Endpoints
+              +------------+---------------------+----------------------------+
+              | Model      | List Endpoint       | Schema                     |
+              +============+=====================+============================+
+              | facility   | /api/v1/facility/   | /api/v1/facility/schema/   |
+              +------------+---------------------+----------------------------+
+              | instrument | /api/v1/instrument/ | /api/v1/instrument/schema/ |
+              +------------+---------------------+----------------------------+
+              | experiment | /api/v1/experiment/ | /api/v1/experiment/schema/ |
+              +------------+---------------------+----------------------------+
+              | dataset    | /api/v1/dataset/    | /api/v1/dataset/schema/    |
+              +------------+---------------------+----------------------------+
+               ...          ...                   ...
+              +------------+---------------------+----------------------------+
+            """)
+        api_command_list_parser = \
+            api_command_parsers.add_parser("list", help=api_list_help,
+                                           usage=api_list_usage)
         api_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
 
-        api_command_get_parser = api_command_parsers.add_parser("get")
+        api_get_help = (
+            "Display the schema for a particular MyTardis API model, "
+            "showing which fields are accesible via the API, which fields "
+            "support filtering, and which fields support ordering.")
+        api_get_usage = textwrap.dedent("""\
+            mytardis api get [-h] [--json] api_model
+
+              EXAMPLE
+
+              $ mytardis api get facility
+              +------------------+------------------------------------------+
+              | API Schema field |                   Value                  |
+              +==================+==========================================+
+              | Model            | facility                                 |
+              +------------------+------------------------------------------+
+              | Fields           | id                                       |
+              |                  | manager_group                            |
+              |                  | name                                     |
+              |                  | resource_uri                             |
+              +------------------+------------------------------------------+
+              | Filtering        | {                                        |
+              |                  |   "id": [                                |
+              |                  |     "exact"                              |
+              |                  |   ],                                     |
+              |                  |   "manager_group": "ALL_WITH_RELATIONS", |
+              |                  |   "name": [                              |
+              |                  |     "exact"                              |
+              |                  |   ]                                      |
+              |                  | }                                        |
+              +------------------+------------------------------------------+
+              | Ordering         | {}                                       |
+              +------------------+------------------------------------------+
+            """)
+        api_command_get_parser = \
+            api_command_parsers.add_parser("get", help=api_get_help,
+                                           usage=api_get_usage)
         api_command_get_parser.add_argument("api_model", help="The model name.")
         api_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
@@ -75,24 +138,76 @@ class ArgParser(object):
         'mytardis config' prompts users for settings to write to
         mytardisclient.models.config.DEFAULT_CONFIG_PATH
         """
-        self.model_parsers.add_parser("config")
+        config_help = "Set MyTardis URL, username and API key."
+        config_usage = textwrap.dedent("""\
+            mytardis config [-h]
+
+              EXAMPLE
+
+              $ mytardis config
+              MyTardis URL? http://mytardisdemo.erc.monash.edu.au
+              MyTardis Username? demofacility
+              MyTardis API key? 644be179cc6773c30fc471bad61b50c90897146c
+
+              Wrote settings to /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
+            """)
+        self.model_parsers.add_parser("config", help=config_help,
+                                      usage=config_usage)
 
     def build_version_parser(self):
         """
         Displays the mytardisclient version
         """
-        self.model_parsers.add_parser("version")
+        version_help = "Display the MyTardis Client version."
+        version_usage = textwrap.dedent("""\
+            mytardis version [-h]
+
+            $ mytardis version
+            MyTardis Client v0.0.1""")
+        self.model_parsers.add_parser("version", help=version_help,
+                                      usage=version_usage)
 
     def build_facility_parser(self):
         """
-        Builds parsing rules for facility-related command-line interface arguments.
+        Builds parsing rules for facility-related
+        command-line interface arguments.
         """
-        facility_parser = self.model_parsers.add_parser("facility")
+        facility_help = \
+            "Display a list of facility records or a single facility record."
+        facility_usage = "mytardis facility [-h] {list,get} ..."
+        facility_parser = \
+            self.model_parsers.add_parser("facility", help=facility_help,
+                                          usage=facility_usage)
         facility_command_parsers = \
             facility_parser.add_subparsers(help='available commands',
                                            dest='command')
 
-        facility_command_list_parser = facility_command_parsers.add_parser("list")
+        facility_list_help = "Display a list of facility records."
+        facility_list_usage = textwrap.dedent("""\
+            mytardis facility list
+                [--limit LIMIT] [--offset OFFSET] [--order_by ORDER_BY] [--json]
+
+              EXAMPLE
+
+              $ mytardis facility list
+
+              Model: Facility
+              Query: http://mytardisdemo.erc.monash.edu.au/api/v1/facility/?format=json
+              Total Count: 2
+              Limit: 20
+              Offset: 0
+
+              +----+---------------+------------------------+
+              | ID |     Name      |     Manager Group      |
+              +====+===============+========================+
+              |  1 | Demo Facility | demo-facility-managers |
+              +----+---------------+------------------------+
+              |  2 | Test Facility | test-facility-managers |
+              +----+---------------+------------------------+
+            """)
+        facility_command_list_parser = \
+            facility_command_parsers.add_parser("list", help=facility_list_help,
+                                                usage=facility_list_usage)
         facility_command_list_parser.add_argument(
             "--limit", help="Maximum number of results to return.")
         facility_command_list_parser.add_argument(
@@ -104,8 +219,46 @@ class ArgParser(object):
         facility_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
 
+        facility_get_help = "Display a single facility record."
+        facility_get_usage = textwrap.dedent("""\
+            mytardis facility get [-h] [--json] facility_id
+
+              EXAMPLE
+
+              $ mytardis facility get 1
+
+              Model: Facility
+
+              +----------------+------------------------+
+              | Facility field |         Value          |
+              +================+========================+
+              | ID             | 1                      |
+              +----------------+------------------------+
+              | Name           | Demo Facility          |
+              +----------------+------------------------+
+              | Manager Group  | demo-facility-managers |
+              +----------------+------------------------+
+
+
+              Model: Instrument
+              Query: http://mytardisdemo.erc.monash.edu.au/api/v1/instrument/?format=json&facility__id=1
+              Total Count: 3
+              Limit: 20
+              Offset: 0
+
+              +----+-------------------------+---------------+
+              | ID |          Name           |   Facility    |
+              +====+=========================+===============+
+              |  3 | Test Instrument         | Demo Facility |
+              +----+-------------------------+---------------+
+              |  4 | Beamline                | Demo Facility |
+              +----+-------------------------+---------------+
+              |  8 | James Test Instrument   | Demo Facility |
+              +----+-------------------------+---------------+
+            """)
         facility_command_get_parser = \
-            facility_command_parsers.add_parser("get")
+            facility_command_parsers.add_parser("get", help=facility_get_help,
+                                                usage=facility_get_usage)
         facility_command_get_parser.add_argument("facility_id",
                                                  help="The facility ID.")
         facility_command_get_parser.add_argument(
@@ -115,13 +268,46 @@ class ArgParser(object):
         """
         Builds parsing rules for instrument-related command-line interface arguments.
         """
-        instrument_parser = self.model_parsers.add_parser("instrument")
+        # pylint: disable=too-many-locals
+        instrument_help = \
+            "Display a list of instrument records or a single instrument record."
+        instrument_usage = "mytardis instrument [-h] {list,get,create,update} ..."
+        instrument_parser = \
+            self.model_parsers.add_parser("instrument", help=instrument_help,
+                                          usage=instrument_usage)
         instrument_command_parsers = \
             instrument_parser.add_subparsers(help='available commands',
                                              dest='command')
 
+        instrument_list_help = "Display a list of instrument records."
+        instrument_list_usage = textwrap.dedent("""\
+            mytardis instrument list
+                [--facility FACILITY] [--limit LIMIT] [--offset OFFSET] [--order_by ORDER_BY] [--json]
+
+              EXAMPLE
+           
+              $ mytardis instrument list --facility 1
+
+              Model: Instrument
+              Query: http://mytardisdemo.erc.monash.edu.au/api/v1/instrument/?format=json&facility__id=1
+              Total Count: 3
+              Limit: 20
+              Offset: 0
+
+              +----+-------------------------+---------------+
+              | ID |          Name           |   Facility    |
+              +====+=========================+===============+
+              |  3 | Test Instrument         | Demo Facility |
+              +----+-------------------------+---------------+
+              |  4 | Beamline                | Demo Facility |
+              +----+-------------------------+---------------+
+              |  8 | James Test Instrument   | Demo Facility |
+              +----+-------------------------+---------------+
+            """)
         instrument_command_list_parser = \
-            instrument_command_parsers.add_parser("list")
+            instrument_command_parsers.add_parser("list",
+                                                  help=instrument_list_help,
+                                                  usage=instrument_list_usage)
         instrument_command_list_parser.add_argument("--facility",
                                                     help="The facility ID.")
         instrument_command_list_parser.add_argument(
@@ -135,22 +321,85 @@ class ArgParser(object):
         instrument_command_list_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
 
+        instrument_get_help = "Display a single instrument record."
+        instrument_get_usage = textwrap.dedent("""\
+            mytardis instrument get [-h] [--json] instrument_id
+
+              EXAMPLE
+
+              $ mytardis instrument get 3
+
+              +------------------+-----------------+
+              | Instrument field |      Value      |
+              +==================+=================+
+              | ID               | 3               |
+              +------------------+-----------------+
+              | Name             | Test Instrument |
+              +------------------+-----------------+
+              | Facility         | Demo Facility   |
+              +------------------+-----------------+
+            """)
         instrument_command_get_parser = \
-            instrument_command_parsers.add_parser("get")
+            instrument_command_parsers.add_parser("get",
+                                                  help=instrument_get_help,
+                                                  usage=instrument_get_usage)
         instrument_command_get_parser.add_argument("instrument_id",
                                                    help="The instrument ID.")
         instrument_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
 
+        instrument_create_help = "Create an instrument record."
+        instrument_create_usage = textwrap.dedent("""\
+            mytardis instrument create [-h] facility_id name
+
+              EXAMPLE
+
+              $ mytardis instrument create 1 "New Instrument"
+              +------------------+----------------+
+              | Instrument field |     Value      |
+              +==================+================+
+              | ID               | 9              |
+              +------------------+----------------+
+              | Name             | New Instrument |
+              +------------------+----------------+
+              | Facility         | Demo Facility  |
+              +------------------+----------------+
+
+              Instrument created successfully.
+            """)
         instrument_cmd_create_parser = \
-            instrument_command_parsers.add_parser("create")
+            instrument_command_parsers.add_parser("create",
+                                                  help=instrument_create_help,
+                                                  usage=instrument_create_usage)
         instrument_cmd_create_parser.add_argument(
             "facility_id", help="The ID of the new instrument's facility.")
         instrument_cmd_create_parser.add_argument(
             "name", help="The name of the instrument to create.")
 
+        instrument_update_help = "Update/rename an existing instrument record."
+        instrument_update_usage = textwrap.dedent("""\
+            mytardis instrument update [-h] [--name NAME] instrument_id
+
+              EXAMPLE
+
+              $ mytardis instrument update --name "Renamed New Instrument" 9
+
+              +------------------+------------------------+
+              | Instrument field |         Value          |
+              +==================+========================+
+              | ID               | 9                      |
+              +------------------+------------------------+
+              | Name             | Renamed New Instrument |
+              +------------------+------------------------+
+              | Facility         | Demo Facility          |
+              +------------------+------------------------+
+
+              Instrument updated successfully.
+            """)
         instrument_cmd_update_parser = \
-            instrument_command_parsers.add_parser("update")
+            instrument_command_parsers.add_parser("update",
+                                                  help=instrument_update_help,
+                                                  usage=instrument_update_usage)
         instrument_cmd_update_parser.add_argument(
             "instrument_id", help="The ID of the instrument to update.")
         instrument_cmd_update_parser.add_argument(
@@ -370,3 +619,10 @@ class ArgParser(object):
         schema_command_get_parser.add_argument("schema_id", help="The schema ID.")
         schema_command_get_parser.add_argument(
             "--json", action='store_true', help="Display results in JSON format.")
+
+
+def get_parser():
+    """
+    Used by sphinx-argparse.
+    """
+    return ArgParser().build_parser()

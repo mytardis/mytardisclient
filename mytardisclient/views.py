@@ -138,7 +138,7 @@ def render_api_endpoints_as_table(api_endpoints, display_heading=True):
         "API Endpoints\n" if display_heading else ""
 
     table = Texttable(max_width=0)
-    table.set_cols_align(["r", 'l', 'l'])
+    table.set_cols_align(["l", 'l', 'l'])
     table.set_cols_valign(['m', 'm', 'm'])
     table.header(["Model", "List Endpoint", "Schema"])
     for api_endpoint in api_endpoints:

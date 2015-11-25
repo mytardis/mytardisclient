@@ -16,5 +16,5 @@ setup(name='mytardisclient',
           ],
       },
       install_requires=['requests', 'ConfigParser', 'texttable',
-                        'dogpile.cache'],
+                        'dogpile.cache', 'sphinx-argparse'],
       zip_safe=False)
