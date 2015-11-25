@@ -3,13 +3,16 @@ from setuptools import setup
 import mytardisclient
 
 setup(name='mytardisclient',
+      packages=['mytardisclient'],
       version=mytardisclient.__version__,
       description='Command-line client for MyTardis API',
-      url='http://github.com/wettenhj/mytardisclient',
       author='James Wettenhall',
       author_email='james.wettenhall@monash.edu',
+      url='http://github.com/wettenhj/mytardisclient',
+      download_url = 'https://github.com/wettenhj/mytardisclient/tarball/0.0.1',
+      keywords = ['mytardis', 'REST'], # arbitrary keywords
+      classifiers = [],
       license='GPL',
-      packages=['mytardisclient'],
       entry_points={
           "console_scripts": [
               "mytardis = mytardisclient.client:run",
