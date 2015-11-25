@@ -78,7 +78,8 @@ class DataFile(object):
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
-            print "url: %s" % url
+            print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             message = response.text
             raise Exception(message)
 
@@ -100,6 +101,7 @@ class DataFile(object):
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             if response.status_code == 404:
                 message = "Datafile with ID %s doesn't exist." % datafile_id
                 raise DoesNotExist(message, url, response, DataFile)
@@ -187,6 +189,8 @@ class DataFile(object):
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_datafile_json))
         if response.status_code != 201:
+            print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             message = response.text
             raise Exception(message)
         datafile_id = response.headers['location'].split("/")[-2]
@@ -205,7 +209,8 @@ class DataFile(object):
                                                config.apikey)}
         response = requests.get(url=url, headers=headers, stream=True)
         if response.status_code != 200:
-            print "url: %s" % url
+            print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             message = response.text
             raise Exception(message)
         try:
@@ -249,8 +254,8 @@ class DataFile(object):
                                  files={'attached_file': file_obj})
         file_obj.close()
         if response.status_code != 201:
-            print "url: %s" % url
             print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             message = response.text
             raise Exception(message)
         if directory:
@@ -276,6 +281,7 @@ class DataFile(object):
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             message = response.text
             raise Exception(message)
         datafile_json = response.json()
@@ -308,6 +314,8 @@ class DataFileParameterSet(object):
         url += "&datafiles__id=%s" % datafile_id
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
+            print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             message = response.text
             raise Exception(message)
 

@@ -8,6 +8,7 @@ def build_experiment_parser(argument_parser):
     """
     Builds parsing rules for experiment-related command-line interface arguments.
     """
+    # pylint: disable=too-many-locals
     experiment_help = \
         "Display a list of experiment records or a single experiment record."
     experiment_usage = "mytardis experiment [-h] {list,get,create,update} ..."
@@ -207,7 +208,6 @@ def build_experiment_parser(argument_parser):
     experiment_cmd_create_parser.add_argument(
         "--params", help="A JSON file containing experiment parameters.")
 
-    
     experiment_update_help = "Update an experiment record."
     experiment_update_usage = textwrap.dedent("""\
         mytardis experiment update

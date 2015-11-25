@@ -8,16 +8,10 @@ def build_dataset_parser(argument_parser):
     """
     Builds parsing rules for dataset-related command-line interface arguments.
     """
+    # pylint: disable=too-many-locals
     dataset_help = \
         "Display a list of dataset records or a single dataset record."
-    # Dataset updates are not yet enabled in the MyTardis API,
-    # see the "update_detail" method in tardis/tardis_portal/api.py
-    allow_dataset_updates = False
-
-    if allow_dataset_updates:
-        dataset_usage = "mytardis dataset [-h] {list,get,create,update} ..."
-    else:
-        dataset_usage = "mytardis dataset [-h] {list,get,create} ..."
+    dataset_usage = "mytardis dataset [-h] {list,get,create,update} ..."
     dataset_parser = \
         argument_parser.model_parsers.add_parser("dataset",
                                                  help=dataset_help,
@@ -230,9 +224,6 @@ def build_dataset_parser(argument_parser):
     dataset_command_create_parser.add_argument(
         "--params", help="A JSON file containing dataset parameters.")
 
-    if not allow_dataset_updates:
-        return
-
     dataset_update_help = "Update a dataset record."
     dataset_update_usage = textwrap.dedent("""\
         mytardis dataset update
@@ -245,11 +236,8 @@ def build_dataset_parser(argument_parser):
             ...
           Exception
 
-          $ echo $?
-          1
-
-          We have used the correct syntax, but in this case, we don't have
-          permission to update the dataset.
+          Dataset updates are not yet enabled in the MyTardis API.
+          See the "update_detail" method in tardis/tardis_portal/api.py
         """)
     dataset_cmd_update_parser = \
         dataset_command_parsers.add_parser("update",
