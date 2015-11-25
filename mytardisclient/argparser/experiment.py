@@ -207,8 +207,32 @@ def build_experiment_parser(argument_parser):
     experiment_cmd_create_parser.add_argument(
         "--params", help="A JSON file containing experiment parameters.")
 
+    
+    experiment_update_help = "Update an experiment record."
+    experiment_update_usage = textwrap.dedent("""\
+        mytardis experiment update
+            [--title TITLE] [--description DESCRIPTION] experiment_id
+
+          EXAMPLE
+          $ mytardis experiment update --title "Renamed Exp" 20
+          +------------------+-------------------+
+          | Experiment field |       Value       |
+          +==================+===================+
+          | ID               | 20                |
+          +------------------+-------------------+
+          | Institution      | Monash University |
+          +------------------+-------------------+
+          | Title            | Renamed Exp       |
+          +------------------+-------------------+
+          | Description      |                   |
+          +------------------+-------------------+
+
+          Experiment updated successfully.
+        """)
     experiment_cmd_update_parser = \
-        experiment_command_parsers.add_parser("update")
+        experiment_command_parsers.add_parser("update",
+                                              help=experiment_update_help,
+                                              usage=experiment_update_usage)
     experiment_cmd_update_parser.add_argument(
         "experiment_id", help="The ID of the experiment to update.")
     experiment_cmd_update_parser.add_argument(

@@ -564,8 +564,8 @@ def render_datafiles_as_table(datafiles, display_heading=True):
     table = Texttable(max_width=0)
     table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l'])
     table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm'])
-    table.header(["ID", "Directory", "Filename", "URI", "Verified",
-                  "Size", "MD5 Sum"])
+    table.header(["DataFile ID", "Directory", "Filename", "URI",
+                  "Verified", "Size", "MD5 Sum"])
     for datafile in datafiles:
         uris = [replica.uri for replica in datafile.replicas]
         table.add_row([datafile.id, datafile.directory, datafile.filename,
