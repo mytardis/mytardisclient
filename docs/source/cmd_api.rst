@@ -2,7 +2,7 @@ mytardis api
 ************
 
 .. argparse::
-   :module: mytardisclient.argparser
+   :module: mytardisclient.argparser.__init__
    :func: get_parser
    :prog: mytardis
    :path: api
