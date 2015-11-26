@@ -97,6 +97,9 @@ class Config(object):
             except:
                 logger.error(traceback.format_exc())
 
+        self.update_default_headers()
+
+    def update_default_headers(self):
         self.default_headers = {
             "Authorization": "ApiKey %s:%s" % (self.username,
                                                self.apikey),

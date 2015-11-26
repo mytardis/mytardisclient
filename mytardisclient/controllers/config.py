@@ -18,7 +18,7 @@ class ConfigController(object):
         """
         Configure MyTardis Client settings.
         """
-        if args and args.key:
+        if args and hasattr(args, 'key') and args.key:
             print getattr(config, args.key)
             return
 
@@ -33,4 +33,5 @@ class ConfigController(object):
         config.username = raw_input("MyTardis Username? ")
         config.apikey = raw_input("MyTardis API key? ")
         config.save(self.path)
+        config.update_default_headers()
         print "\nWrote settings to %s" % self.path
