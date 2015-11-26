@@ -39,7 +39,7 @@ def run():
     config_path = DEFAULT_CONFIG_PATH
     if not os.path.exists(config_path) or \
             args.model == 'config':
-        ConfigController(config_path).configure()
+        ConfigController(config_path).configure(args)
         if args.model == 'config':
             sys.exit(0)
     config = Config(config_path)

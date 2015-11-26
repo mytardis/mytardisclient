@@ -14,10 +14,14 @@ class ConfigController(object):
     def __init__(self, path):
         self.path = path
 
-    def configure(self):
+    def configure(self, args=None):
         """
         Configure MyTardis Client settings.
         """
+        if args and args.key:
+            print getattr(config, args.key)
+            return
+
         if os.path.exists(self.path):
             print "A config file already exists at %s" % self.path
             overwrite = raw_input("Are you sure you want to overwrite it? ")
