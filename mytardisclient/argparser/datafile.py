@@ -100,8 +100,44 @@ def build_datafile_parser(argument_parser):
     datafile_command_get_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")
 
+    datafile_create_help = textwrap.dedent("""\
+        Create a datafile record.
+        """)
+    datafile_create_usage = textwrap.dedent("""\
+        mytardis datafile create
+            [--directory DIRECTORY] [--storagebox STORAGEBOX] dataset_id file_path
+
+          EXAMPLE
+
+          $ mytardis datafile create 31 path/test.txt
+
+          Model: DataFile
+
+          +----------------+------------------------------------+
+          | DataFile field |               Value                |
+          +================+====================================+
+          | ID             | 119                                |
+          +----------------+------------------------------------+
+          | Dataset        | /api/v1/dataset/31/                |
+          +----------------+------------------------------------+
+          | Filename       | test.txt                           |
+          +----------------+------------------------------------+
+          | URI            | James Test Dataset 001-31/test.txt |
+          +----------------+------------------------------------+
+          | Verified       | False                              |
+          +----------------+------------------------------------+
+          | Size           |   5 bytes                          |
+          +----------------+------------------------------------+
+          | MD5 Sum        | 2205e48de5f93c784733ffcca841d2b5   |
+          +----------------+------------------------------------+
+
+          DataFile created successfully.
+            """)
     datafile_command_create_parser = \
-        datafile_command_parsers.add_parser("create")
+        datafile_command_parsers.add_parser(
+            "create",
+            help=datafile_create_help,
+            usage=datafile_create_usage)
     datafile_command_create_parser.add_argument(
         "dataset_id", help="The dataset ID.")
     datafile_command_create_parser.add_argument(
@@ -127,7 +163,7 @@ def build_datafile_parser(argument_parser):
     datafile_cmd_download_parser.add_argument("datafile_id",
                                               help="The datafile ID.")
 
-    datafile_upload_help = "Download a datafile."
+    datafile_upload_help = "Upload a datafile."
     datafile_upload_usage = textwrap.dedent("""\
         mytardis datafile upload dataset_id [--directory DIRECTORY] file_path
 
