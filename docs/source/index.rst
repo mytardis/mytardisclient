@@ -1,5 +1,5 @@
-MyTardis Client Documentation
-=============================
+MyTardis Client
+===============
 
 Contents
 ^^^^^^^^

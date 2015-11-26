@@ -4,9 +4,6 @@ MyTardis Client Command-Line Interface
 MyTardis Client provides a command line interface and various Python
 classes for interacting with MyTardis's REST API.
 
-Contents
-^^^^^^^^
-
 .. toctree::
     :maxdepth: 1
 
