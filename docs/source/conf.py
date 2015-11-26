@@ -107,6 +107,9 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 # html_theme = 'alabaster'
 html_theme = 'classic'
+html_theme_options = {
+    "sidebarwidth": "275",
+}
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
