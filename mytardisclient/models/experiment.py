@@ -49,6 +49,8 @@ class Experiment(object):
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
+            print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             message = response.text
             raise Exception(message)
 
@@ -116,6 +118,7 @@ class Experiment(object):
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
+            print "URL: %s" % url
             message = response.text
             raise Exception(message)
         experiment_json = response.json()
