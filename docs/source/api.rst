@@ -67,6 +67,15 @@ mytardisclient.models.datafile
     :inherited-members:
     :show-inheritance:
 
+mytardisclient.models.schema
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: mytardisclient.models.schema
+    :members:
+    :undoc-members:
+    :inherited-members:
+    :show-inheritance:
+
 mytardisclient.models.storagebox
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
