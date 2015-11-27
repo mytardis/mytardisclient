@@ -1,5 +1,6 @@
 """
-Controller class for running commands (list, get, download, upload, update)
+Controller class for running commands (list, get, download, upload, update,
+                                       verify)
 on datafile records.
 """
 
@@ -9,7 +10,8 @@ from mytardisclient.views import render
 
 class DataFileController(object):
     """
-    Controller class for running commands (list, get, download, upload, update)
+    Controller class for running commands (list, get, download, upload, update,
+                                           verify))
     on datafile records.
     """
     def __init__(self):
@@ -19,6 +21,7 @@ class DataFileController(object):
         """
         Generic run command method.
         """
+        # pylint: disable=too-many-return-statements
         command = args.command
         if hasattr(args, 'json') and args.json:
             render_format = 'json'
@@ -40,6 +43,8 @@ class DataFileController(object):
             return self.upload(args.dataset_id, args.directory, args.file_path)
         elif command == "update":
             return self.update(args.datafile_id, args.md5sum, render_format)
+        elif command == "verify":
+            return self.verify(args.datafile_id)
 
     def list(self, dataset_id, directory, filename,
              limit, offset, order_by, render_format):
@@ -94,3 +99,10 @@ class DataFileController(object):
         datafile = DataFile.update(datafile_id, md5sum)
         print render(datafile, render_format)
         print "DataFile updated successfully."
+
+    def verify(self, datafile_id):
+        """
+        Ask MyTardis to verify a datafile.
+        """
+        # pylint: disable=no-self-use
+        DataFile.verify(datafile_id)

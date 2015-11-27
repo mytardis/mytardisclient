@@ -155,7 +155,7 @@ class DataFile(object):
         specifies the location of 'results.dat' on the analysis server.
 
         To enable the MyTardis server to access (and verify) the file via
-        SSHFS / SFTP, a symbolic link can be created in 
+        SSHFS / SFTP, a symbolic link can be created in
         ~james/.mytardisclient/datasets/, named "dataset1-123" pointing to
         the location of 'results.dat', i.e. ~james/analysis/dataset1/.
         """
@@ -282,6 +282,21 @@ class DataFile(object):
             raise Exception(message)
         datafile_json = response.json()
         return DataFile(datafile_json)
+
+    @staticmethod
+    def verify(datafile_id):
+        """
+        Ask MyTardis to verify a datafile with id datafile_id
+        """
+        url = "%s/api/v1/dataset_file/%s/verify/" \
+            % (config.url, datafile_id)
+        response = requests.get(url=url, headers=config.default_headers)
+        if response.status_code != 200:
+            print "HTTP %s" % response.status_code
+            print "URL: %s" % url
+            message = response.text
+            raise Exception(message)
+        print "Requested verification of datafile ID %s." % datafile_id
 
 
 class DataFileParameterSet(object):

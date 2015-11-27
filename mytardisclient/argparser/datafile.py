@@ -255,3 +255,18 @@ def build_datafile_parser(argument_parser):
         "datafile_id", help="The ID of the datafile to update.")
     datafile_cmd_update_parser.add_argument(
         "--md5sum", help="The new MD5 sum of the datafile.")
+
+    datafile_verify_help = "Ask MyTardis to verify a datafile record."
+    datafile_verify_usage = textwrap.dedent("""\
+        mytardis datafile verify datafile_id
+
+          EXAMPLE
+
+          $ mytardis datafile verify 99
+        """)
+    datafile_command_verify_parser = \
+        datafile_command_parsers.add_parser("verify",
+                                            help=datafile_verify_help,
+                                            usage=datafile_verify_usage)
+    datafile_command_verify_parser.add_argument("datafile_id",
+                                                help="The datafile ID.")
