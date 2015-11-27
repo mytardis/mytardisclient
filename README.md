@@ -262,7 +262,23 @@ And if a lookup fails, we get a non-zero exit code:
 1
 ```
 
-We previously demonstrated how to upload 'hello.txt' to MyTardis via HTTP POST using "mytardis datafile upload ...".  We can also create a datafile record without uploading it, and implement a different file transfer mechanism.  Suppose the MyTardis server has temporary access to user james's account on an HPC system called "analyzer" via SSHFS with an SSH certificate or key-pair.  Then to register file "test.txt" from the "analyzer" HPC system in MyTardis, we create a record for it using "mytardis datafile create".  The "james-analyzer" storage box could be created on MyTardis with location "/mnt/sshfs/james-analyzer" on the MyTardis server.  Now to allow MyTardis to verify the 'test.txt' file, we could either implement a custom storage box (so MyTardis knows it is not in a [dataset-description]-[dataset_id] folder as would normally be the case on MyTardis).  Or we could create a symbolic link on the analyzer HPC system, e.g. ~/.mytardisclient/dataset-links/James Test Dataset 001-31 which points to the actual location of 'test.txt'.
+We previously demonstrated how to upload 'hello.txt' to MyTardis via HTTP POST
+using "mytardis datafile upload ...".  We can also create a datafile record
+without uploading it, and implement a different file transfer mechanism.
+Suppose the MyTardis server has temporary access to user james's account on an
+HPC system called "analyzer" via SSHFS with an SSH certificate or key-pair.
+Then to register file "test.txt" from the "analyzer" HPC system in MyTardis, we
+create a DataFile record for it using "mytardis datafile create".  The
+"james-analyzer" storage box can be created on MyTardis with location
+"/mnt/sshfs/james-analyzer" on the MyTardis server.  This mountpoint can
+provide the MyTardis server with access to
+analyzer:~james/.config/mytardisclient/datasets/.  Now to allow MyTardis
+to verify the 'test.txt' file, we can create a symbolic link on the analyzer
+HPC system, i.e.
+~/.config/mytardisclient/datasets/James Test Dataset 001-31
+which points to the actual location of 'test.txt'.  If we don't provide the
+MyTardis server with a way to access the file, then its DataFile record will
+remain unverified.
 
 ```
 (mytardisclient) $ mytardis datafile create --storagebox james-analyzer 31 ./test.txt 

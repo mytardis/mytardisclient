@@ -152,16 +152,12 @@ class DataFile(object):
         mytardis datafile create 123 --storagebox=james-analyzer ~/analysis/dataset1/results.dat
 
         The file_path argument (set to ~/analysis/dataset1/results.dat)
-        specifies the location of 'results.dat' on the analysis server.  The
-        only problem with this approach is that when verifying and/or copying
-        the datafile, MyTardis will look for results.dat in
-        /mnt/sshfs/james-analyzer/dataset1-123/results.dat, when in fact it is in
-        /mnt/sshfs/james-analyzer/dataset1/results.dat
+        specifies the location of 'results.dat' on the analysis server.
 
-        A solution to this is to have the MyTardis server SSHFS-mount
-        ~james/.mytardisclient/datasets/ instead, and have the MyTardis Client
-        create a symbolic link in ~james/.mytardisclient/datsets/ named
-        "dataset1-123" pointing to ~james/analysis/dataset1/.
+        To enable the MyTardis server to access (and verify) the file via
+        SSHFS / SFTP, a symbolic link can be created in 
+        ~james/.mytardisclient/datasets/, named "dataset1-123" pointing to
+        the location of 'results.dat', i.e. ~james/analysis/dataset1/.
         """
         if not directory:
             directory = ""
