@@ -1,2 +1,2 @@
-include run.py README.md LICENSE.txt
+include run.py LICENSE.txt
 recursive-include mytardisclient *.py
