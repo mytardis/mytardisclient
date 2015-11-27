@@ -28,6 +28,6 @@ setup(name='mytardisclient',
               "mytardis = mytardisclient.client:run",
           ],
       },
-      install_requires=['requests', 'ConfigParser', 'texttable',
-                        'dogpile.cache'],
+      install_requires=['requests', 'pyopenssl', 'ndg-httpsclient', 'pyasn1',
+                        'ConfigParser', 'texttable', 'dogpile.cache'],
       zip_safe=False)
