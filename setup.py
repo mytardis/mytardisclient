@@ -13,7 +13,8 @@ import mytardisclient
 setup(name='mytardisclient',
       packages=find_packages(),
       version=mytardisclient.__version__,
-      description='Command-line client for MyTardis API',
+      description="Command Line Interface and Python classes for interacting "
+          "with MyTardis's REST API.",
       long_description='',
       author='James Wettenhall',
       author_email='james.wettenhall@monash.edu',
