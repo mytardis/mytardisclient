@@ -502,6 +502,7 @@ def render_datafile_as_table(datafile):
     table.header(["DataFile field", "Value"])
     table.add_row(["ID", datafile.id])
     table.add_row(["Dataset", datafile.dataset])
+    table.add_row(["Directory", datafile.directory])
     table.add_row(["Filename", datafile.filename])
     uris = [replica.uri for replica in datafile.replicas]
     table.add_row(["URI", "\n".join(uris)])
@@ -564,11 +565,12 @@ def render_datafiles_as_table(datafiles, display_heading=True):
     table = Texttable(max_width=0)
     table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l'])
     table.set_cols_valign(['m', 'm', 'm', 'm', 'm', 'm', 'm'])
-    table.header(["DataFile ID", "Directory", "Filename", "URI",
-                  "Verified", "Size", "MD5 Sum"])
+    table.header(["DataFile ID", "Filename", "Storage Box",
+                  "URI", "Verified", "Size", "MD5 Sum"])
     for datafile in datafiles:
         uris = [replica.uri for replica in datafile.replicas]
-        table.add_row([datafile.id, datafile.directory, datafile.filename,
+        locations = [replica.location for replica in datafile.replicas]
+        table.add_row([datafile.id, datafile.filename, "\n".join(locations),
                        "\n".join(uris), str(datafile.verified),
                        human_readable_size_string(datafile.size),
                        datafile.md5sum])
