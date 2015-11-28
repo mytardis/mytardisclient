@@ -34,13 +34,12 @@ class DataFileController(object):
         elif command == "get":
             return self.get(args.datafile_id, render_format)
         elif command == "create":
-            return self.create(args.dataset_id, args.directory,
-                               args.storagebox, args.file_path,
-                               render_format)
+            return self.create(args.dataset_id, args.storagebox,
+                               args.file_path, render_format)
         elif command == "download":
             return self.download(args.datafile_id)
         elif command == "upload":
-            return self.upload(args.dataset_id, args.directory, args.file_path)
+            return self.upload(args.dataset_id, args.file_path)
         elif command == "update":
             return self.update(args.datafile_id, args.md5sum, render_format)
         elif command == "verify":
@@ -65,15 +64,13 @@ class DataFileController(object):
         datafile = DataFile.get(datafile_id)
         print render(datafile, render_format)
 
-    def create(self, dataset_id, directory, storagebox, file_path,
-               render_format):
+    def create(self, dataset_id, storagebox, file_path, render_format):
         """
         Create datafile record for an existing datafile.
         """
         # pylint: disable=too-many-arguments
         # pylint: disable=no-self-use
-        datafile = DataFile.create(dataset_id, directory,
-                                   storagebox, file_path)
+        datafile = DataFile.create(dataset_id, storagebox, file_path)
         print render(datafile, render_format)
         print "DataFile created successfully."
 
@@ -84,12 +81,12 @@ class DataFileController(object):
         # pylint: disable=no-self-use
         DataFile.download(datafile_id)
 
-    def upload(self, dataset_id, directory, file_path):
+    def upload(self, dataset_id, file_path):
         """
         Upload datafile.
         """
         # pylint: disable=no-self-use
-        DataFile.upload(dataset_id, directory, file_path)
+        DataFile.upload(dataset_id, file_path)
 
     def update(self, datafile_id, md5sum, render_format):
         """

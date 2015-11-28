@@ -16,6 +16,8 @@ from mytardisclient.logs import logger
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.config',
                                    'mytardisclient', 'mytardisclient.cfg')
+DEFAULT_DATASETS_PATH = os.path.join(os.path.expanduser('~'), '.config',
+                                     'mytardisclient', 'datasets')
 DEFAULT_CACHE_PATH = os.path.join(os.path.expanduser('~'), '.cache',
                                   'mytardisclient', 'mytardisclient.cache')
 
@@ -26,6 +28,7 @@ class Config(object):
     (MyTardis URL, username and API key),
     usually stored in ~/.config/mytardisclient/mytardisclient.cfg
     """
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, path=DEFAULT_CONFIG_PATH):
         self.path = path
         self.url = ""
@@ -38,6 +41,9 @@ class Config(object):
                 return "%s(%s,%s)" % \
                     (function.__name__, str(args), str(kwargs))
             return generate_key
+        self.datasets_path = DEFAULT_DATASETS_PATH
+        if not os.path.exists(self.datasets_path):
+            os.makedirs(self.datasets_path)
         self.cache_path = DEFAULT_CACHE_PATH
         if not os.path.exists(os.path.dirname(self.cache_path)):
             os.makedirs(os.path.dirname(self.cache_path))

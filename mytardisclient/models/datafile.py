@@ -112,11 +112,26 @@ class DataFile(object):
         return DataFile(datafile_json=datafile_json)
 
     @staticmethod
-    def create(dataset_id, directory, storagebox, file_path):
+    def create(dataset_id, storagebox, file_path):
         """
         Create a datafile record.
 
-        See also: upload
+        :param dataset_id: The ID of the dataset to create the datafile in.
+        :param storagebox: The storage box containing the datafile.
+        :param file_path: The local path to the file to be represented in
+            the datafile record.
+
+            file_path should be a relative (not absolute) path,
+            e.g. dataset1/subdir1/datafile1.txt
+
+            The first directory ('dataset1') in the file_path is the local
+            dataset path, which we will create a symlink to in
+             ~/.config/mytardisclient/datasets/ which will enable MyTardis
+            to verify and ingest the file (see below).  The subdirectory
+            ('subdir1') to be recorded in the DataFile record will be
+            determined automatically.
+
+        See also: :func:`mytardisclient.models.datafile.DataFile.upload`
 
         Suppose someone with username james generates a file called
         "results.dat" on a data analysis server called analyzer.example.com
@@ -159,11 +174,29 @@ class DataFile(object):
         ~james/.mytardisclient/datasets/, named "dataset1-123" pointing to
         the location of 'results.dat', i.e. ~james/analysis/dataset1/.
         """
-        if not directory:
-            directory = ""
+        # pylint: disable=too-many-locals
+        if os.path.isabs(file_path):
+            raise Exception("file_path should be relative, not absolute.")
         dataset = Dataset.get(dataset_id)
+        file_path_components = file_path.split(os.sep)
+        local_dataset_path = file_path_components.pop(0)
+        filename = file_path_components.pop(-1)
+        if len(file_path_components) > 0:
+            directory = os.path.join(*file_path_components)
+        else:
+            directory = ""
         uri = os.path.join("%s-%s" % (dataset.description, dataset_id),
-                           directory, os.path.basename(file_path))
+                           directory, filename)
+        dataset_symlink_path = os.path.join(config.datasets_path, uri)
+        if not os.path.exists(dataset_symlink_path):
+            print "Creating symlink to: %s in " \
+                "~/.config/mytardisclient/datasets/ called %s" \
+                % (local_dataset_path,
+                   "%s-%s" % (dataset.description, dataset_id))
+            os.symlink(os.path.abspath(os.path.dirname(file_path)),
+                       os.path.join(config.datasets_path,
+                                    "%s-%s" % (dataset.description,
+                                               dataset_id)))
         md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
         replicas = [{
             "url": uri,
@@ -173,7 +206,7 @@ class DataFile(object):
         }]
         new_datafile_json = {
             'dataset': "/api/v1/dataset/%s/" % dataset_id,
-            'filename': os.path.basename(file_path),
+            'filename': filename,
             'directory': directory or "",
             'md5sum': md5sum,
             'size': str(os.stat(file_path).st_size),
@@ -223,7 +256,7 @@ class DataFile(object):
         print "Downloaded: %s" % filename
 
     @staticmethod
-    def upload(dataset_id, directory, file_path):
+    def upload(dataset_id, file_path):
         """
         Upload datafile to dataset with ID dataset_id,
         using HTTP POST.
@@ -232,15 +265,20 @@ class DataFile(object):
         created_time = datetime.fromtimestamp(
             os.stat(file_path).st_ctime).isoformat()
         md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
+        file_path_components = file_path.split(os.sep)
+        _ = file_path_components.pop(0)  # local_dataset_path
+        filename = file_path_components.pop(-1)
+        if len(file_path_components) > 0:
+            directory = os.path.join(*file_path_components)
+        else:
+            directory = ""
         file_data = {"dataset": "/api/v1/dataset/%s/" % dataset_id,
-                     "filename": os.path.basename(file_path),
-                     "directory": "",
+                     "filename": filename,
+                     "directory": directory,
                      "md5sum": md5sum,
                      "size": str(os.stat(file_path).st_size),
                      "mimetype": mimetypes.guess_type(file_path)[0],
                      "created_time": created_time}
-        if directory:
-            file_data['directory'] = directory
         file_obj = open(file_path, 'rb')
         headers = {
             "Authorization": "ApiKey %s:%s" % (config.username,

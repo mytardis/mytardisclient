@@ -105,7 +105,7 @@ def build_datafile_parser(argument_parser):
         """)
     datafile_create_usage = textwrap.dedent("""\
         mytardis datafile create
-            [--directory DIRECTORY] [--storagebox STORAGEBOX] dataset_id file_path
+            [--storagebox STORAGEBOX] dataset_id file_path
 
           EXAMPLE
 
@@ -141,8 +141,6 @@ def build_datafile_parser(argument_parser):
     datafile_command_create_parser.add_argument(
         "dataset_id", help="The dataset ID.")
     datafile_command_create_parser.add_argument(
-        "--directory", help="The subdirectory within the dataset.")
-    datafile_command_create_parser.add_argument(
         "--storagebox", help="The storage box containing the datafile.")
     datafile_command_create_parser.add_argument(
         "file_path", help="The file to be represented in the datafile record.")
@@ -165,7 +163,7 @@ def build_datafile_parser(argument_parser):
 
     datafile_upload_help = "Upload a datafile."
     datafile_upload_usage = textwrap.dedent("""\
-        mytardis datafile upload dataset_id [--directory DIRECTORY] file_path
+        mytardis datafile upload dataset_id file_path
 
           EXAMPLE
 
@@ -219,9 +217,6 @@ def build_datafile_parser(argument_parser):
                                             usage=datafile_upload_usage)
     datafile_cmd_upload_parser.add_argument("dataset_id",
                                             help="The dataset ID.")
-    datafile_cmd_upload_parser.add_argument(
-        "--directory",
-        help="The datafile's subdirectory within the dataset.")
     datafile_cmd_upload_parser.add_argument("file_path",
                                             help="The file to upload.")
 
