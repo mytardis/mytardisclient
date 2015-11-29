@@ -13,13 +13,14 @@ import mytardisclient
 setup(name='mytardisclient',
       packages=find_packages(),
       version=mytardisclient.__version__,
-      description="Command Line Interface and Python classes for interacting "
-          "with MyTardis's REST API.",
+      description="Command Line Interface and Python classes "
+      "for interacting with MyTardis's REST API.",
       long_description='',
       author='James Wettenhall',
       author_email='james.wettenhall@monash.edu',
       url='http://github.com/wettenhj/mytardisclient',
-      download_url='https://github.com/wettenhj/mytardisclient/archive/0.1.1.tar.gz',
+      download_url='https://github.com/wettenhj/mytardisclient'
+      '/archive/%s.tar.gz' % mytardisclient.__version__,
       keywords=['mytardis', 'REST'], # arbitrary keywords
       classifiers=[],
       license='GPL',
