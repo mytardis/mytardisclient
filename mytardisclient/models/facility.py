@@ -30,7 +30,14 @@ class Facility(object):
     @config.region.cache_on_arguments(namespace="Facility")
     def list(limit=None, offset=None, order_by=None):
         """
-        Get facilities I have access to
+        Retrieve a list of facilities.
+
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
+
+        :return: A list of :class:`Facility` records, encapsulated in a
+            `ResultSet` object`.
         """
         url = config.url + "/api/v1/facility/?format=json"
         if limit:
@@ -55,7 +62,11 @@ class Facility(object):
     @config.region.cache_on_arguments(namespace="Facility")
     def get(facility_id):
         """
-        Get facility with id facility_id
+        Get facility with ID facility_id
+
+        :param facility_id: The ID of a facility to retrieve.
+
+        :return: A :class:`Facility` record.
         """
         url = "%s/api/v1/facility/?format=json&id=%s" % (config.url,
                                                          facility_id)

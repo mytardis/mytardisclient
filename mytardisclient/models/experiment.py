@@ -38,7 +38,14 @@ class Experiment(object):
     @config.region.cache_on_arguments(namespace="Experiment")
     def list(limit=None, offset=None, order_by=None):
         """
-        Get experiments I have access to
+        Retrieve a list of experiments.
+
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
+
+        :return: A list of :class:`Experiment` records, encapsulated in a
+            `ResultSet` object.
         """
         url = config.url + "/api/v1/experiment/?format=json"
         if limit:
@@ -64,7 +71,11 @@ class Experiment(object):
     @config.region.cache_on_arguments(namespace="Experiment")
     def get(exp_id):
         """
-        Get experiment with id exp_id
+        Get experiment with ID exp_id
+
+        :param exp_id: The ID of an experiment to retrieve.
+
+        :return: An :class:`Experiment` record.
         """
         url = "%s/api/v1/experiment/?format=json&id=%s" \
             % (config.url, exp_id)
@@ -82,7 +93,15 @@ class Experiment(object):
     @staticmethod
     def create(title, description="", institution=None, params_file_json=None):
         """
-        Create an experiment.
+        Create an experiment record.
+
+        :param title: The title of the experiment.
+        :param description: The description of the experiment.
+        :param institution: The institution of the experiment.
+        :param params_file_json: Path to a JSON file with experiment
+            parameters.
+
+        :return: A new :class:`Dataset` record.
         """
         new_exp_json = {
             "title": title,

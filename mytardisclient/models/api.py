@@ -1,11 +1,10 @@
 """
-Model class for MyTardis API v1's endpoints.
+The api module contains model classes for MyTardis API v1's endpoints.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 
-This following lists all of the supported endpoints:
-    /api/v1/?format=json
+This following lists all of the supported endpoints: /api/v1/?format=json
 
-And this lists supported methods on an endpoint:
+API functionality available for a particular model can be retrieved with:
     /api/v1/facility/schema/?format=json
 
 The 'schema' request above requires authentication.
@@ -41,7 +40,14 @@ class ApiEndpoint(object):
     @config.region.cache_on_arguments(namespace="ApiEndpoint")
     def list():
         """
-        Get a list of API endpoints.
+        Retrieve a list of API endpoints, encapsulated in
+        an :class:`ApiEndpoints` object.
+
+        The :class:`ApiEndpoints` object encapsulates the entire JSON response
+        from the /api/v1/ query.
+
+        :return: A list of API endpoints, encapsulated in
+            an :class:`ApiEndpoints` object.
         """
         url = "%s/api/v1/?format=json" % config.url
         response = requests.get(url=url, headers=config.default_headers)
@@ -60,6 +66,11 @@ class ApiSchema(object):
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-few-public-methods
     def __init__(self, model, schema_json):
+        """
+        :param model: The name of an API-accessible model, e.g. 'dataset_file'.
+        :param schema_json: The JSON returned from an /api/v1/model/schema/
+            query.
+        """
         self.model = model
         self.json = schema_json
         self.fields = schema_json['fields']
@@ -80,6 +91,10 @@ class ApiSchema(object):
     def get(model):
         """
         Get a list of API-accessible functionality for a particular model.
+
+        :param model: The name of an API-accessible model, e.g. 'dataset_file'.
+        :return: An :class:`ApiSchema` object, which encapsulates the list of
+                API-accessible functionality for a particular model.
         """
         if model == "datafile":
             model = "dataset_file"
@@ -105,6 +120,8 @@ class ApiEndpoints(object):
     def __init__(self, json):
         """
         Dictionary of API endpoints with model names as keys.
+
+        :param json: The JSON returned by the /api/v1/ query.
         """
         self.json = json
         self.index = -1
@@ -112,22 +129,31 @@ class ApiEndpoints(object):
 
     def __len__(self):
         """
-        Return number of models accessible via API.
+        Return the number of models accessible via the API.
+        :return: The number of models accessible via the API.
         """
         return len(self.json.keys())
 
     def __getitem__(self, model):
         """
-        Get an endpoint from the set.
+        Return the API endpoint for a particular model.
+
+        :param model: The name of an API-accessible model, e.g. 'dataset_file'.
+        :return: The :class:`ApiEndpoint` object for that supplied model.
         """
         return ApiEndpoint(model, self.json[model])
 
     def __iter__(self):
-        """__iter__"""
+        """
+        Return the ResultSet's iterator object, which is itself.
+        """
         return self
 
     def next(self):
-        """next"""
+        """
+        Return the next item from the `ResultSet`. If there are no further
+        items, raise the StopIteration exception.
+        """
         self.index += 1
         if self.index >= len(self):
             raise StopIteration

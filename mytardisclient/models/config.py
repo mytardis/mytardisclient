@@ -70,7 +70,10 @@ class Config(object):
     def load(self, path=None):
         """
         Sets some default values for settings fields, then loads a config
-        file, usually ~/.config/mytardisclient/mytardisclient.cfg
+        file.
+
+        :param path: The path to the config file, usually
+            ~/.config/mytardisclient/mytardisclient.cfg
         """
         self.url = ""
         self.username = ""
@@ -106,6 +109,13 @@ class Config(object):
         self.update_default_headers()
 
     def update_default_headers(self):
+        """
+        If the client is launched with a query request, but no valid
+        configuration has been set, then the application's
+        configuration object will need to be updated, and the default
+        header will need to updated, because it depends on the API
+        key in the configuration.
+        """
         self.default_headers = {
             "Authorization": "ApiKey %s:%s" % (self.username,
                                                self.apikey),
@@ -114,6 +124,10 @@ class Config(object):
         }
 
     def validate(self):
+        """
+        Ensure that the config contains a non-empty username,
+        API key and MyTardis URL.
+        """
         if self.username == "":
             raise Exception("MyTardis username is missing from config.")
         if self.apikey == "":
@@ -125,6 +139,12 @@ class Config(object):
             raise Exception("Invalid MyTardis URL found in config: %s", self.url)
 
     def save(self, path=None):
+        """
+        Saves the configuration to disk.
+
+        :param path: The path to save to, usually
+            ~/.config/mytardisclient/mytardisclient.cfg
+        """
         if path:
             self.path = path
         else:

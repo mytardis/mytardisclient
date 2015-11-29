@@ -106,6 +106,7 @@ class DataFile(object):
         Retrieve datafile record with id datafile_id
 
         :param datafile_id: The ID of a datafile to retrieve.
+
         :return: A :class:`DataFile` record.
         """
         url = "%s/api/v1/dataset_file/%s/?format=json" % \
@@ -138,6 +139,8 @@ class DataFile(object):
             which will enable MyTardis to verify and ingest the file (see
             below).  The subdirectory ('subdir1') to be recorded in the
             DataFile record will be determined automatically.
+
+        :return: A new :class:`DataFile` record.
 
         See also: :func:`mytardisclient.models.datafile.DataFile.upload`
 

@@ -30,7 +30,15 @@ class Instrument(object):
     @config.region.cache_on_arguments(namespace="Instrument")
     def list(facility_id=None, limit=None, offset=None, order_by=None):
         """
-        Get instruments in facility with ID facility_id.
+        Retrieve a list of instruments in a facility with ID facility_id.
+
+        :param facility_id: The ID of a facility to retrieve instruments from.
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
+
+        :return: A list of :class:`Instrument` records, encapsulated in a
+            ResultSet object.
         """
         url = "%s/api/v1/instrument/?format=json" % config.url
         if facility_id:
@@ -57,7 +65,11 @@ class Instrument(object):
     @config.region.cache_on_arguments(namespace="Instrument")
     def get(instrument_id):
         """
-        Get instrument with id instrument_id
+        Get instrument with ID instrument_id
+
+        :param instrument_id: The ID of an instrument to retrieve.
+
+        :return: An :class:`Instrument` record.
         """
         url = "%s/api/v1/instrument/?format=json&id=%s" % \
             (config.url, instrument_id)
@@ -75,7 +87,12 @@ class Instrument(object):
     @staticmethod
     def create(facility_id, name):
         """
-        Create an instrument.
+        Create an instrument record.
+
+        :param facility_id: The ID of the facility to create the instrument in.
+        :param name: The name of the instrument.
+
+        :return: A new :class:`Instrument` record.
         """
         new_instrument_json = {
             "name": name,
@@ -94,6 +111,11 @@ class Instrument(object):
     def update(instrument_id, name):
         """
         Update an instrument record.
+
+        :param instrument_id: The ID of the instrument record to update.
+        :param name: The new name of the instrument.
+
+        :return: An updated :class:`Instrument` record.
         """
         updated_fields_json = {
             "name": name,

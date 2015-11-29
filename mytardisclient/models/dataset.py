@@ -42,7 +42,15 @@ class Dataset(object):
     def list(experiment_id=None,
              limit=None, offset=None, order_by=None):
         """
-        Get datasets I have access to
+        Retrieve a list of datasets.
+
+        :param experiment_id: The ID of an experiment to retrieve datasets from.
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
+
+        :return: A list of :class:`Dataset` records, encapsulated in a
+            `ResultSet` object.
         """
         url = "%s/api/v1/dataset/?format=json" % config.url
         if experiment_id:
@@ -69,7 +77,11 @@ class Dataset(object):
     @config.region.cache_on_arguments(namespace="Dataset")
     def get(dataset_id):
         """
-        Get dataset with id dataset_id
+        Get dataset with ID dataset_id
+
+        :param dataset_id: The ID of a dataset to retrieve.
+
+        :return: A :class:`Dataset` record.
         """
         url = config.url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
@@ -87,7 +99,16 @@ class Dataset(object):
     def create(experiment_id, description, instrument_id=None,
                params_file_json=None):
         """
-        Create a dataset.
+        Create a dataset record.
+
+        :param experiment_id: The ID of the experiment to create the
+            dataset in.
+        :param description: The description of the dataset.
+        :param instrument_id: The instrument the data was collected on.
+        :param params_file_json: Path to a JSON file with dataset
+            parameters.
+
+        :return: A new :class:`Dataset` record.
         """
         new_dataset_json = {
             "description": description,
