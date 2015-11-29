@@ -60,7 +60,16 @@ class DataFile(object):
     def list(dataset_id=None, directory=None, filename=None,
              limit=None, offset=None, order_by=None):
         """
-        Get datafiles I have access to
+        Retrieve a list of datafiles.
+
+        :param dataset_id: The ID of a dataset to retrieve datafiles from.
+        :param directory: The subdirectory within the dataset.
+        :param filename: The datafile's name.
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
+
+        :return: A list of :class:`DataFile` records.
         """
         # pylint: disable=too-many-arguments
         url = "%s/api/v1/dataset_file/?format=json" % config.url
@@ -94,7 +103,10 @@ class DataFile(object):
     @config.region.cache_on_arguments(namespace="DataFile")
     def get(datafile_id):
         """
-        Get datafile record with id datafile_id
+        Retrieve datafile record with id datafile_id
+
+        :param datafile_id: The ID of a datafile to retrieve.
+        :return: A :class:`DataFile` record.
         """
         url = "%s/api/v1/dataset_file/%s/?format=json" % \
             (config.url, datafile_id)
@@ -119,17 +131,13 @@ class DataFile(object):
         :param dataset_id: The ID of the dataset to create the datafile in.
         :param storagebox: The storage box containing the datafile.
         :param file_path: The local path to the file to be represented in
-            the datafile record.
-
-            file_path should be a relative (not absolute) path,
-            e.g. dataset1/subdir1/datafile1.txt
-
-            The first directory ('dataset1') in the file_path is the local
-            dataset path, which we will create a symlink to in
-             ~/.config/mytardisclient/datasets/ which will enable MyTardis
-            to verify and ingest the file (see below).  The subdirectory
-            ('subdir1') to be recorded in the DataFile record will be
-            determined automatically.
+            the datafile record.  file_path should be a relative (not absolute)
+            path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first directory
+            ('dataset1') in the file_path is the local dataset path, which we
+            will create a symlink to in ~/.config/mytardisclient/datasets/
+            which will enable MyTardis to verify and ingest the file (see
+            below).  The subdirectory ('subdir1') to be recorded in the
+            DataFile record will be determined automatically.
 
         See also: :func:`mytardisclient.models.datafile.DataFile.upload`
 
@@ -230,6 +238,8 @@ class DataFile(object):
     def download(datafile_id):
         """
         Download datafile with id datafile_id
+
+        :param datafile_id: The ID of a datafile to download.
         """
         url = "%s/api/v1/dataset_file/%s/download/" \
             % (config.url, datafile_id)
@@ -260,7 +270,19 @@ class DataFile(object):
         """
         Upload datafile to dataset with ID dataset_id,
         using HTTP POST.
+
+        :param dataset_id: The ID of the dataset to create the datafile in.
+        :param file_path: The local path to the file to be represented in
+            the datafile record.  file_path should be a relative (not absolute)
+            path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first directory
+            ('dataset1') in the file_path is the local dataset path, which we
+            will create a symlink to in ~/.config/mytardisclient/datasets/
+            which will enable MyTardis to verify and ingest the file (see
+            below).  The subdirectory ('subdir1') to be recorded in the
+            DataFile record will be determined automatically.
         """
+        if os.path.isabs(file_path):
+            raise Exception("file_path should be relative, not absolute.")
         url = "%s/api/v1/dataset_file/" % config.url
         created_time = datetime.fromtimestamp(
             os.stat(file_path).st_ctime).isoformat()
@@ -302,11 +324,16 @@ class DataFile(object):
         """
         Update a datafile record.
 
-        Only the md5sum field can be updated at present.
-        For a large file, its upload can commence before
-        the local MD5 sum calculation is complete, i.e.
-        the datafile record can be initially created with
-        a bogus checksum which is later corrected.
+        :param datafile_id: The ID of a datafile to be updated.
+        :param md5sum: The new MD5 sum value.
+
+        This method is not usable yet, because the MyTardis API doesn't yet
+        allow update_detail to be performed on DataFile records.
+
+        For a large file, its upload can commence before the local MD5 sum
+        calculation is complete, i.e.  the datafile record can be initially
+        created with a bogus checksum which is later updated using this
+        method.
         """
         updated_fields_json = {'md5sum': md5sum}
         url = "%s/api/v1/dataset_file/%s/" % \
@@ -325,6 +352,8 @@ class DataFile(object):
     def verify(datafile_id):
         """
         Ask MyTardis to verify a datafile with id datafile_id
+
+        :param datafile_id: The ID of a datafile to be verified.
         """
         url = "%s/api/v1/dataset_file/%s/verify/" \
             % (config.url, datafile_id)
@@ -358,6 +387,8 @@ class DataFileParameterSet(object):
         """
         List datafile parameter sets associated with datafile ID
         datafile_id.
+
+        :param datafile_id: The ID of a datafile to list parameter saets for.
         """
         url = "%s/api/v1/datafileparameterset/?format=json" % config.url
         url += "&datafiles__id=%s" % datafile_id
@@ -394,5 +425,8 @@ class DataFileParameter(object):
     def list(datafile_param_set):
         """
         List datafile parameter records in parameter set.
+
+        :param datafile_param_saet: The datafile parameter set to
+            list parameters for.
         """
         pass
