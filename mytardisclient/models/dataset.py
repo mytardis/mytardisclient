@@ -169,6 +169,12 @@ class DatasetParameterSet(object):
         """
         List dataset parameter sets associated with dataset ID
         dataset_id.
+
+        :param dataset_id: The ID of the dataset to retrieve parameter
+            sets for.
+
+        :return: A list of :class:`DatasetParameterSet` records,
+            encapsulated in a `ResultSet` object`.
         """
         url = "%s/api/v1/datasetparameterset/?format=json" % config.url
         url += "&datasets__id=%s"  % dataset_id

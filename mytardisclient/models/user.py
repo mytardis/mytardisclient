@@ -63,6 +63,16 @@ class User(object):
 
     @staticmethod
     def get_user_by_username(username):
+        """
+        Returns a user record matching the supplied username.
+
+        Can be used to match up user folder names with MyTardis
+        user records for assigning ACLs.
+
+        :param username: A MyTardis username.
+
+        :return: A :class:`User` instance.
+        """
         url = config.url + "/api/v1/user/?format=json&username=" + username
         try:
             response = requests.get(url=url, headers=config.default_headers)
@@ -89,6 +99,17 @@ class User(object):
 
     @staticmethod
     def get_user_by_email(email):
+        """
+        Returns a user record matching the supplied username.
+
+        Can be used to match up user folder names with MyTardis
+        user records for assigning ACLs.
+
+        :param email: An email address uniquely identifying a MyTardis
+            user account.
+
+        :return: A :class:`User` instance.
+        """
         url = config.url + "/api/v1/user/?format=json&email__iexact=" + \
             urllib2.quote(email)
         try:

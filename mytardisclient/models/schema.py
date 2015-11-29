@@ -38,7 +38,14 @@ class Schema(object):
     @config.region.cache_on_arguments(namespace="Schema")
     def list(limit=None, offset=None, order_by=None):
         """
-        Get schemas I have access to
+        Retrieve a list of schemas.
+
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
+
+        :return: A list of :class:`Schema` records, encapsulated in a
+            `ResultSet` object`.
         """
         url = "%s/api/v1/schema/?format=json" % config.url
         if limit:
@@ -64,7 +71,11 @@ class Schema(object):
     @config.region.cache_on_arguments(namespace="Schema")
     def get(schema_id):
         """
-        Get schema with id schema_id
+        Get schema with ID schema_id
+
+        :param schema_id: The ID of a schema to retrieve.
+
+        :return: A :class:`Schema` record.
         """
         url = "%s/api/v1/schema/%s/?format=json" % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
@@ -120,7 +131,13 @@ class ParameterName(object):
     @config.region.cache_on_arguments(namespace="ParameterName")
     def list(schema):
         """
-        List parameter name records in schema.
+        Retrieve the list of parameter name records in a schema.
+
+        :param schema: The schema to retrieve parameter names for.
+        :type schema: :class:`mytardisclient.models.schema.Schema`
+
+        :return: A list of :class:`ParameterName` records,
+            encapsulated in a `ResultSet` object`.
         """
         # We would use "&schema__id=" if it were supported by MyTardis:
         url = "%s/api/v1/parametername/?format=json" % config.url
@@ -165,6 +182,10 @@ class ParameterName(object):
     def get(parametername_id):
         """
         Get parameter name with id parametername_id
+
+        :param parametername_id: The ID of a parameter name to retrieve.
+
+        :return: A :class:`ParameterName` record.
         """
         url = "%s/api/v1/parametername/%s/?format=json" % (config.url,
                                                            parametername_id)

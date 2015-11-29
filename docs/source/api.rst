@@ -85,6 +85,15 @@ mytardisclient.models.storagebox
     :inherited-members:
     :show-inheritance:
 
+mytardisclient.models.resultset
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: mytardisclient.models.resultset
+    :members:
+    :undoc-members:
+    :inherited-members:
+    :show-inheritance:
+
 mytardisclient.views
 ^^^^^^^^^^^^^^^^^^^^
 

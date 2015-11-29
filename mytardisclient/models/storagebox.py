@@ -37,7 +37,14 @@ class StorageBox(object):
     @config.region.cache_on_arguments(namespace="StorageBox")
     def list(limit=None, offset=None, order_by=None):
         """
-        Get storage_boxes I have access to
+        Retrieve a list of storage boxes.
+
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
+
+        :return: A list of :class:`StorageBox` records, encapsulated in a
+            `ResultSet` object`.
         """
         url = "%s/api/v1/storagebox/?format=json" % config.url
         if limit:
@@ -64,7 +71,11 @@ class StorageBox(object):
     @config.region.cache_on_arguments(namespace="StorageBox")
     def get(storage_box_id):
         """
-        Get storage_box with id storage_box_id
+        Get storage box with ID storage_box_id
+
+        :param storage_box_id: The ID of a storage box to retrieve.
+
+        :return: A :class:`StorageBox` record.
         """
         url = "%s/api/v1/storagebox/%s/?format=json" % \
             (config.url, storage_box_id)

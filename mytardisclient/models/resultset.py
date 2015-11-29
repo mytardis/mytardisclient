@@ -1,5 +1,7 @@
 """
-resultset.py
+This module contains the :class:`ResultSet` class, an abstraction to represent
+the JSON returned by the MyTardis API, particularly for queries which return
+multiple records and could be subject to pagination.
 """
 
 
@@ -39,11 +41,16 @@ class ResultSet(object):
         return self.model(self.json['objects'][key])
 
     def __iter__(self):
-        """__iter__"""
+        """
+        Return the ResultSet's iterator object, which is itself.
+        """
         return self
 
     def next(self):
-        """next"""
+        """
+        Return the next item from the :class:`ResultSet`. If there
+        are no further items, raise the StopIteration exception.
+        """
         self.index += 1
         if self.index >= len(self):
             raise StopIteration

@@ -165,6 +165,12 @@ class ExperimentParameterSet(object):
         """
         List experiment parameter sets associated with experiment ID
         experiment_id.
+
+        :param experiment_id: The ID of the experiment to retrieve parameter
+            sets for.
+
+        :return: A list of :class:`ExperimentParameterSet` records,
+            encapsulated in a `ResultSet` object`.
         """
         url = "%s/api/v1/experimentparameterset/?format=json" % config.url
         url += "&experiments__id=%s" % experiment_id

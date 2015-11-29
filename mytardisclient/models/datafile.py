@@ -391,7 +391,10 @@ class DataFileParameterSet(object):
         List datafile parameter sets associated with datafile ID
         datafile_id.
 
-        :param datafile_id: The ID of a datafile to list parameter saets for.
+        :param datafile_id: The ID of a datafile to list parameter sets for.
+
+        :return: A list of :class:`DatasetParameterSet` records,
+            encapsulated in a `ResultSet` object`.
         """
         url = "%s/api/v1/datafileparameterset/?format=json" % config.url
         url += "&datafiles__id=%s" % datafile_id
@@ -429,7 +432,7 @@ class DataFileParameter(object):
         """
         List datafile parameter records in parameter set.
 
-        :param datafile_param_saet: The datafile parameter set to
+        :param datafile_param_set: The datafile parameter set to
             list parameters for.
         """
         pass

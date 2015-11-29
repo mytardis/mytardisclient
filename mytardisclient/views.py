@@ -1,6 +1,7 @@
 """
 Views for MyTardis records.
 """
+# pylint: disable=too-many-lines
 
 import json
 from texttable import Texttable
@@ -20,7 +21,24 @@ from mytardisclient.utils import human_readable_size_string
 
 def render(data, render_format='table', display_heading=True):
     """
-    Generic render function
+    Generic render function.
+
+    Calls a more specific render function depending on the data type
+    to display (render) the data in the desired format.
+
+    :param data: The data to be displayed.  An instance of a model class
+        (e.g.  :class:`mytardisclient.models.dataset.Dataset`) or an instance of
+        :class:`mytardisclient.models.resultset.ResultSet`
+        or an instance of :class:`mytardisclient.models.api.ApiEndpoints`.
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     if data.__class__ == ResultSet:
         return render_result_set(data, render_format, display_heading)
@@ -33,6 +51,14 @@ def render(data, render_format='table', display_heading=True):
 def render_single_record(data, render_format):
     """
     Render single record.
+
+    Calls a more specific render function depending on the data type
+    to display (render) the data in the desired format.
+
+    :param data: The data to be displayed.  An instance of a model class
+        (e.g.  :class:`mytardisclient.models.dataset.Dataset`).
+    :param render_format: The format to display the data in ('table' or
+        'json').
     """
     # pylint: disable=too-many-return-statements
     if data.__class__ == ApiSchema:
@@ -55,32 +81,53 @@ def render_single_record(data, render_format):
         print "Class is " + data.__class__.__name__
 
 
-def render_result_set(data, render_format, display_heading=True):
+def render_result_set(result_set, render_format, display_heading=True):
     """
     Render result set.
+
+    Calls a more specific render function depending on the type of data
+    stored within the `ResultSet` to display (render) the data in the
+    desired format.
+
+    :param result_set: The result set to be rendered.
+    :type result_set: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     # pylint: disable=too-many-return-statements
-    if data.model == Facility:
-        return render_facilities(data, render_format, display_heading)
-    elif data.model == Instrument:
-        return render_instruments(data, render_format, display_heading)
-    elif data.model == Experiment:
-        return render_experiments(data, render_format, display_heading)
-    elif data.model == Dataset:
-        return render_datasets(data, render_format, display_heading)
-    elif data.model == DataFile:
-        return render_datafiles(data, render_format, display_heading)
-    elif data.model == StorageBox:
-        return render_storage_boxes(data, render_format, display_heading)
-    elif data.model == Schema:
-        return render_schemas(data, render_format, display_heading)
+    if result_set.model == Facility:
+        return render_facilities(result_set, render_format, display_heading)
+    elif result_set.model == Instrument:
+        return render_instruments(result_set, render_format, display_heading)
+    elif result_set.model == Experiment:
+        return render_experiments(result_set, render_format, display_heading)
+    elif result_set.model == Dataset:
+        return render_datasets(result_set, render_format, display_heading)
+    elif result_set.model == DataFile:
+        return render_datafiles(result_set, render_format, display_heading)
+    elif result_set.model == StorageBox:
+        return render_storage_boxes(result_set, render_format, display_heading)
+    elif result_set.model == Schema:
+        return render_schemas(result_set, render_format, display_heading)
     else:
-        print "Class is " + data.model.__name__
+        print "Class is " + result_set.model.__name__
 
 
 def render_api_schema(api_schema, render_format):
     """
     Render API schema
+
+    :param api_schema: The API schema model to be displayed.
+    :type api_schema: :class:`mytardisclient.models.api.ApiSchema`
+    :param render_format: The format to display the data in ('table' or
+        'json').
     """
     if render_format == 'json':
         return render_api_schema_as_json(api_schema)
@@ -91,6 +138,14 @@ def render_api_schema(api_schema, render_format):
 def render_api_schema_as_json(api_schema, indent=2, sort_keys=True):
     """
     Returns JSON representation of API schema.
+
+    :param api_schema: The API schema model to be displayed.
+    :type api_schema: :class:`mytardisclient.models.api.ApiSchema`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(api_schema.json, indent=indent, sort_keys=sort_keys)
 
@@ -98,6 +153,9 @@ def render_api_schema_as_json(api_schema, indent=2, sort_keys=True):
 def render_api_schema_as_table(api_schema):
     """
     Returns ASCII table view of API schema.
+
+    :param api_schema: The API schema model to be displayed.
+    :type api_schema: :class:`mytardisclient.models.api.ApiSchema`
     """
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -116,6 +174,15 @@ def render_api_schema_as_table(api_schema):
 def render_api_endpoints(api_endpoints, render_format, display_heading=True):
     """
     Render API endpoints
+
+    :param api_endpoints: The API endpoints to be rendered.
+    :type api_endpoints: :class:`mytardisclient.models.api.ApiEndpoints`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for
+        an `ApiEndpoints` set, setting `display_heading` to True
+        ensures that a heading is displayed before the results table.
+        The heading includes the URL resolved to perform the query.
     """
     if render_format == 'json':
         return render_api_endpoints_as_json(api_endpoints)
@@ -126,13 +193,30 @@ def render_api_endpoints(api_endpoints, render_format, display_heading=True):
 def render_api_endpoints_as_json(api_endpoints, indent=2, sort_keys=True):
     """
     Returns JSON representation of api_endpoints.
+
+    :param api_endpoints: The API endpoints to be rendered.
+    :type api_endpoints: :class:`mytardisclient.models.api.ApiEndpoints`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(api_endpoints.json, indent=indent, sort_keys=sort_keys)
 
 
 def render_api_endpoints_as_table(api_endpoints, display_heading=True):
     """
-    Returns ASCII table view of api_endpoints..
+    Returns ASCII table view of api_endpoints.
+
+    :param api_endpoints: The API endpoints to be rendered.
+    :type api_endpoints: :class:`mytardisclient.models.api.ApiEndpoints`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for
+        an `ApiEndpoints` set, setting `display_heading` to True
+        ensures that a heading is displayed before the results table.
+        The heading includes the URL resolved to perform the query.
     """
     heading = "\n" \
         "API Endpoints\n" if display_heading else ""
@@ -150,6 +234,15 @@ def render_api_endpoints_as_table(api_endpoints, display_heading=True):
 def render_facility(facility, render_format, display_heading=True):
     """
     Render facility
+
+    :param facility: The facility to be rendered.
+    :type facility: :class:`mytardisclient.models.facility.Facility`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for
+        an `ApiEndpoints` set, setting `display_heading` to True
+        ensures that a heading is displayed before the results table.
+        The heading includes the URL resolved to perform the query.
     """
     if render_format == 'json':
         return render_facility_as_json(facility)
@@ -160,6 +253,14 @@ def render_facility(facility, render_format, display_heading=True):
 def render_facility_as_json(facility, indent=2, sort_keys=True):
     """
     Returns JSON representation of facility.
+
+    :param facility: The facility to be rendered.
+    :type facility: :class:`mytardisclient.models.facility.Facility`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(facility.json, indent=indent, sort_keys=sort_keys)
 
@@ -167,6 +268,13 @@ def render_facility_as_json(facility, indent=2, sort_keys=True):
 def render_facility_as_table(facility, display_heading=True):
     """
     Returns ASCII table view of facility.
+
+    :param facility: The facility to be rendered.
+    :type facility: :class:`mytardisclient.models.facility.Facility`
+    :param display_heading: When using the 'table' render format for
+        an `ApiEndpoints` set, setting `display_heading` to True
+        ensures that a heading is displayed before the results table.
+        The heading includes the URL resolved to perform the query.
     """
     heading = "\nModel: Facility\n\n" if display_heading else ""
 
@@ -183,6 +291,18 @@ def render_facility_as_table(facility, display_heading=True):
 def render_facilities(facilities, render_format, display_heading=True):
     """
     Render facilities
+
+    :param facilities: The `ResultSet` of facilities to be rendered.
+    :type facilities: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     if render_format == 'json':
         return render_facilities_as_json(facilities)
@@ -193,13 +313,31 @@ def render_facilities(facilities, render_format, display_heading=True):
 def render_facilities_as_json(facilities, indent=2, sort_keys=True):
     """
     Returns JSON representation of facilities.
+
+    :param facilities: The result set of facilities to be displayed.
+    :type facilities: :class:`mytardisclient.models.resultset.ResultSet`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(facilities.json, indent=indent, sort_keys=sort_keys)
 
 
 def render_facilities_as_table(facilities, display_heading=True):
     """
-    Returns ASCII table view of facilities..
+    Returns ASCII table view of facilities.
+
+    :param facilities: The facilities to be rendered.
+    :type facilities: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: Setting `display_heading` to True ensures
+        that the meta information returned by the query is summarized
+        in a 'heading' before displaying the table.  This meta
+        information can be used to determine whether the query results
+        have been truncated due to pagination.
     """
     heading = "\n" \
         "Model: Facility\n" \
@@ -222,6 +360,11 @@ def render_facilities_as_table(facilities, display_heading=True):
 def render_instrument(instrument, render_format):
     """
     Render instrument
+
+    :param instrument: The instrument to be rendered.
+    :type instrument: :class:`mytardisclient.models.instrument.Instrument`
+    :param render_format: The format to display the data in ('table' or
+        'json').
     """
     if render_format == 'json':
         return render_instrument_as_json(instrument)
@@ -232,6 +375,14 @@ def render_instrument(instrument, render_format):
 def render_instrument_as_json(instrument, indent=2, sort_keys=True):
     """
     Returns JSON representation of instrument.
+
+    :param instrument: The instrument to be rendered.
+    :type instrument: :class:`mytardisclient.models.instrument.Instrument`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(instrument.json, indent=indent, sort_keys=sort_keys)
 
@@ -239,6 +390,9 @@ def render_instrument_as_json(instrument, indent=2, sort_keys=True):
 def render_instrument_as_table(instrument):
     """
     Returns ASCII table view of instrument.
+
+    :param instrument: The instrument to be rendered.
+    :type instrument: :class:`mytardisclient.models.instrument.Instrument`
     """
     instrument_table = Texttable()
     instrument_table.set_cols_align(['l', 'l'])
@@ -253,6 +407,18 @@ def render_instrument_as_table(instrument):
 def render_instruments(instruments, render_format, display_heading=True):
     """
     Render instruments
+
+    :param instruments: The `ResultSet` of instruments to be rendered.
+    :type instruments: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     if render_format == 'json':
         return render_instruments_as_json(instruments)
@@ -263,13 +429,31 @@ def render_instruments(instruments, render_format, display_heading=True):
 def render_instruments_as_json(instruments, indent=2, sort_keys=True):
     """
     Returns JSON representation of instruments.
+
+    :param instruments: The result set of instruments to be displayed.
+    :type instruments: :class:`mytardisclient.models.resultset.ResultSet`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(instruments.json, indent=indent, sort_keys=sort_keys)
 
 
 def render_instruments_as_table(instruments, display_heading=True):
     """
-    Returns ASCII table view of instruments..
+    Returns ASCII table view of instruments.
+
+    :param instruments: The instruments to be rendered.
+    :type instruments: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: Setting `display_heading` to True ensures
+        that the meta information returned by the query is summarized
+        in a 'heading' before displaying the table.  This meta
+        information can be used to determine whether the query results
+        have been truncated due to pagination.
     """
     heading = "\n" \
         "Model: Instrument\n" \
@@ -292,6 +476,11 @@ def render_instruments_as_table(instruments, display_heading=True):
 def render_experiment(experiment, render_format):
     """
     Render experiment
+
+    :param experiment: The experiment to be rendered.
+    :type experiment: :class:`mytardisclient.models.experiment.Experiment`
+    :param render_format: The format to display the data in ('table' or
+        'json').
     """
     if render_format == 'json':
         return render_experiment_as_json(experiment)
@@ -302,6 +491,14 @@ def render_experiment(experiment, render_format):
 def render_experiment_as_json(experiment, indent=2, sort_keys=True):
     """
     Returns JSON representation of experiment.
+
+    :param experiment: The experiment to be rendered.
+    :type experiment: :class:`mytardisclient.models.experiment.Experiment`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(experiment.json, indent=indent, sort_keys=sort_keys)
 
@@ -309,6 +506,9 @@ def render_experiment_as_json(experiment, indent=2, sort_keys=True):
 def render_experiment_as_table(experiment):
     """
     Returns ASCII table view of experiment.
+
+    :param experiment: The experiment to be rendered.
+    :type experiment: :class:`mytardisclient.models.experiment.Experiment`
     """
     exp_and_param_sets = ""
 
@@ -346,6 +546,18 @@ def render_experiment_as_table(experiment):
 def render_experiments(experiments, render_format, display_heading=True):
     """
     Render experiments
+
+    :param experiments: The `ResultSet` of experiments to be rendered.
+    :type experiments: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     if render_format == 'json':
         return render_experiments_as_json(experiments)
@@ -356,13 +568,31 @@ def render_experiments(experiments, render_format, display_heading=True):
 def render_experiments_as_json(experiments, indent=2, sort_keys=True):
     """
     Returns JSON representation of experiments.
+
+    :param experiments: The result set of experiments to be displayed.
+    :type experiments: :class:`mytardisclient.models.resultset.ResultSet`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(experiments.json, indent=indent, sort_keys=sort_keys)
 
 
 def render_experiments_as_table(experiments, display_heading=True):
     """
-    Returns ASCII table view of experiments..
+    Returns ASCII table view of experiments.
+
+    :param experiments: The experiments to be rendered.
+    :type experiments: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: Setting `display_heading` to True ensures
+        that the meta information returned by the query is summarized
+        in a 'heading' before displaying the table.  This meta
+        information can be used to determine whether the query results
+        have been truncated due to pagination.
     """
     heading = "\n" \
         "Model: Experiment\n" \
@@ -386,6 +616,11 @@ def render_experiments_as_table(experiments, display_heading=True):
 def render_dataset(dataset, render_format):
     """
     Render dataset
+
+    :param dataset: The dataset to be rendered.
+    :type dataset: :class:`mytardisclient.models.dataset.Dataset`
+    :param render_format: The format to display the data in ('table' or
+        'json').
     """
     if render_format == 'json':
         return render_dataset_as_json(dataset)
@@ -396,6 +631,14 @@ def render_dataset(dataset, render_format):
 def render_dataset_as_json(dataset, indent=2, sort_keys=True):
     """
     Returns JSON representation of dataset.
+
+    :param dataset: The dataset to be rendered.
+    :type dataset: :class:`mytardisclient.models.dataset.Dataset`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(dataset.json, indent=indent, sort_keys=sort_keys)
 
@@ -403,6 +646,9 @@ def render_dataset_as_json(dataset, indent=2, sort_keys=True):
 def render_dataset_as_table(dataset):
     """
     Returns ASCII table view of dataset.
+
+    :param dataset: The dataset to be rendered.
+    :type dataset: :class:`mytardisclient.models.dataset.Dataset`
     """
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -438,6 +684,18 @@ def render_dataset_as_table(dataset):
 def render_datasets(datasets, render_format, display_heading=True):
     """
     Render datasets
+
+    :param datasets: The `ResultSet` of datasets to be rendered.
+    :type datasets: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     if render_format == 'json':
         return render_datasets_as_json(datasets)
@@ -448,13 +706,31 @@ def render_datasets(datasets, render_format, display_heading=True):
 def render_datasets_as_json(datasets, indent=2, sort_keys=True):
     """
     Returns JSON representation of datasets.
+
+    :param datasets: The result set of datasets to be displayed.
+    :type datasets: :class:`mytardisclient.models.resultset.ResultSet`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(datasets.json, indent=indent, sort_keys=sort_keys)
 
 
 def render_datasets_as_table(datasets, display_heading=True):
     """
-    Returns ASCII table view of datasets..
+    Returns ASCII table view of datasets.
+
+    :param datasets: The datasets to be rendered.
+    :type datasets: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: Setting `display_heading` to True ensures
+        that the meta information returned by the query is summarized
+        in a 'heading' before displaying the table.  This meta
+        information can be used to determine whether the query results
+        have been truncated due to pagination.
     """
     heading = "\n" \
         "Model: Dataset\n" \
@@ -478,6 +754,11 @@ def render_datasets_as_table(datasets, display_heading=True):
 def render_datafile(datafile, render_format):
     """
     Render datafile
+
+    :param datafile: The datafile to be rendered.
+    :type datafile: :class:`mytardisclient.models.datafile.DataFile`
+    :param render_format: The format to display the data in ('table' or
+        'json').
     """
     if render_format == 'json':
         return render_datafile_as_json(datafile)
@@ -488,6 +769,14 @@ def render_datafile(datafile, render_format):
 def render_datafile_as_json(datafile, indent=2, sort_keys=True):
     """
     Returns JSON representation of datafile.
+
+    :param datafile: The datafile to be rendered.
+    :type datafile: :class:`mytardisclient.models.datafile.DataFile`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(datafile.json, indent=indent, sort_keys=sort_keys)
 
@@ -495,6 +784,9 @@ def render_datafile_as_json(datafile, indent=2, sort_keys=True):
 def render_datafile_as_table(datafile):
     """
     Returns ASCII table view of datafile.
+
+    :param datafile: The datafile to be rendered.
+    :type datafile: :class:`mytardisclient.models.datafile.DataFile`
     """
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -535,6 +827,18 @@ def render_datafile_as_table(datafile):
 def render_datafiles(datafiles, render_format, display_heading=True):
     """
     Render datafiles
+
+    :param datafiles: The `ResultSet` of datafiles to be rendered.
+    :type datafiles: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     if render_format == 'json':
         return render_datafiles_as_json(datafiles)
@@ -545,13 +849,31 @@ def render_datafiles(datafiles, render_format, display_heading=True):
 def render_datafiles_as_json(datafiles, indent=2, sort_keys=True):
     """
     Returns JSON representation of datafiles.
+
+    :param datafiles: The result set of datafiles to be displayed.
+    :type datafiles: :class:`mytardisclient.models.resultset.ResultSet`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(datafiles.json, indent=indent, sort_keys=sort_keys)
 
 
 def render_datafiles_as_table(datafiles, display_heading=True):
     """
-    Returns ASCII table view of datafiles..
+    Returns ASCII table view of datafiles.
+
+    :param datafiles: The datafiles to be rendered.
+    :type datafiles: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: Setting `display_heading` to True ensures
+        that the meta information returned by the query is summarized
+        in a 'heading' before displaying the table.  This meta
+        information can be used to determine whether the query results
+        have been truncated due to pagination.
     """
     heading = "\n" \
         "Model: DataFile\n" \
@@ -580,6 +902,9 @@ def render_datafiles_as_table(datafiles, display_heading=True):
 def render_storage_box(storage_box, render_format):
     """
     Render storage box
+
+    :param storage_box: The storage box to be rendered.
+    :type storage_box: :class:`mytardisclient.models.storagebox.StorageBox`
     """
     if render_format == 'json':
         return render_storage_box_as_json(storage_box)
@@ -590,6 +915,14 @@ def render_storage_box(storage_box, render_format):
 def render_storage_box_as_json(storage_box, indent=2, sort_keys=True):
     """
     Returns JSON representation of storage_box.
+
+    :param storage_box: The storage box to be rendered.
+    :type storage_box: :class:`mytardisclient.models.storagebox.StorageBox`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(storage_box.json, indent=indent, sort_keys=sort_keys)
 
@@ -635,7 +968,19 @@ def render_storage_box_as_table(storage_box):
 
 def render_storage_boxes(storage_boxes, render_format, display_heading=True):
     """
-    Render storage_boxes
+    Render storage boxes.
+
+    :param storage_boxes: The `ResultSet` of storage boxes to be rendered.
+    :type storage_boxes: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     if render_format == 'json':
         return render_storage_boxes_as_json(storage_boxes)
@@ -646,13 +991,31 @@ def render_storage_boxes(storage_boxes, render_format, display_heading=True):
 def render_storage_boxes_as_json(storage_boxes, indent=2, sort_keys=True):
     """
     Returns JSON representation of storage_boxes.
+
+    :param storage_boxes: The result set of storage boxes to be displayed.
+    :type storage_boxes: :class:`mytardisclient.models.resultset.ResultSet`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(storage_boxes.json, indent=indent, sort_keys=sort_keys)
 
 
 def render_storage_boxes_as_table(storage_boxes, display_heading=True):
     """
-    Returns ASCII table view of storage_boxes..
+    Returns ASCII table view of storage_boxes.
+
+    :param storage_boxes: The storage boxes to be rendered.
+    :type storage_boxes: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: Setting `display_heading` to True ensures
+        that the meta information returned by the query is summarized
+        in a 'heading' before displaying the table.  This meta
+        information can be used to determine whether the query results
+        have been truncated due to pagination.
     """
     heading = "\n" \
         "Model: StorageBox\n" \
@@ -677,6 +1040,11 @@ def render_storage_boxes_as_table(storage_boxes, display_heading=True):
 def render_schema(schema, render_format):
     """
     Render schema
+
+    :param schema: The schema to be rendered.
+    :type schema: :class:`mytardisclient.models.schema.Schema`
+    :param render_format: The format to display the data in ('table' or
+        'json').
     """
     if render_format == 'json':
         return render_schema_as_json(schema)
@@ -687,6 +1055,14 @@ def render_schema(schema, render_format):
 def render_schema_as_json(schema, indent=2, sort_keys=True):
     """
     Returns JSON representation of schema.
+
+    :param schema: The schema to be rendered.
+    :type schema: :class:`mytardisclient.models.schema.Schema`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(schema.json, indent=indent, sort_keys=sort_keys)
 
@@ -694,6 +1070,9 @@ def render_schema_as_json(schema, indent=2, sort_keys=True):
 def render_schema_as_table(schema):
     """
     Returns ASCII table view of schema.
+
+    :param schema: The schema to be rendered.
+    :type schema: :class:`mytardisclient.models.schema.Schema`
     """
     schema_parameter_names = ""
 
@@ -735,6 +1114,18 @@ def render_schema_as_table(schema):
 def render_schemas(schemas, render_format, display_heading=True):
     """
     Render schemas
+
+    :param schemas: The `ResultSet` of schemas to be rendered.
+    :type schemas: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
     """
     if render_format == 'json':
         return render_schemas_as_json(schemas)
@@ -745,13 +1136,31 @@ def render_schemas(schemas, render_format, display_heading=True):
 def render_schemas_as_json(schemas, indent=2, sort_keys=True):
     """
     Returns JSON representation of schemas.
+
+    :param schemas: The result set of schemas boxes to be displayed.
+    :type schemas: :class:`mytardisclient.models.resultset.ResultSet`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
     """
     return json.dumps(schemas.json, indent=indent, sort_keys=sort_keys)
 
 
 def render_schemas_as_table(schemas, display_heading=True):
     """
-    Returns ASCII table view of schemas..
+    Returns ASCII table view of schemas.
+
+    :param schemas: The schemas to be rendered.
+    :type schemas: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: Setting `display_heading` to True ensures
+        that the meta information returned by the query is summarized
+        in a 'heading' before displaying the table.  This meta
+        information can be used to determine whether the query results
+        have been truncated due to pagination.
     """
     heading = "\n" \
         "Model: Schema\n" \

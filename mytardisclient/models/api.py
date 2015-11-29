@@ -145,14 +145,14 @@ class ApiEndpoints(object):
 
     def __iter__(self):
         """
-        Return the ResultSet's iterator object, which is itself.
+        Return the :class:`ApiEndpoints`'s iterator object, which is itself.
         """
         return self
 
     def next(self):
         """
-        Return the next item from the `ResultSet`. If there are no further
-        items, raise the StopIteration exception.
+        Return the next item from the :class:`ApiEndpoints` set. If there are
+        no further items, raise the StopIteration exception.
         """
         self.index += 1
         if self.index >= len(self):
