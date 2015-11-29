@@ -9,6 +9,7 @@ import json
 import os
 import cgi
 import hashlib
+import urllib
 from datetime import datetime
 
 from mytardisclient.conf import config
@@ -18,6 +19,7 @@ from .resultset import ResultSet
 from .schema import Schema
 from .schema import ParameterName
 from mytardisclient.utils.exceptions import DoesNotExist
+from mytardisclient.utils.exceptions import DuplicateKey
 
 
 class DataFile(object):
@@ -103,7 +105,7 @@ class DataFile(object):
     @config.region.cache_on_arguments(namespace="DataFile")
     def get(datafile_id):
         """
-        Retrieve datafile record with id datafile_id
+        Retrieve DataFile record with id datafile_id
 
         :param datafile_id: The ID of a datafile to retrieve.
 
@@ -127,12 +129,12 @@ class DataFile(object):
     @staticmethod
     def create(dataset_id, storagebox, file_path):
         """
-        Create a datafile record.
+        Create a DataFile record.
 
         :param dataset_id: The ID of the dataset to create the datafile in.
         :param storagebox: The storage box containing the datafile.
         :param file_path: The local path to the file to be represented in
-            the datafile record.  file_path should be a relative (not absolute)
+            the DataFile record.  file_path should be a relative (not absolute)
             path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first directory
             ('dataset1') in the file_path is the local dataset path, which we
             will create a symlink to in ~/.config/mytardisclient/datasets/
@@ -173,7 +175,7 @@ class DataFile(object):
         with key 'location' and value '/mnt/sshfs/james-analyzer'.
 
         Once james knows the dataset ID of the dataset he wants to upload to
-        (123 in this case), he can create a datafile record as follows:
+        (123 in this case), he can create a DataFile record as follows:
 
         mytardis datafile create 123 --storagebox=james-analyzer ~/analysis/dataset1/results.dat
 
@@ -208,6 +210,14 @@ class DataFile(object):
                        os.path.join(config.datasets_path,
                                     "%s-%s" % (dataset.description,
                                                dataset_id)))
+        if DataFile.exists(dataset_id, directory, filename):
+            if directory and directory != "":
+                _file_path = os.path.join(directory, filename)
+            else:
+                _file_path = filename
+            raise DuplicateKey("A DataFile record already exists for file "
+                               "'%s' in dataset ID %s." % (_file_path,
+                                                           dataset_id))
         md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
         replicas = [{
             "url": uri,
@@ -276,7 +286,7 @@ class DataFile(object):
 
         :param dataset_id: The ID of the dataset to create the datafile in.
         :param file_path: The local path to the file to be represented in
-            the datafile record.  file_path should be a relative (not absolute)
+            the DataFile record.  file_path should be a relative (not absolute)
             path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first directory
             ('dataset1') in the file_path is the local dataset path, which we
             will create a symlink to in ~/.config/mytardisclient/datasets/
@@ -289,7 +299,6 @@ class DataFile(object):
         url = "%s/api/v1/dataset_file/" % config.url
         created_time = datetime.fromtimestamp(
             os.stat(file_path).st_ctime).isoformat()
-        md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
         file_path_components = file_path.split(os.sep)
         _ = file_path_components.pop(0)  # local_dataset_path
         filename = file_path_components.pop(-1)
@@ -297,6 +306,15 @@ class DataFile(object):
             directory = os.path.join(*file_path_components)
         else:
             directory = ""
+        if DataFile.exists(dataset_id, directory, filename):
+            if directory and directory != "":
+                _file_path = os.path.join(directory, filename)
+            else:
+                _file_path = filename
+            raise DuplicateKey("A DataFile record already exists for file "
+                               "'%s' in dataset ID %s." % (_file_path,
+                                                           dataset_id))
+        md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
         file_data = {"dataset": "/api/v1/dataset/%s/" % dataset_id,
                      "filename": filename,
                      "directory": directory,
@@ -325,7 +343,7 @@ class DataFile(object):
     @staticmethod
     def update(datafile_id, md5sum):
         """
-        Update a datafile record.
+        Update a DataFile record.
 
         :param datafile_id: The ID of a datafile to be updated.
         :param md5sum: The new MD5 sum value.
@@ -334,7 +352,7 @@ class DataFile(object):
         allow update_detail to be performed on DataFile records.
 
         For a large file, its upload can commence before the local MD5 sum
-        calculation is complete, i.e.  the datafile record can be initially
+        calculation is complete, i.e.  the DataFile record can be initially
         created with a bogus checksum which is later updated using this
         method.
         """
@@ -367,6 +385,33 @@ class DataFile(object):
             message = response.text
             raise Exception(message)
         print "Requested verification of datafile ID %s." % datafile_id
+
+    @staticmethod
+    def exists(dataset_id, directory, filename):
+        """
+        If MyTardis is running with DEBUG=False, then we won't
+        be able detect duplicate key errors easily, we will just
+        receive a generic HTTP 500 from the MyTardis API. This
+        method checks whether a DataFile record already exists
+        for the supplied dataset_id, directory and filename.
+
+        :param dataset_id: The ID of the dataset to check existence in.
+        :param directory: The directory within the dataset to check existence in.
+        :param filename: The filename to check for existence.
+
+        :return: True if a matching DataFile record already exists.
+        """
+
+        url = "%s/api/v1/dataset_file/?format=json" % config.url
+        url += "&dataset__id=%s" % dataset_id
+        url += "&filename=%s" % urllib.quote(filename)
+        if directory and directory != "":
+            url += "&directory=%s" % urllib.quote(directory)
+        response = requests.get(url=url, headers=config.default_headers)
+        if response.status_code < 200 or response.status_code >= 300:
+            raise Exception("Failed to check for existing file '%s' "
+                            "in dataset ID %s." % (filename, dataset_id))
+        return response.json()['meta']['total_count'] > 0
 
 
 class DataFileParameterSet(object):
