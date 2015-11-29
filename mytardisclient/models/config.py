@@ -30,21 +30,38 @@ class Config(object):
     """
     # pylint: disable=too-many-instance-attributes
     def __init__(self, path=DEFAULT_CONFIG_PATH):
+        #: The config file's location.
+        #: Default: ~/.config/mytardisclient/mytardisclient.cfg
         self.path = path
+
+        #: The MyTardis URL, e.g. 'http://mytardisdemo.erc.monash.edu.au'
         self.url = ""
+
+        #: The MyTardis username, e.g. 'demofacility"
         self.username = ""
+
+        #: The MyTardis API key, e.g. '644be179cc6773c30fc471bad61b50c90897146c'
         self.apikey = ""
+
+        #: Default headers to use for API queries
+        #: (including API key authorization).
         self.default_headers = None
+
+        #: Location to create symlinks to dataset folders.
+        #: Default: ~/.config/mytardisclient/datasets/
+        self.datasets_path = DEFAULT_DATASETS_PATH
+        if not os.path.exists(self.datasets_path):
+            os.makedirs(self.datasets_path)
+
+        #: Path for caching results of frequently used queries.
+        #: Default: ~/.cache/mytardisclient/mytardisclient.cache
+        self.cache_path = DEFAULT_CACHE_PATH
         def key_generator(namespace, function):
             # pylint: disable=unused-argument
             def generate_key(*args, **kwargs):
                 return "%s(%s,%s)" % \
                     (function.__name__, str(args), str(kwargs))
             return generate_key
-        self.datasets_path = DEFAULT_DATASETS_PATH
-        if not os.path.exists(self.datasets_path):
-            os.makedirs(self.datasets_path)
-        self.cache_path = DEFAULT_CACHE_PATH
         if not os.path.exists(os.path.dirname(self.cache_path)):
             os.makedirs(os.path.dirname(self.cache_path))
         self.region = \
