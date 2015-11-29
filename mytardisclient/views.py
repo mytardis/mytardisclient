@@ -794,6 +794,8 @@ def render_datafile_as_table(datafile):
     table.header(["DataFile field", "Value"])
     table.add_row(["ID", datafile.id])
     table.add_row(["Dataset", datafile.dataset])
+    locations = [replica.location for replica in datafile.replicas]
+    table.add_row(["Storage Box", "\n".join(locations)])
     table.add_row(["Directory", datafile.directory])
     table.add_row(["Filename", datafile.filename])
     uris = [replica.uri for replica in datafile.replicas]
