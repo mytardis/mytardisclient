@@ -3,8 +3,9 @@ Model class for MyTardis API v1's InstrumentResource.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 
-import requests
 import json
+
+import requests
 
 from mytardisclient.conf import config
 from .facility import Facility

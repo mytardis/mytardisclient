@@ -3,9 +3,10 @@ Model class for MyTardis API v1's ExperimentResource.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 
-import requests
 import json
 import os
+
+import requests
 
 from .resultset import ResultSet
 from .schema import Schema
