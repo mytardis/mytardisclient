@@ -3,7 +3,6 @@ Model class for MyTardis API v1's DataFileResource.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 
-import requests
 import mimetypes
 import json
 import os
@@ -11,6 +10,8 @@ import cgi
 import hashlib
 import urllib
 from datetime import datetime
+
+import requests
 
 from mytardisclient.conf import config
 from .replica import Replica
@@ -190,6 +191,8 @@ class DataFile(object):
         # pylint: disable=too-many-locals
         if os.path.isabs(file_path):
             raise Exception("file_path should be relative, not absolute.")
+        elif not os.path.exists(file_path):
+            raise Exception("Path doesn't exist: %s" % file_path)
         dataset = Dataset.get(dataset_id)
         file_path_components = file_path.split(os.sep)
         local_dataset_path = file_path_components.pop(0)
@@ -200,7 +203,9 @@ class DataFile(object):
             directory = ""
         uri = os.path.join("%s-%s" % (dataset.description, dataset_id),
                            directory, filename)
-        dataset_symlink_path = os.path.join(config.datasets_path, uri)
+        dataset_symlink_path = \
+            os.path.join(config.datasets_path,
+                         "%s-%s" % (dataset.description, dataset_id))
         if not os.path.exists(dataset_symlink_path):
             print "Creating symlink to: %s in " \
                 "~/.config/mytardisclient/datasets/ called %s" \
@@ -296,6 +301,8 @@ class DataFile(object):
         """
         if os.path.isabs(file_path):
             raise Exception("file_path should be relative, not absolute.")
+        elif not os.path.exists(file_path):
+            raise Exception("Path doesn't exist: %s" % file_path)
         url = "%s/api/v1/dataset_file/" % config.url
         created_time = datetime.fromtimestamp(
             os.stat(file_path).st_ctime).isoformat()
