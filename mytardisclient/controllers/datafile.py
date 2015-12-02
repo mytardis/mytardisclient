@@ -35,7 +35,7 @@ class DataFileController(object):
             return self.get(args.datafile_id, render_format)
         elif command == "create":
             return self.create(args.dataset_id, args.storagebox,
-                               args.file_path, render_format)
+                               args.path, render_format)
         elif command == "download":
             return self.download(args.datafile_id)
         elif command == "upload":
@@ -64,15 +64,19 @@ class DataFileController(object):
         datafile = DataFile.get(datafile_id)
         print render(datafile, render_format)
 
-    def create(self, dataset_id, storagebox, file_path, render_format):
+    def create(self, dataset_id, storagebox, path, render_format):
         """
-        Create datafile record for an existing datafile.
+        Create datafile record(s) for an existing file or for all files
+        within a directory.
         """
         # pylint: disable=too-many-arguments
         # pylint: disable=no-self-use
-        datafile = DataFile.create(dataset_id, storagebox, file_path)
-        print render(datafile, render_format)
-        print "DataFile created successfully."
+        datafiles = DataFile.create(dataset_id, storagebox, path)
+        print render(datafiles, render_format)
+        if isinstance(datafiles, DataFile):
+            print "DataFile created successfully."
+        else:
+            print "%s DataFiles created successfully." % len(datafiles)
 
     def download(self, datafile_id):
         """

@@ -17,10 +17,10 @@ from mytardisclient.logs import logger
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.config',
                                    'mytardisclient', 'mytardisclient.cfg')
-DEFAULT_DATASETS_PATH = os.path.join(os.path.expanduser('~'), '.config',
-                                     'mytardisclient', 'datasets')
-DEFAULT_CACHE_PATH = os.path.join(os.path.expanduser('~'), '.cache',
-                                  'mytardisclient', 'mytardisclient.cache')
+CACHE_PATH = os.path.join(os.path.expanduser('~'), '.cache',
+                          'mytardisclient', 'mytardisclient.cache')
+DATASETS_PATH_PREFIX = os.path.join(os.path.expanduser('~'), '.config',
+                                    'mytardisclient', 'servers')
 
 
 class Config(object):
@@ -44,19 +44,9 @@ class Config(object):
         #: The MyTardis API key, e.g. '644be179cc6773c30fc471bad61b50c90897146c'
         self.apikey = ""
 
-        #: Default headers to use for API queries
-        #: (including API key authorization).
-        self.default_headers = None
-
-        #: Location to create symlinks to dataset folders.
-        #: Default: ~/.config/mytardisclient/datasets/
-        self.datasets_path = DEFAULT_DATASETS_PATH
-        if not os.path.exists(self.datasets_path):
-            os.makedirs(self.datasets_path)
-
         #: Path for caching results of frequently used queries.
         #: Default: ~/.cache/mytardisclient/mytardisclient.cache
-        self.cache_path = DEFAULT_CACHE_PATH
+        self.cache_path = CACHE_PATH
         def key_generator(namespace, function):
             # pylint: disable=unused-argument
             def generate_key(*args, **kwargs):
@@ -73,17 +63,38 @@ class Config(object):
                     arguments={
                         "filename": self.cache_path
                     })
+
         if path:
             self.load()
 
     def __unicode__(self):
-        return json.dumps(self.__dict__, indent=2)
+        attrs = dict(path=self.path,
+                     url=self.url,
+                     username=self.username,
+                     apikey=self.apikey,
+                     cache_path=self.cache_path,
+                     datasets_path=self.datasets_path)
+        return json.dumps(attrs, indent=2)
 
     def __str__(self):
         return self.__unicode__()
 
     def __repr__(self):
         return self.__unicode__()
+
+    @property
+    def hostname(self):
+        parsed_url = urlparse(self.url)
+        return parsed_url.netloc
+
+    @property
+    def datasets_path(self):
+        #: Location to create symlinks to dataset folders.
+        #: Default: ~/.config/mytardisclient/servers/[mytardis_hostname]/
+        datasets_path = os.path.join(DATASETS_PATH_PREFIX, self.hostname)
+        if not os.path.exists(datasets_path):
+            os.makedirs(datasets_path)
+        return datasets_path
 
     def load(self, path=None):
         """
@@ -124,17 +135,13 @@ class Config(object):
             except:
                 logger.error(traceback.format_exc())
 
-        self.update_default_headers()
-
-    def update_default_headers(self):
+    @property
+    def default_headers(self):
         """
-        If the client is launched with a query request, but no valid
-        configuration has been set, then the application's
-        configuration object will need to be updated, and the default
-        header will need to updated, because it depends on the API
-        key in the configuration.
+        Default headers to use for API queries
+        (including API key authorization).
         """
-        self.default_headers = {
+        return {
             "Authorization": "ApiKey %s:%s" % (self.username,
                                                self.apikey),
             "Content-Type": "application/json",
@@ -153,8 +160,10 @@ class Config(object):
         if self.url == "":
             raise Exception("MyTardis URL is missing from config.")
         parsed_url = urlparse(self.url)
-        if parsed_url.scheme not in ('http', 'https') or parsed_url.netloc == '':
-            raise Exception("Invalid MyTardis URL found in config: %s", self.url)
+        if parsed_url.scheme not in ('http', 'https') or \
+                parsed_url.netloc == '':
+            raise Exception("Invalid MyTardis URL found in config: %s",
+                            self.url)
 
     def save(self, path=None):
         """

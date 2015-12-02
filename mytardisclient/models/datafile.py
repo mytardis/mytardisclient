@@ -128,20 +128,78 @@ class DataFile(object):
         return DataFile(datafile_json=datafile_json)
 
     @staticmethod
-    def create(dataset_id, storagebox, file_path):
+    def create(dataset_id, storagebox, path):
+        """
+        Create one or more DataFile records, depending on whether the
+        supplied path is a single file or a directory.
+
+        :param dataset_id: The ID of the dataset to create the datafile
+            record(s) in.
+        :param storagebox: The storage box containing the datafile(s).
+        :param path: The relative path to a file to be represented in
+            the DataFile record, or a directory containing the files to create
+            records for.  The path should be a relative (not absolute) path,
+            e.g.  'dataset1/subdir1/datafile1.txt'.  The first directory
+            ('dataset1') in the path is the local dataset path, which we will
+            create a symlink to in
+            ~/.config/mytardisclient/servers/[mytardis_hostname]/ which
+            will enable MyTardis to verify and ingest the file (see below).
+            The subdirectory ('subdir1') to be recorded in the DataFile
+            record(s) will be determined automatically.
+        """
+        if os.path.isabs(path):
+            raise Exception("The path should be relative, not absolute.")
+        elif not os.path.exists(path):
+            raise Exception("The path doesn't exist: %s" % path)
+        if os.path.isdir(path):
+            return DataFile.create_datafiles(dataset_id, storagebox, path)
+        else:
+            return DataFile.create_datafile(dataset_id, storagebox, path)
+
+    @staticmethod
+    def create_datafiles(dataset_id, storagebox, dir_path):
+        """
+        Create a DataFile record for each file within the dir_path directory.
+
+        :param dataset_id: The ID of the dataset to create the datafile
+            record(s) in.
+        :param storagebox: The storage box containing the datafile(s).
+        :param dir_path: The relative path to a directory containing file(s) to
+            create DataFile records for.  The path should be a relative (not
+            absolute) path, e.g.  'dataset1/'.  We will create a symlink to
+            this path in ~/.config/mytardisclient/servers/[mytardis_hostname]/
+            which will enable MyTardis to verify and ingest its file(s).
+        """
+        datafiles = {'meta': {'total_count': 0, 'limit': 0, 'offset': 0}, 'objects': []}
+
+        for root, _, files in os.walk(dir_path):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                datafile = DataFile.create_datafile(dataset_id, storagebox, file_path)
+                datafiles['meta']['total_count'] += 1
+                datafiles['objects'].append(datafile.json)
+        return ResultSet(DataFile, url=None, json=datafiles)
+
+    @staticmethod
+    def create_datafile(dataset_id, storagebox, file_path):
         """
         Create a DataFile record.
 
         :param dataset_id: The ID of the dataset to create the datafile in.
         :param storagebox: The storage box containing the datafile.
+        :param recursive: Whether to recursively include files within a
+            directory (specified as file_path), or whether to include only a
+            single file.
         :param file_path: The local path to the file to be represented in
-            the DataFile record.  file_path should be a relative (not absolute)
-            path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first directory
-            ('dataset1') in the file_path is the local dataset path, which we
-            will create a symlink to in ~/.config/mytardisclient/datasets/
-            which will enable MyTardis to verify and ingest the file (see
-            below).  The subdirectory ('subdir1') to be recorded in the
-            DataFile record will be determined automatically.
+            the DataFile record, or if recursive is True, the directory
+            containing the files.  file_path should be a relative (not
+            absolute) path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first
+            directory ('dataset1') in the file_path is the local dataset path,
+            which we will create a symlink to in
+            ~/.config/mytardisclient/servers/[mytardis_hostname]/ which will
+            enable MyTardis to verify and ingest the file.  The subdirectory
+            ('subdir1') to be recorded in the DataFile record(s) will be
+            determined automatically.
 
         :return: A new :class:`DataFile` record.
 
@@ -185,14 +243,16 @@ class DataFile(object):
 
         To enable the MyTardis server to access (and verify) the file via
         SSHFS / SFTP, a symbolic link can be created in
-        ~james/.mytardisclient/datasets/, named "dataset1-123" pointing to
+        ~james/.mytardisclient/servers/[mytardis_hostname]/, named "dataset1-123" pointing to
         the location of 'results.dat', i.e. ~james/analysis/dataset1/.
         """
         # pylint: disable=too-many-locals
         if os.path.isabs(file_path):
-            raise Exception("file_path should be relative, not absolute.")
+            raise Exception("The path should be relative, not absolute.")
         elif not os.path.exists(file_path):
             raise Exception("Path doesn't exist: %s" % file_path)
+        if os.path.isdir(file_path):
+            raise Exception("The path should be a single file: %s" % file_path)
         dataset = Dataset.get(dataset_id)
         file_path_components = file_path.split(os.sep)
         local_dataset_path = file_path_components.pop(0)
@@ -208,8 +268,8 @@ class DataFile(object):
                          "%s-%s" % (dataset.description, dataset_id))
         if not os.path.exists(dataset_symlink_path):
             print "Creating symlink to: %s in " \
-                "~/.config/mytardisclient/datasets/ called %s" \
-                % (local_dataset_path,
+                "~/.config/mytardisclient/servers/%s/ called %s" \
+                % (local_dataset_path, config.hostname,
                    "%s-%s" % (dataset.description, dataset_id))
             os.symlink(os.path.abspath(os.path.dirname(file_path)),
                        os.path.join(config.datasets_path,
@@ -294,7 +354,8 @@ class DataFile(object):
             the DataFile record.  file_path should be a relative (not absolute)
             path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first directory
             ('dataset1') in the file_path is the local dataset path, which we
-            will create a symlink to in ~/.config/mytardisclient/datasets/
+            will create a symlink to in
+            ~/.config/mytardisclient/servers/[mytardis_hostname]/
             which will enable MyTardis to verify and ingest the file (see
             below).  The subdirectory ('subdir1') to be recorded in the
             DataFile record will be determined automatically.

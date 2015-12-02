@@ -105,11 +105,11 @@ def build_datafile_parser(argument_parser):
         """)
     datafile_create_usage = textwrap.dedent("""\
         mytardis datafile create
-            [--storagebox STORAGEBOX] dataset_id file_path
+            [-s STORAGEBOX] dataset_id path
 
           EXAMPLE
 
-          $ mytardis datafile create 31 path/test.txt
+          $ mytardis datafile create 31 dataset1/test.txt
 
           Model: DataFile
 
@@ -141,9 +141,11 @@ def build_datafile_parser(argument_parser):
     datafile_command_create_parser.add_argument(
         "dataset_id", help="The dataset ID.")
     datafile_command_create_parser.add_argument(
-        "--storagebox", help="The storage box containing the datafile.")
+        "-s", "--storagebox", help="The storage box containing the datafile.")
     datafile_command_create_parser.add_argument(
-        "file_path", help="The file to be represented in the datafile record.")
+        "path",
+        help="The file to be represented in the datafile record, or "
+        "a directory containing the datafiles to create records for.")
 
     datafile_download_help = "Download a datafile."
     datafile_download_usage = textwrap.dedent("""\

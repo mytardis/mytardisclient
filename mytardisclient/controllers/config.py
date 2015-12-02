@@ -33,5 +33,4 @@ class ConfigController(object):
         config.username = raw_input("MyTardis Username? ")
         config.apikey = raw_input("MyTardis API key? ")
         config.save(self.path)
-        config.update_default_headers()
         print "\nWrote settings to %s" % self.path
