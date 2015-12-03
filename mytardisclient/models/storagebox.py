@@ -3,10 +3,13 @@ Model class for MyTardis API v1's StorageBoxResource.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 
+import logging
 import requests
 
 from mytardisclient.conf import config
 from .resultset import ResultSet
+
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 class StorageBox(object):
@@ -54,6 +57,7 @@ class StorageBox(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "URL: %s" % url
             print "HTTP %s" % response.status_code
@@ -80,6 +84,7 @@ class StorageBox(object):
         url = "%s/api/v1/storagebox/%s/?format=json" % \
             (config.url, storage_box_id)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)

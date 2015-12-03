@@ -4,6 +4,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 
 import json
+import logging
 
 import requests
 
@@ -11,6 +12,8 @@ from mytardisclient.conf import config
 from .facility import Facility
 from .resultset import ResultSet
 from mytardisclient.utils.exceptions import DoesNotExist
+
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 class Instrument(object):
@@ -51,6 +54,7 @@ class Instrument(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -75,6 +79,7 @@ class Instrument(object):
         url = "%s/api/v1/instrument/?format=json&id=%s" % \
             (config.url, instrument_id)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -102,6 +107,7 @@ class Instrument(object):
         url = config.url + "/api/v1/instrument/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_instrument_json))
+        logger.info("POST %s %s", url, response.status_code)
         if response.status_code != 201:
             message = response.text
             raise Exception(message)

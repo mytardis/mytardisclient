@@ -148,10 +148,9 @@ class Dataset(object):
         """
         updated_fields_json = {'description': description}
         url = "%s/api/v1/dataset/%s/" % (config.url, dataset_id)
-        logger.info("PATCH %s", url)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
-        logger.info("HTTP %s", response.status_code)
+        logger.info("PATCH %s %s", url, response.status_code)
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
             message = response.text
