@@ -5,6 +5,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 
 import json
 import os
+import logging
 
 import requests
 
@@ -15,13 +16,15 @@ from .schema import ParameterName
 from .instrument import Instrument
 from mytardisclient.utils.exceptions import DoesNotExist
 
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
 
 class Dataset(object):
     """
     Model class for MyTardis API v1's DatasetResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
-    def __init__(self, dataset_json=None):
+    def __init__(self, dataset_json=None, include_metadata=False):
         self.json = dataset_json
         self.id = None  # pylint: disable=invalid-name
         self.description = None
@@ -34,9 +37,11 @@ class Dataset(object):
                     self.__dict__[key] = dataset_json[key]
             if dataset_json['instrument']:
                 self.instrument = Instrument(dataset_json['instrument'])
-            self.parameter_sets = []
-            for dataset_param_set_json in dataset_json['parameter_sets']:
-                self.parameter_sets.append(DatasetParameterSet(dataset_param_set_json))
+            if include_metadata:
+                self.parameter_sets = []
+                for dataset_param_set_json in dataset_json['parameter_sets']:
+                    self.parameter_sets.append(
+                        DatasetParameterSet(dataset_param_set_json))
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
@@ -63,6 +68,7 @@ class Dataset(object):
         if order_by:
             url += "&order_by=%s"  % order_by
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -76,7 +82,7 @@ class Dataset(object):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
-    def get(dataset_id):
+    def get(dataset_id, include_metadata=True):
         """
         Get dataset with ID dataset_id
 
@@ -86,6 +92,7 @@ class Dataset(object):
         """
         url = config.url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -94,7 +101,8 @@ class Dataset(object):
         if datasets_json['meta']['total_count'] == 0:
             message = "Dataset matching filter doesn't exist."
             raise DoesNotExist(message, url, response, Dataset)
-        return Dataset(dataset_json=datasets_json['objects'][0])
+        return Dataset(dataset_json=datasets_json['objects'][0],
+                       include_metadata=include_metadata)
 
     @staticmethod
     def create(experiment_id, description, instrument_id=None,
@@ -126,6 +134,7 @@ class Dataset(object):
         url = config.url + "/api/v1/dataset/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_dataset_json))
+        logger.info("POST %s %s", url, response.status_code)
         if response.status_code != 201:
             message = response.text
             raise Exception(message)
@@ -139,8 +148,10 @@ class Dataset(object):
         """
         updated_fields_json = {'description': description}
         url = "%s/api/v1/dataset/%s/" % (config.url, dataset_id)
+        logger.info("PATCH %s", url)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
+        logger.info("HTTP %s", response.status_code)
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
             message = response.text
@@ -180,6 +191,7 @@ class DatasetParameterSet(object):
         url = "%s/api/v1/datasetparameterset/?format=json" % config.url
         url += "&datasets__id=%s"  % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)

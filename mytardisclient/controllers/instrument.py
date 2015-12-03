@@ -3,7 +3,6 @@ Controller class for running commands (list, get, create, update)
 on instrument records.
 """
 
-# from mytardisclient.logs import logger
 from mytardisclient.models.instrument import Instrument
 from mytardisclient.views import render
 

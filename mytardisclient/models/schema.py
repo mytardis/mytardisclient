@@ -2,12 +2,14 @@
 Model class for MyTardis API v1's SchemaResource.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
-
+import logging
 import requests
 
 from mytardisclient.conf import config
 from .resultset import ResultSet
 from mytardisclient.utils.exceptions import DoesNotExist
+
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 class Schema(object):
@@ -29,7 +31,7 @@ class Schema(object):
         self.type = _schema_types[type_index]  # pylint: disable=invalid-name
         self.subtype = schema_json['subtype']
 
-        self.parameter_names = ParameterName.list(schema=self)
+        self.parameter_names = ParameterName.list(schema_id=self.id)
 
     def __str__(self):
         return self.name
@@ -55,6 +57,7 @@ class Schema(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "URL: %s" % url
             print "HTTP %s" % response.status_code
@@ -79,6 +82,7 @@ class Schema(object):
         """
         url = "%s/api/v1/schema/%s/?format=json" % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             if response.status_code == 404:
                 message = "Schema ID %s doesn't exist." % schema_id
@@ -129,19 +133,19 @@ class ParameterName(object):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="ParameterName")
-    def list(schema):
+    def list(schema_id):
         """
         Retrieve the list of parameter name records in a schema.
 
-        :param schema: The schema to retrieve parameter names for.
-        :type schema: :class:`mytardisclient.models.schema.Schema`
+        :param schema_id: The ID of the schema to retrieve parameter names for.
 
         :return: A list of :class:`ParameterName` records,
             encapsulated in a `ResultSet` object`.
         """
-        # We would use "&schema__id=" if it were supported by MyTardis:
-        url = "%s/api/v1/parametername/?format=json" % config.url
+        url = "%s/api/v1/parametername/?format=json&schema__id=%s" \
+            % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "URL: %s" % url
             print "HTTP %s" % response.status_code
@@ -150,7 +154,7 @@ class ParameterName(object):
         parameter_names_json = response.json()
         num_records = len(parameter_names_json['objects'])
 
-        schema_resource_uri = "/api/v1/schema/%s/" % schema.id
+        schema_resource_uri = "/api/v1/schema/%s/" % schema_id
         parameter_names_json['objects'] = \
             [pn for pn in parameter_names_json['objects']
              if pn['schema'] == schema_resource_uri]
@@ -163,6 +167,7 @@ class ParameterName(object):
             url = "%s/api/v1/parametername/?format=json" % config.url
             url += "&offset=%s" % offset
             response = requests.get(url=url, headers=config.default_headers)
+            logger.info("GET %s %s", url, response.status_code)
             if response.status_code != 200:
                 print "URL: %s" % url
                 print "HTTP %s" % response.status_code
@@ -190,6 +195,7 @@ class ParameterName(object):
         url = "%s/api/v1/parametername/%s/?format=json" % (config.url,
                                                            parametername_id)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             if response.status_code == 404:
                 message = "Parameter Name ID %s doesn't exist." % parametername_id

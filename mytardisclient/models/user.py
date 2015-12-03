@@ -4,6 +4,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 import traceback
 import urllib2
+import logging
 
 import requests
 
@@ -11,7 +12,8 @@ from mytardisclient.conf import config
 from .group import Group
 from mytardisclient.utils.exceptions import IncompatibleMyTardisVersion
 from mytardisclient.utils.exceptions import DoesNotExist
-from mytardisclient.logs import logger
+
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 class User(object):

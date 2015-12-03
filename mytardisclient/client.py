@@ -4,6 +4,8 @@ client.py
 """
 import os
 import sys
+import logging
+import logging.config
 
 from mytardisclient import __version__ as VERSION
 from mytardisclient.models.config import Config
@@ -44,6 +46,12 @@ def run():
             sys.exit(0)
     config = Config(config_path)
     config.validate()
+
+    logging.config.fileConfig(config.logging_config_path,
+                              disable_existing_loggers=False)
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logger = logging.getLogger(__name__)
+    logger.info("MyTardis Client v%s", VERSION)
 
     if args.verbose and (not hasattr(args, 'json') or not args.json):
         print "Config: %s" % config_path

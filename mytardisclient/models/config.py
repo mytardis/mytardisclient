@@ -7,13 +7,10 @@ usually stored in ~/.config/mytardisclient/mytardisclient.cfg
 
 import os
 import json
-import traceback
 from urlparse import urlparse
 
 from ConfigParser import ConfigParser
 from dogpile.cache import make_region  # pylint: disable=import-error
-
-from mytardisclient.logs import logger
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.config',
                                    'mytardisclient', 'mytardisclient.cfg')
@@ -21,6 +18,39 @@ CACHE_PATH = os.path.join(os.path.expanduser('~'), '.cache',
                           'mytardisclient', 'mytardisclient.cache')
 DATASETS_PATH_PREFIX = os.path.join(os.path.expanduser('~'), '.config',
                                     'mytardisclient', 'servers')
+LOGFILE_PATH = os.path.join(os.path.expanduser('~'), '.mytardisclient.log')
+LOGGING_CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.config',
+                                   'mytardisclient', 'logging.cfg')
+DEFAULT_LOGGING_CONF = """\
+[loggers]
+keys=root
+
+[handlers]
+keys=fileHandler,consoleHandler
+
+[formatters]
+keys=simpleFormatter
+
+[logger_root]
+level=DEBUG
+handlers=fileHandler,consoleHandler
+
+[handler_fileHandler]
+class=FileHandler
+level=INFO
+formatter=simpleFormatter
+args=('%(file_path)s', 'w')
+
+[handler_consoleHandler]
+class=StreamHandler
+level=WARNING
+formatter=simpleFormatter
+args=(sys.stdout,)
+
+[formatter_simpleFormatter]
+format=%%(asctime)s - %%(name)s - %%(levelname)s - %%(message)s
+datefmt=
+""" % {'file_path': LOGFILE_PATH}
 
 
 class Config(object):
@@ -34,6 +64,16 @@ class Config(object):
         #: The config file's location.
         #: Default: ~/.config/mytardisclient/mytardisclient.cfg
         self.path = path
+
+        #: The logging config path.
+        #: Default: ~/.config/mytardisclient/logging.cfg
+        self.logging_config_path = LOGGING_CONFIG_PATH
+        if not os.path.exists(os.path.dirname(self.logging_config_path)):
+            os.makedirs(os.path.dirname(self.logging_config_path))
+        if not os.path.exists(self.logging_config_path):
+            with open(self.logging_config_path, 'w') as logging_config:
+                logging_config.write(DEFAULT_LOGGING_CONF)
+        self.logfile_path = LOGFILE_PATH
 
         #: The MyTardis URL, e.g. 'http://mytardisdemo.erc.monash.edu.au'
         self.url = ""
@@ -114,26 +154,21 @@ class Config(object):
             path = self.path
 
         if path is not None and os.path.exists(path):
-            logger.info("Reading settings from: " + path)
-            # pylint: disable=bare-except
-            try:
-                config_parser = ConfigParser()
-                config_parser.read(path)
-                section = "mytardisclient"
-                fields = ["url", "username", "apikey"]
+            config_parser = ConfigParser()
+            config_parser.read(path)
+            section = "mytardisclient"
+            fields = ["url", "username", "apikey"]
 
-                # For backwards compatibility:
-                if config_parser.has_option(section, "mytardis_url"):
-                    self.url = config_parser.get(section, "mytardis_url")
-                if config_parser.has_option(section, "api_key"):
-                    self.apikey = config_parser.get(section, "api_key")
+            # For backwards compatibility:
+            if config_parser.has_option(section, "mytardis_url"):
+                self.url = config_parser.get(section, "mytardis_url")
+            if config_parser.has_option(section, "api_key"):
+                self.apikey = config_parser.get(section, "api_key")
 
-                for field in fields:
-                    if config_parser.has_option(section, field):
-                        self.__dict__[field] = \
-                            config_parser.get(section, field)
-            except:
-                logger.error(traceback.format_exc())
+            for field in fields:
+                if config_parser.has_option(section, field):
+                    self.__dict__[field] = \
+                        config_parser.get(section, field)
 
     @property
     def default_headers(self):
@@ -186,4 +221,3 @@ class Config(object):
             for field in fields:
                 config_parser.set("mytardisclient", field, self.__dict__[field])
             config_parser.write(config_file)
-        logger.info("Saved settings to " + self.path)

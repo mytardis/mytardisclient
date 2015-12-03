@@ -9,6 +9,7 @@ import os
 import cgi
 import hashlib
 import urllib
+import logging
 from datetime import datetime
 
 import requests
@@ -22,6 +23,8 @@ from .schema import ParameterName
 from mytardisclient.utils.exceptions import DoesNotExist
 from mytardisclient.utils.exceptions import DuplicateKey
 
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
 
 class DataFile(object):
     """
@@ -29,7 +32,7 @@ class DataFile(object):
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, datafile_json):
+    def __init__(self, datafile_json, include_metadata=False):
         self.json = datafile_json
         self.id = datafile_json['id']  # pylint: disable=invalid-name
         self.dataset = datafile_json['dataset']
@@ -40,10 +43,11 @@ class DataFile(object):
         self.replicas = []
         for replica_json in datafile_json['replicas']:
             self.replicas.append(Replica(replica_json))
-        self.parameter_sets = []
-        for datafile_param_set_json in datafile_json['parameter_sets']:
-            self.parameter_sets.append(
-                DataFileParameterSet(datafile_param_set_json))
+        if include_metadata:
+            self.parameter_sets = []
+            for datafile_param_set_json in datafile_json['parameter_sets']:
+                self.parameter_sets.append(
+                    DataFileParameterSet(datafile_param_set_json))
 
     @property
     def verified(self):
@@ -89,6 +93,7 @@ class DataFile(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -104,7 +109,7 @@ class DataFile(object):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="DataFile")
-    def get(datafile_id):
+    def get(datafile_id, include_metadata=True):
         """
         Retrieve DataFile record with id datafile_id
 
@@ -115,6 +120,7 @@ class DataFile(object):
         url = "%s/api/v1/dataset_file/%s/?format=json" % \
             (config.url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -125,7 +131,8 @@ class DataFile(object):
             raise Exception(message)
 
         datafile_json = response.json()
-        return DataFile(datafile_json=datafile_json)
+        return DataFile(datafile_json=datafile_json,
+                        include_metadata=include_metadata)
 
     @staticmethod
     def create(dataset_id, storagebox, path):
@@ -303,6 +310,7 @@ class DataFile(object):
         url = "%s/api/v1/dataset_file/" % config.url
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_datafile_json))
+        logger.info("POST %s %s", url, response.status_code)
         if response.status_code != 201:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -325,6 +333,7 @@ class DataFile(object):
             "Authorization": "ApiKey %s:%s" % (config.username,
                                                config.apikey)}
         response = requests.get(url=url, headers=headers, stream=True)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -397,6 +406,7 @@ class DataFile(object):
         response = requests.post(url, headers=headers,
                                  data={"json_data": json.dumps(file_data)},
                                  files={'attached_file': file_obj})
+        logger.info("POST %s %s", url, response.status_code)
         file_obj.close()
         if response.status_code != 201:
             print "HTTP %s" % response.status_code
@@ -429,6 +439,7 @@ class DataFile(object):
             (config.url, datafile_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
+        logger.info("PATCH %s %s", url, response.status_code)
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -447,6 +458,7 @@ class DataFile(object):
         url = "%s/api/v1/dataset_file/%s/verify/" \
             % (config.url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -476,6 +488,7 @@ class DataFile(object):
         if directory and directory != "":
             url += "&directory=%s" % urllib.quote(directory)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code < 200 or response.status_code >= 300:
             raise Exception("Failed to check for existing file '%s' "
                             "in dataset ID %s." % (filename, dataset_id))
@@ -512,6 +525,7 @@ class DataFileParameterSet(object):
         url = "%s/api/v1/datafileparameterset/?format=json" % config.url
         url += "&datafiles__id=%s" % datafile_id
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url

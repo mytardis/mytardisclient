@@ -5,6 +5,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 
 import json
 import os
+import logging
 
 import requests
 
@@ -14,13 +15,15 @@ from .schema import ParameterName
 from mytardisclient.conf import config
 from mytardisclient.utils.exceptions import DoesNotExist
 
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
 
 class Experiment(object):
     """
     Model class for MyTardis API v1's ExperimentResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
-    def __init__(self, experiment_json=None):
+    def __init__(self, experiment_json=None, include_metadata=False):
         self.json = experiment_json
         self.id = None  # pylint: disable=invalid-name
         self.title = None
@@ -30,10 +33,11 @@ class Experiment(object):
             for key in self.__dict__.keys():
                 if key in experiment_json:
                     self.__dict__[key] = experiment_json[key]
-        self.parameter_sets = []
-        for exp_param_set_json in experiment_json['parameter_sets']:
-            self.parameter_sets.append(
-                ExperimentParameterSet(exp_param_set_json))
+        if include_metadata:
+            self.parameter_sets = []
+            for exp_param_set_json in experiment_json['parameter_sets']:
+                self.parameter_sets.append(
+                    ExperimentParameterSet(exp_param_set_json))
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
@@ -48,7 +52,7 @@ class Experiment(object):
         :return: A list of :class:`Experiment` records, encapsulated in a
             `ResultSet` object.
         """
-        url = config.url + "/api/v1/experiment/?format=json"
+        url = "%s/api/v1/experiment/?format=json" % config.url
         if limit:
             url += "&limit=%s" % limit
         if offset:
@@ -56,9 +60,10 @@ class Experiment(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            logger.error("HTTP %s", response.status_code)
+            logger.error("GET %s", url)
             message = response.text
             raise Exception(message)
 
@@ -70,7 +75,7 @@ class Experiment(object):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
-    def get(exp_id):
+    def get(exp_id, include_metadata=True):
         """
         Get experiment with ID exp_id
 
@@ -81,6 +86,7 @@ class Experiment(object):
         url = "%s/api/v1/experiment/?format=json&id=%s" \
             % (config.url, exp_id)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -89,7 +95,8 @@ class Experiment(object):
         if experiments_json['meta']['total_count'] == 0:
             message = "Experiment matching filter doesn't exist."
             raise DoesNotExist(message, url, response, Experiment)
-        return Experiment(experiment_json=experiments_json['objects'][0])
+        return Experiment(experiment_json=experiments_json['objects'][0],
+                          include_metadata=include_metadata)
 
     @staticmethod
     def create(title, description="", institution=None, params_file_json=None):
@@ -118,6 +125,7 @@ class Experiment(object):
         url = config.url + "/api/v1/experiment/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_exp_json))
+        logger.info("POST %s %s", url, response.status_code)
         if response.status_code != 201:
             message = response.text
             raise Exception(message)
@@ -136,6 +144,7 @@ class Experiment(object):
             (config.url, experiment_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
+        logger.info("PATCH %s %s", url, response.status_code)
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -175,7 +184,9 @@ class ExperimentParameterSet(object):
         """
         url = "%s/api/v1/experimentparameterset/?format=json" % config.url
         url += "&experiments__id=%s" % experiment_id
+        logger.info("GET %s", url)
         response = requests.get(url=url, headers=config.default_headers)
+        logger.info("HTTP %s", response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
