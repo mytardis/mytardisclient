@@ -26,6 +26,7 @@ def build_datafile_parser(argument_parser):
         mytardis datafile list
             [--dataset DATASET] [--directory DIRECTORY] [--filename FILENAME]
             [--limit LIMIT] [--offset OFFSET] [--order_by ORDER_BY] [--json]
+            [--filter FILTER]
 
           EXAMPLE
        
@@ -65,6 +66,8 @@ def build_datafile_parser(argument_parser):
         help="Order by this field.")
     datafile_command_list_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")
+    datafile_command_list_parser.add_argument(
+        "--filter", help="Filter on these fields, e.g. \"filename=file1.txt\".")
 
     datafile_get_help = "Display a single datafile record."
     datafile_get_usage = textwrap.dedent("""\

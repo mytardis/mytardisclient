@@ -31,8 +31,8 @@ class DataFileController(object):
             render_format = 'table'
         if command == "list":
             return self.list(args.dataset, args.directory, args.filename,
-                             args.limit, args.offset, args.order_by,
-                             render_format)
+                             args.filter, args.limit, args.offset,
+                             args.order_by, render_format)
         elif command == "get":
             return self.get(args.datafile_id, render_format)
         elif command == "create":
@@ -48,7 +48,7 @@ class DataFileController(object):
         elif command == "verify":
             return self.verify(args.datafile_id)
 
-    def list(self, dataset_id, directory, filename,
+    def list(self, dataset_id, directory, filename, filters,
              limit, offset, order_by, render_format):
         """
         Display list of datafile records.
@@ -56,7 +56,7 @@ class DataFileController(object):
         # pylint: disable=too-many-arguments
         # pylint: disable=no-self-use
         datafiles = DataFile.list(dataset_id, directory, filename,
-                                  limit, offset, order_by)
+                                  filters, limit, offset, order_by)
         print render(datafiles, render_format)
 
     def get(self, datafile_id, render_format):

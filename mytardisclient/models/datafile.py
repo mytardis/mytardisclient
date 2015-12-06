@@ -8,7 +8,7 @@ import json
 import os
 import cgi
 import hashlib
-import urllib
+import urllib2
 import logging
 from datetime import datetime
 
@@ -64,7 +64,7 @@ class DataFile(object):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="DataFile")
-    def list(dataset_id=None, directory=None, filename=None,
+    def list(dataset_id=None, directory=None, filename=None, filters=None,
              limit=None, offset=None, order_by=None):
         """
         Retrieve a list of datafiles.
@@ -72,6 +72,7 @@ class DataFile(object):
         :param dataset_id: The ID of a dataset to retrieve datafiles from.
         :param directory: The subdirectory within the dataset.
         :param filename: The datafile's name.
+        :param filters: Filters, e.g. "filename=file1.txt"
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
@@ -86,6 +87,11 @@ class DataFile(object):
             url += "&directory=%s" % directory
         if filename:
             url += "&filename=%s" % filename
+        if filters:
+            filter_components = filters.split('&')
+            for filter_component in filter_components:
+                field, value = filter_component.split('=')
+                url += "&%s=%s" % (field, urllib2.quote(value))
         if limit:
             url += "&limit=%s" % limit
         if offset:
@@ -541,9 +547,9 @@ class DataFile(object):
 
         url = "%s/api/v1/dataset_file/?format=json" % config.url
         url += "&dataset__id=%s" % dataset_id
-        url += "&filename=%s" % urllib.quote(filename)
+        url += "&filename=%s" % urllib2.quote(filename)
         if directory and directory != "":
-            url += "&directory=%s" % urllib.quote(directory)
+            url += "&directory=%s" % urllib2.quote(directory)
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code < 200 or response.status_code >= 300:
