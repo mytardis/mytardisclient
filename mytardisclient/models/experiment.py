@@ -5,6 +5,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 
 import json
 import os
+import urllib2
 import logging
 
 import requests
@@ -41,18 +42,24 @@ class Experiment(object):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
-    def list(limit=None, offset=None, order_by=None):
+    def list(limit=None, offset=None, order_by=None, filters=None):
         """
         Retrieve a list of experiments.
 
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
+        :param filters: Filters, e.g. "title=Exp Title"
 
         :return: A list of :class:`Experiment` records, encapsulated in a
             `ResultSet` object.
         """
         url = "%s/api/v1/experiment/?format=json" % config.url
+        if filters:
+            filter_components = filters.split('&')
+            for filter_component in filter_components:
+                field, value = filter_component.split('=')
+                url += "&%s=%s" % (field, urllib2.quote(value))
         if limit:
             url += "&limit=%s" % limit
         if offset:

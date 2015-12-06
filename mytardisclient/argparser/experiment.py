@@ -24,6 +24,7 @@ def build_experiment_parser(argument_parser):
     experiment_list_usage = textwrap.dedent("""\
         mytardis experiment list
             [--limit LIMIT] [--offset OFFSET] [--order_by ORDER_BY] [--json]
+            [--filter FILTER]
 
           EXAMPLE
        
@@ -61,6 +62,8 @@ def build_experiment_parser(argument_parser):
         help="Order by this field.")
     experiment_command_list_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")
+    experiment_command_list_parser.add_argument(
+        "--filter", help="Filter on these fields, e.g. \"title=Exp Title\".")
 
     experiment_get_help = "Display a single experiment record."
     experiment_get_usage = textwrap.dedent("""\
