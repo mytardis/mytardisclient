@@ -50,7 +50,7 @@ class Facility(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -75,7 +75,7 @@ class Facility(object):
         url = "%s/api/v1/facility/?format=json&id=%s" % (config.url,
                                                          facility_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)

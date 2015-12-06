@@ -57,7 +57,7 @@ class Schema(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "URL: %s" % url
             print "HTTP %s" % response.status_code
@@ -82,7 +82,7 @@ class Schema(object):
         """
         url = "%s/api/v1/schema/%s/?format=json" % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             if response.status_code == 404:
                 message = "Schema ID %s doesn't exist." % schema_id
@@ -145,7 +145,7 @@ class ParameterName(object):
         url = "%s/api/v1/parametername/?format=json&schema__id=%s" \
             % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "URL: %s" % url
             print "HTTP %s" % response.status_code
@@ -167,7 +167,7 @@ class ParameterName(object):
             url = "%s/api/v1/parametername/?format=json" % config.url
             url += "&offset=%s" % offset
             response = requests.get(url=url, headers=config.default_headers)
-            logger.info("GET %s %s", url, response.status_code)
+            logger.debug("GET %s %s", url, response.status_code)
             if response.status_code != 200:
                 print "URL: %s" % url
                 print "HTTP %s" % response.status_code
@@ -195,7 +195,7 @@ class ParameterName(object):
         url = "%s/api/v1/parametername/%s/?format=json" % (config.url,
                                                            parametername_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             if response.status_code == 404:
                 message = "Parameter Name ID %s doesn't exist." % parametername_id

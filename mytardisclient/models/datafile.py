@@ -93,7 +93,7 @@ class DataFile(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -120,7 +120,7 @@ class DataFile(object):
         url = "%s/api/v1/dataset_file/%s/?format=json" % \
             (config.url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -135,7 +135,7 @@ class DataFile(object):
                         include_metadata=include_metadata)
 
     @staticmethod
-    def create(dataset_id, storagebox, path):
+    def create(dataset_id, storagebox, dataset_path, path):
         """
         Create one or more DataFile records, depending on whether the
         supplied path is a single file or a directory.
@@ -143,67 +143,102 @@ class DataFile(object):
         :param dataset_id: The ID of the dataset to create the datafile
             record(s) in.
         :param storagebox: The storage box containing the datafile(s).
-        :param path: The relative path to a file to be represented in
-            the DataFile record, or a directory containing the files to create
-            records for.  The path should be a relative (not absolute) path,
-            e.g.  'dataset1/subdir1/datafile1.txt'.  The first directory
-            ('dataset1') in the path is the local dataset path, which we will
-            create a symlink to in
+        :param dataset_path:
+            Only required if the supplied path to the datafile(s) is absolute
+            (not relative).  If a relative path is supplied, then dataset_path
+            is automatically set to the first component of the relative path.
+            The MyTardis Client will create a symlink to dataset_path in
             ~/.config/mytardisclient/servers/[mytardis_hostname]/ which
-            will enable MyTardis to verify and ingest the file (see below).
-            The subdirectory ('subdir1') to be recorded in the DataFile
-            record(s) will be determined automatically.
+            will enable MyTardis to verify and ingest the file.
+        :param path: The path to a file to be represented in the DataFile
+            record or to a directory containing the files to create records
+            for.
+            If the path is a relative (not absolute) path,
+            e.g. 'dataset1/subdir1/datafile1.txt', then the first directory
+            ('dataset1') in the path is assumed to be the local dataset path.
+            The MyTardis Client will create a symlink to the local dataset path
+            in ~/.config/mytardisclient/servers/[mytardis_hostname]/ which
+            will enable MyTardis to verify and ingest the file.
+            If the path is an absolute path, e.g.
+            '/home/james/dataset1/subdir1/datafile1.txt', then the dataset_path
+            argument must be used to specified the dataset path, e.g.
+            '/home/james/dataset1'.
         """
-        if os.path.isabs(path):
-            raise Exception("The path should be relative, not absolute.")
+        if not dataset_path and os.path.isabs(path):
+            raise Exception("Either supply dataset_path or supply a relative "
+                            "path to the datafile(s).")
         elif not os.path.exists(path):
             raise Exception("The path doesn't exist: %s" % path)
         if os.path.isdir(path):
-            return DataFile.create_datafiles(dataset_id, storagebox, path)
+            return DataFile.create_datafiles(dataset_id, storagebox,
+                                             dataset_path, path)
         else:
-            return DataFile.create_datafile(dataset_id, storagebox, path)
+            return DataFile.create_datafile(dataset_id, storagebox,
+                                            dataset_path, path)
 
     @staticmethod
-    def create_datafiles(dataset_id, storagebox, dir_path):
+    def create_datafiles(dataset_id, storagebox, dataset_path, dir_path):
         """
         Create a DataFile record for each file within the dir_path directory.
 
         :param dataset_id: The ID of the dataset to create the datafile
             record(s) in.
         :param storagebox: The storage box containing the datafile(s).
-        :param dir_path: The relative path to a directory containing file(s) to
-            create DataFile records for.  The path should be a relative (not
-            absolute) path, e.g.  'dataset1/'.  We will create a symlink to
-            this path in ~/.config/mytardisclient/servers/[mytardis_hostname]/
+        :param dataset_path:
+            Only required if the supplied dir_path is absolute (not relative).
+            If a relative path is supplied, then dataset_path
+            is automatically set to the first component of the relative path.
+            The MyTardis Client will create a symlink to dataset_path in
+            ~/.config/mytardisclient/servers/[mytardis_hostname]/ which
+            will enable MyTardis to verify and ingest the file.
+        :param dir_path: The path to a directory containing file(s) to
+            create DataFile records for.  If the dir_path is relative (not
+            absolute) path, e.g. 'dataset1/subdir1', then the MyTardis Client
+            will assume that the first component of the path (e.g. 'dataset1/')
+            is the local dataset path, and create a symlink to this path in
+            ~/.config/mytardisclient/servers/[mytardis_hostname]/
             which will enable MyTardis to verify and ingest its file(s).
+            If dir_path is an absolute path, e.g.
+            '/home/james/dataset1/subdir1/', then the dataset_path
+            argument must be used to specified the dataset path, e.g.
+            '/home/james/dataset1'.
         """
-        datafiles = {'meta': {'total_count': 0, 'limit': 0, 'offset': 0}, 'objects': []}
-
+        num_datafiles_created = 0
         for root, _, files in os.walk(dir_path):
             for filename in files:
                 file_path = os.path.join(root, filename)
-                datafile = DataFile.create_datafile(dataset_id, storagebox, file_path)
-                datafiles['meta']['total_count'] += 1
-                datafiles['objects'].append(datafile.json)
-        return ResultSet(DataFile, url=None, json=datafiles)
+                try:
+                    DataFile.create_datafile(dataset_id, storagebox,
+                                             dataset_path, file_path,
+                                             return_new_datafile=False)
+                    num_datafiles_created += 1
+                except DuplicateKey:
+                    logger.warning("A DataFile record already exists for %s",
+                                   file_path)
+        return num_datafiles_created
 
     @staticmethod
-    def create_datafile(dataset_id, storagebox, file_path):
+    def create_datafile(dataset_id, storagebox, dataset_path, file_path,
+                        return_new_datafile=True):
         """
         Create a DataFile record.
 
         :param dataset_id: The ID of the dataset to create the datafile in.
         :param storagebox: The storage box containing the datafile.
-        :param recursive: Whether to recursively include files within a
-            directory (specified as file_path), or whether to include only a
-            single file.
+        :param dataset_path:
+            Only required if the supplied path to the datafile is absolute
+            (not relative).  If a relative file_path is specified, and
+            dataset_path is not specified, then  dataset_path is
+            automatically set to the first component of the file_path.
+            The MyTardis Client will create a symlink to dataset_path in
+            ~/.config/mytardisclient/servers/[mytardis_hostname]/ which
+            will enable MyTardis to verify and ingest the file.
         :param file_path: The local path to the file to be represented in
-            the DataFile record, or if recursive is True, the directory
-            containing the files.  file_path should be a relative (not
-            absolute) path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first
-            directory ('dataset1') in the file_path is the local dataset path,
-            which we will create a symlink to in
-            ~/.config/mytardisclient/servers/[mytardis_hostname]/ which will
+            the DataFile record.  If file_path is a relative (not absolute)
+            path, e.g. 'dataset1/subdir1/datafile1.txt', then the first
+            directory ('dataset1') in the file_path is assumed to be the local
+            dataset path, which we will create a symlink to in
+            ~/.config/mytardisclient/servers/[mytardis_hostname]/.  This  will
             enable MyTardis to verify and ingest the file.  The subdirectory
             ('subdir1') to be recorded in the DataFile record(s) will be
             determined automatically.
@@ -254,13 +289,30 @@ class DataFile(object):
         the location of 'results.dat', i.e. ~james/analysis/dataset1/.
         """
         # pylint: disable=too-many-locals
-        if os.path.isabs(file_path):
-            raise Exception("The path should be relative, not absolute.")
+        # pylint: disable=too-many-branches
+        # pylint: disable=too-many-statements
+        if not dataset_path and os.path.isabs(file_path):
+            raise Exception("Either supply dataset_path or supply a relative "
+                            "path to the datafile.")
         elif not os.path.exists(file_path):
             raise Exception("Path doesn't exist: %s" % file_path)
         if os.path.isdir(file_path):
             raise Exception("The path should be a single file: %s" % file_path)
         dataset = Dataset.get(dataset_id)
+        if os.path.isabs(file_path):
+            local_dataset_path = dataset_path
+            file_path_without_dataset = os.path.relpath(file_path,
+                                                        dataset_path)
+            (directory, filename) = os.path.split(file_path_without_dataset)
+        else:
+            file_path_components = file_path.split(os.sep)
+            local_dataset_path = file_path_components.pop(0)  # local_dataset_path
+            filename = file_path_components.pop(-1)
+            if len(file_path_components) > 0:
+                directory = os.path.join(*file_path_components)
+            else:
+                directory = ""
+
         file_path_components = file_path.split(os.sep)
         local_dataset_path = file_path_components.pop(0)
         filename = file_path_components.pop(-1)
@@ -310,15 +362,17 @@ class DataFile(object):
         url = "%s/api/v1/dataset_file/" % config.url
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_datafile_json))
-        logger.info("POST %s %s", url, response.status_code)
+        logger.debug("POST %s %s", url, response.status_code)
         if response.status_code != 201:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
             message = response.text
             raise Exception(message)
-        datafile_id = response.headers['location'].split("/")[-2]
-        new_datafile = DataFile.get(datafile_id)
-        return new_datafile
+        logger.info("Created a DataFile record for %s", file_path)
+        if return_new_datafile:
+            datafile_id = response.headers['location'].split("/")[-2]
+            new_datafile = DataFile.get(datafile_id)
+            return new_datafile
 
     @staticmethod
     def download(datafile_id):
@@ -333,7 +387,7 @@ class DataFile(object):
             "Authorization": "ApiKey %s:%s" % (config.username,
                                                config.apikey)}
         response = requests.get(url=url, headers=headers, stream=True)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -353,36 +407,45 @@ class DataFile(object):
         print "Downloaded: %s" % filename
 
     @staticmethod
-    def upload(dataset_id, file_path):
+    def upload(dataset_id, dataset_path, file_path):
         """
         Upload datafile to dataset with ID dataset_id,
         using HTTP POST.
 
         :param dataset_id: The ID of the dataset to create the datafile in.
+        :param dataset_path:
+            Only required if the supplied path to the datafile is absolute
+            (not relative).  If a relative path is supplied,
+            e.g. 'dataset1/subdir1/datafile1.txt', then the dataset_path
+            is assumed to be the first component of the relative path,
+            leaving the remaining path components to define the directory
+            and filename to record in the DataFile record.
         :param file_path: The local path to the file to be represented in
-            the DataFile record.  file_path should be a relative (not absolute)
-            path, e.g. 'dataset1/subdir1/datafile1.txt'.  The first directory
-            ('dataset1') in the file_path is the local dataset path, which we
-            will create a symlink to in
-            ~/.config/mytardisclient/servers/[mytardis_hostname]/
-            which will enable MyTardis to verify and ingest the file (see
-            below).  The subdirectory ('subdir1') to be recorded in the
-            DataFile record will be determined automatically.
+            the DataFile record.  If dataset_path is not specified,
+            file_path must be a relative (not absolute) path, e.g.
+            'dataset1/subdir1/datafile1.txt'.
         """
-        if os.path.isabs(file_path):
-            raise Exception("file_path should be relative, not absolute.")
+        # pylint: disable=too-many-locals
+        if not dataset_path and os.path.isabs(file_path):
+            raise Exception("Either supply dataset_path or supply a relative "
+                            "path to the datafile.")
         elif not os.path.exists(file_path):
             raise Exception("Path doesn't exist: %s" % file_path)
         url = "%s/api/v1/dataset_file/" % config.url
         created_time = datetime.fromtimestamp(
             os.stat(file_path).st_ctime).isoformat()
-        file_path_components = file_path.split(os.sep)
-        _ = file_path_components.pop(0)  # local_dataset_path
-        filename = file_path_components.pop(-1)
-        if len(file_path_components) > 0:
-            directory = os.path.join(*file_path_components)
+        if os.path.isabs(file_path):
+            file_path_without_dataset = os.path.relpath(file_path,
+                                                        dataset_path)
+            directory, filename = os.path.split(file_path_without_dataset)
         else:
-            directory = ""
+            file_path_components = file_path.split(os.sep)
+            _ = file_path_components.pop(0)  # local_dataset_path
+            filename = file_path_components.pop(-1)
+            if len(file_path_components) > 0:
+                directory = os.path.join(*file_path_components)
+            else:
+                directory = ""
         if DataFile.exists(dataset_id, directory, filename):
             if directory and directory != "":
                 _file_path = os.path.join(directory, filename)
@@ -406,7 +469,7 @@ class DataFile(object):
         response = requests.post(url, headers=headers,
                                  data={"json_data": json.dumps(file_data)},
                                  files={'attached_file': file_obj})
-        logger.info("POST %s %s", url, response.status_code)
+        logger.debug("POST %s %s", url, response.status_code)
         file_obj.close()
         if response.status_code != 201:
             print "HTTP %s" % response.status_code
@@ -439,7 +502,7 @@ class DataFile(object):
             (config.url, datafile_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
-        logger.info("PATCH %s %s", url, response.status_code)
+        logger.debug("PATCH %s %s", url, response.status_code)
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -458,7 +521,7 @@ class DataFile(object):
         url = "%s/api/v1/dataset_file/%s/verify/" \
             % (config.url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -488,7 +551,7 @@ class DataFile(object):
         if directory and directory != "":
             url += "&directory=%s" % urllib.quote(directory)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code < 200 or response.status_code >= 300:
             raise Exception("Failed to check for existing file '%s' "
                             "in dataset ID %s." % (filename, dataset_id))
@@ -525,7 +588,7 @@ class DataFileParameterSet(object):
         url = "%s/api/v1/datafileparameterset/?format=json" % config.url
         url += "&datafiles__id=%s" % datafile_id
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url

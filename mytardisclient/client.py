@@ -49,12 +49,14 @@ def run():
 
     logging.config.fileConfig(config.logging_config_path,
                               disable_existing_loggers=False)
+    logging.getLogger("dogpile.core.dogpile").setLevel(logging.WARNING)
     logging.getLogger("requests").setLevel(logging.WARNING)
     logger = logging.getLogger(__name__)
     logger.info("MyTardis Client v%s", VERSION)
 
     if args.verbose and (not hasattr(args, 'json') or not args.json):
-        print "Config: %s" % config_path
+        print "General config: %s" % config_path
+        print "Logging config: %s" % config.logging_config_path
         print "MyTardis URL: %s" % config.url
         print "Username: %s" % config.username
 

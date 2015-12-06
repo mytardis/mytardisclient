@@ -37,7 +37,7 @@ handlers=fileHandler,consoleHandler
 
 [handler_fileHandler]
 class=FileHandler
-level=INFO
+level=DEBUG
 formatter=simpleFormatter
 args=('%(file_path)s', 'w')
 

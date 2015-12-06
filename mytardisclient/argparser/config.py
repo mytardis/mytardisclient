@@ -33,6 +33,9 @@ def build_config_parser(argument_parser):
 
           $ mytardis config --get path
           /Users/wettenhj/.config/mytardisclient/mytardisclient.cfg
+
+          $ mytardis config --get logging_config_path
+          /Users/wettenhj/.config/mytardisclient/logging.cfg
         """)
     config_command_parser = \
         argument_parser.model_parsers.add_parser("config", help=config_help,

@@ -4,6 +4,8 @@ Controller class for running commands (list, get, download, upload, update,
 on datafile records.
 """
 
+import os
+
 from mytardisclient.models.datafile import DataFile
 from mytardisclient.views import render
 
@@ -35,11 +37,12 @@ class DataFileController(object):
             return self.get(args.datafile_id, render_format)
         elif command == "create":
             return self.create(args.dataset_id, args.storagebox,
-                               args.path, render_format)
+                               args.dataset_path, args.path, render_format)
         elif command == "download":
             return self.download(args.datafile_id)
         elif command == "upload":
-            return self.upload(args.dataset_id, args.file_path)
+            return self.upload(args.dataset_id, args.dataset_path,
+                               args.file_path)
         elif command == "update":
             return self.update(args.datafile_id, args.md5sum, render_format)
         elif command == "verify":
@@ -64,19 +67,23 @@ class DataFileController(object):
         datafile = DataFile.get(datafile_id)
         print render(datafile, render_format)
 
-    def create(self, dataset_id, storagebox, path, render_format):
+    def create(self, dataset_id, storagebox, dataset_path, path,
+               render_format):
         """
         Create datafile record(s) for an existing file or for all files
         within a directory.
         """
         # pylint: disable=too-many-arguments
         # pylint: disable=no-self-use
-        datafiles = DataFile.create(dataset_id, storagebox, path)
-        print render(datafiles, render_format)
-        if isinstance(datafiles, DataFile):
-            print "DataFile created successfully."
+        if os.path.isdir(path):
+            num_created = DataFile.create_datafiles(dataset_id, storagebox,
+                                                    dataset_path, path)
+            print "%s datafiles created." % num_created
         else:
-            print "%s DataFiles created successfully." % len(datafiles)
+            datafile = DataFile.create_datafile(dataset_id, storagebox,
+                                                dataset_path, path)
+            print render(datafile, render_format)
+            print "DataFile created successfully."
 
     def download(self, datafile_id):
         """
@@ -85,12 +92,12 @@ class DataFileController(object):
         # pylint: disable=no-self-use
         DataFile.download(datafile_id)
 
-    def upload(self, dataset_id, file_path):
+    def upload(self, dataset_id, dataset_path, file_path):
         """
         Upload datafile.
         """
         # pylint: disable=no-self-use
-        DataFile.upload(dataset_id, file_path)
+        DataFile.upload(dataset_id, dataset_path, file_path)
 
     def update(self, datafile_id, md5sum, render_format):
         """

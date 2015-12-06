@@ -60,7 +60,7 @@ class Experiment(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             logger.error("HTTP %s", response.status_code)
             logger.error("GET %s", url)
@@ -86,7 +86,7 @@ class Experiment(object):
         url = "%s/api/v1/experiment/?format=json&id=%s" \
             % (config.url, exp_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("GET %s %s", url, response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
@@ -125,7 +125,7 @@ class Experiment(object):
         url = config.url + "/api/v1/experiment/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_exp_json))
-        logger.info("POST %s %s", url, response.status_code)
+        logger.debug("POST %s %s", url, response.status_code)
         if response.status_code != 201:
             message = response.text
             raise Exception(message)
@@ -144,7 +144,7 @@ class Experiment(object):
             (config.url, experiment_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
-        logger.info("PATCH %s %s", url, response.status_code)
+        logger.debug("PATCH %s %s", url, response.status_code)
         if response.status_code != 202:
             print "HTTP %s" % response.status_code
             print "URL: %s" % url
@@ -184,9 +184,8 @@ class ExperimentParameterSet(object):
         """
         url = "%s/api/v1/experimentparameterset/?format=json" % config.url
         url += "&experiments__id=%s" % experiment_id
-        logger.info("GET %s", url)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.info("HTTP %s", response.status_code)
+        logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
