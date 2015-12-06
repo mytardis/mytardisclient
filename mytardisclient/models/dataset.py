@@ -5,6 +5,7 @@ See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 
 import json
 import os
+import urllib2
 import logging
 
 import requests
@@ -45,12 +46,13 @@ class Dataset(object):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
-    def list(experiment_id=None,
+    def list(experiment_id=None, filters=None,
              limit=None, offset=None, order_by=None):
         """
         Retrieve a list of datasets.
 
         :param experiment_id: The ID of an experiment to retrieve datasets from.
+        :param filters: Filters, e.g. "description=Dataset Description"
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
@@ -59,8 +61,14 @@ class Dataset(object):
             `ResultSet` object.
         """
         url = "%s/api/v1/dataset/?format=json" % config.url
+
         if experiment_id:
             url += "&experiments__id=%s"  % experiment_id
+        if filters:
+            filter_components = filters.split('&')
+            for filter_component in filter_components:
+                field, value = filter_component.split('=')
+                url += "&%s=%s" % (field, urllib2.quote(value))
         if limit:
             url += "&limit=%s"  % limit
         if offset:
@@ -72,13 +80,7 @@ class Dataset(object):
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
-
-        if experiment_id or limit or offset:
-            filters = dict(experiment_id=experiment_id,
-                           limit=limit, offset=offset)
-            return ResultSet(Dataset, url, response.json(), **filters)
-        else:
-            return ResultSet(Dataset, url, response.json())
+        return ResultSet(Dataset, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
@@ -194,9 +196,7 @@ class DatasetParameterSet(object):
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
-
-        filters = dict(dataset_id=dataset_id)
-        return ResultSet(DatasetParameterSet, url, response.json(), **filters)
+        return ResultSet(DatasetParameterSet, url, response.json())
 
 
 class DatasetParameter(object):

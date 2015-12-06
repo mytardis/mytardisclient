@@ -14,7 +14,7 @@ class ResultSet(object):
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, model, url, json, **filters):
+    def __init__(self, model, url, json):
         """
         Each record in the result set can be
         represented as an object of class model
@@ -26,7 +26,6 @@ class ResultSet(object):
         self.total_count = self.json['meta']['total_count']
         self.limit = self.json['meta']['limit']
         self.offset = self.json['meta']['offset']
-        self.filters = str(filters)
 
     def __len__(self):
         """

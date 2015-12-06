@@ -58,13 +58,7 @@ class Instrument(object):
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
-
-        if facility_id or limit or offset:
-            filters = dict(facility_id=facility_id, limit=limit, offset=offset)
-            return ResultSet(Instrument, url, response.json(),
-                             **filters)
-        else:
-            return ResultSet(Instrument, url, response.json())
+        return ResultSet(Instrument, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Instrument")

@@ -26,9 +26,9 @@ class DatasetController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.exp, args.limit,
-                             args.offset, args.order_by,
-                             render_format)
+            return self.list(args.exp, args.filter,
+                             args.limit, args.offset,
+                             args.order_by, render_format)
         elif command == "get":
             return self.get(args.dataset_id, render_format)
         elif command == "create":
@@ -38,13 +38,14 @@ class DatasetController(object):
             return self.update(args.dataset_id, args.description,
                                render_format)
 
-    def list(self, experiment_id, limit, offset, order_by, render_format):
+    def list(self, experiment_id, filters, limit, offset, order_by,
+             render_format):
         """
         Display list of dataset records.
         """
         # pylint: disable=too-many-arguments
         # pylint: disable=no-self-use
-        datasets = Dataset.list(experiment_id,
+        datasets = Dataset.list(experiment_id, filters,
                                 limit, offset, order_by)
         print render(datasets, render_format)
 

@@ -63,12 +63,7 @@ class Schema(object):
             print "HTTP %s" % response.status_code
             message = response.text
             raise Exception(message)
-
-        if limit or offset:
-            filters = dict(limit=limit, offset=offset)
-            return ResultSet(Schema, url, response.json(), **filters)
-        else:
-            return ResultSet(Schema, url, response.json())
+        return ResultSet(Schema, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Schema")

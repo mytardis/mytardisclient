@@ -26,8 +26,8 @@ class ExperimentController(object):
         else:
             render_format = 'table'
         if command == "list":
-            return self.list(args.limit, args.offset, args.order_by,
-                             args.filter, render_format)
+            return self.list(args.filter, args.limit, args.offset,
+                             args.order_by, render_format)
         elif command == "get":
             return self.get(args.experiment_id, render_format)
         elif command == "create":
@@ -37,13 +37,13 @@ class ExperimentController(object):
             return self.update(args.experiment_id, args.title,
                                args.description, render_format)
 
-    def list(self, limit, offset, order_by, filters, render_format):
+    def list(self, filters, limit, offset, order_by, render_format):
         """
         Display list of experiment records.
         """
         # pylint: disable=no-self-use
         # pylint: disable=too-many-arguments
-        experiments = Experiment.list(limit, offset, order_by, filters)
+        experiments = Experiment.list(filters, limit, offset, order_by)
         print render(experiments, render_format)
 
     def get(self, experiment_id, render_format):

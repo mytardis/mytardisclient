@@ -24,6 +24,7 @@ def build_dataset_parser(argument_parser):
     dataset_list_usage = textwrap.dedent("""\
         mytardis dataset list
             [--exp EXP] [--limit LIMIT] [--offset OFFSET] [--order_by ORDER_BY] [--json]
+            [--filter FILTER]
 
           EXAMPLE
        
@@ -62,6 +63,8 @@ def build_dataset_parser(argument_parser):
         help="Order by this field.")
     dataset_command_list_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")
+    dataset_command_list_parser.add_argument(
+        "--filter", help="Filter on these fields, e.g. \"description=Dataset Description\".")
 
     dataset_get_help = "Display a single dataset record."
     dataset_get_usage = textwrap.dedent("""\

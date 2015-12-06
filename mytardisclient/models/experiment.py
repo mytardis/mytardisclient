@@ -42,14 +42,14 @@ class Experiment(object):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
-    def list(limit=None, offset=None, order_by=None, filters=None):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
         Retrieve a list of experiments.
 
+        :param filters: Filters, e.g. "title=Exp Title"
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
-        :param filters: Filters, e.g. "title=Exp Title"
 
         :return: A list of :class:`Experiment` records, encapsulated in a
             `ResultSet` object.
@@ -73,12 +73,7 @@ class Experiment(object):
             logger.error("GET %s", url)
             message = response.text
             raise Exception(message)
-
-        if limit or offset:
-            filters = dict(limit=limit, offset=offset)
-            return ResultSet(Experiment, url, response.json(), **filters)
-        else:
-            return ResultSet(Experiment, url, response.json())
+        return ResultSet(Experiment, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
@@ -196,10 +191,7 @@ class ExperimentParameterSet(object):
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
-
-        filters = dict(experiment_id=experiment_id)
-        return ResultSet(ExperimentParameterSet, url, response.json(),
-                         **filters)
+        return ResultSet(ExperimentParameterSet, url, response.json())
 
 
 class ExperimentParameter(object):

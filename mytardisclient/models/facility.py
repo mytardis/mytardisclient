@@ -54,13 +54,7 @@ class Facility(object):
         if response.status_code != 200:
             message = response.text
             raise Exception(message)
-
-        if limit or offset:
-            filters = dict(limit=limit, offset=offset)
-            return ResultSet(Facility, url, response.json(),
-                             **filters)
-        else:
-            return ResultSet(Facility, url, response.json())
+        return ResultSet(Facility, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Facility")

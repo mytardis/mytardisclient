@@ -99,13 +99,7 @@ class DataFile(object):
             print "URL: %s" % url
             message = response.text
             raise Exception(message)
-
-        if dataset_id or limit or offset:
-            filters = dict(dataset_id=dataset_id, limit=limit, offset=offset)
-            return ResultSet(DataFile, url, response.json(),
-                             **filters)
-        else:
-            return ResultSet(DataFile, url, response.json())
+        return ResultSet(DataFile, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="DataFile")
@@ -594,9 +588,7 @@ class DataFileParameterSet(object):
             print "URL: %s" % url
             message = response.text
             raise Exception(message)
-
-        filters = dict(datafile_id=datafile_id)
-        return ResultSet(DataFileParameterSet, url, response.json(), **filters)
+        return ResultSet(DataFileParameterSet, url, response.json())
 
 
 class DataFileParameter(object):
