@@ -38,7 +38,7 @@ class ResultSet(object):
         """
         Get a record from the query set.
         """
-        return self.model(self.json['objects'][key])
+        return self.model(self.json['objects'][key], include_metadata=False)
 
     def __iter__(self):
         """
@@ -54,4 +54,4 @@ class ResultSet(object):
         self.index += 1
         if self.index >= len(self):
             raise StopIteration
-        return self.model(self.json['objects'][self.index])
+        return self.model(self.json['objects'][self.index], include_metadata=False)

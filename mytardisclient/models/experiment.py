@@ -23,7 +23,7 @@ class Experiment(object):
     Model class for MyTardis API v1's ExperimentResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
-    def __init__(self, experiment_json=None, include_metadata=False):
+    def __init__(self, experiment_json=None, include_metadata=True):
         self.json = experiment_json
         self.id = None  # pylint: disable=invalid-name
         self.title = None

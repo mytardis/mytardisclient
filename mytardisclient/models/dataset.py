@@ -24,7 +24,7 @@ class Dataset(object):
     Model class for MyTardis API v1's DatasetResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
-    def __init__(self, dataset_json=None, include_metadata=False):
+    def __init__(self, dataset_json=None, include_metadata=True):
         self.json = dataset_json
         self.id = None  # pylint: disable=invalid-name
         self.description = None

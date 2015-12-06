@@ -32,7 +32,7 @@ class DataFile(object):
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, datafile_json, include_metadata=False):
+    def __init__(self, datafile_json, include_metadata=True):
         self.json = datafile_json
         self.id = datafile_json['id']  # pylint: disable=invalid-name
         self.dataset = datafile_json['dataset']
