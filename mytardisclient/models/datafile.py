@@ -299,27 +299,20 @@ class DataFile(object):
         if os.path.isdir(file_path):
             raise Exception("The path should be a single file: %s" % file_path)
         dataset = Dataset.get(dataset_id)
-        if os.path.isabs(file_path):
+        if dataset_path or os.path.isabs(file_path):
             local_dataset_path = dataset_path
             file_path_without_dataset = os.path.relpath(file_path,
                                                         dataset_path)
             (directory, filename) = os.path.split(file_path_without_dataset)
         else:
             file_path_components = file_path.split(os.sep)
-            local_dataset_path = file_path_components.pop(0)  # local_dataset_path
+            local_dataset_path = file_path_components.pop(0)
             filename = file_path_components.pop(-1)
             if len(file_path_components) > 0:
                 directory = os.path.join(*file_path_components)
             else:
                 directory = ""
 
-        file_path_components = file_path.split(os.sep)
-        local_dataset_path = file_path_components.pop(0)
-        filename = file_path_components.pop(-1)
-        if len(file_path_components) > 0:
-            directory = os.path.join(*file_path_components)
-        else:
-            directory = ""
         uri = os.path.join("%s-%s" % (dataset.description, dataset_id),
                            directory, filename)
         dataset_symlink_path = \
