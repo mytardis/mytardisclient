@@ -14,6 +14,7 @@ from .dataset import build_dataset_parser
 from .datafile import build_datafile_parser
 from .storagebox import build_storagebox_parser
 from .schema import build_schema_parser
+from .uploader import build_uploader_parser
 
 
 class ArgParser(object):
@@ -38,12 +39,12 @@ class ArgParser(object):
         if args.model not in ('api', 'config', 'version',
                               'facility', 'instrument',
                               'experiment', 'dataset', 'datafile',
-                              'storagebox', 'schema'):
+                              'storagebox', 'schema', 'uploader'):
             self.parser.error(
                 "model should be one of 'api', 'config', 'version', "
                 "'facility', 'instrument', "
                 "'experiment', 'dataset', 'datafile', 'storagebox', "
-                "'schema'.")
+                "'schema', 'uploader'.")
 
         return args
 
@@ -61,6 +62,7 @@ class ArgParser(object):
         build_datafile_parser(self)
         build_storagebox_parser(self)
         build_schema_parser(self)
+        build_uploader_parser(self)
 
         return self.parser
 

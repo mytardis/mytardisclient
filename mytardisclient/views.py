@@ -15,6 +15,7 @@ from mytardisclient.models.dataset import Dataset
 from mytardisclient.models.datafile import DataFile
 from mytardisclient.models.storagebox import StorageBox
 from mytardisclient.models.schema import Schema
+from mytardisclient.models.uploader import Uploader
 from mytardisclient.models.resultset import ResultSet
 from mytardisclient.utils import human_readable_size_string
 
@@ -77,6 +78,8 @@ def render_single_record(data, render_format):
         return render_storage_box(data, render_format)
     elif data.__class__ == Schema:
         return render_schema(data, render_format)
+    elif data.__class__ == Uploader:
+        return render_uploader(data, render_format)
     else:
         print "Class is " + data.__class__.__name__
 
@@ -116,6 +119,8 @@ def render_result_set(result_set, render_format, display_heading=True):
         return render_storage_boxes(result_set, render_format, display_heading)
     elif result_set.model == Schema:
         return render_schemas(result_set, render_format, display_heading)
+    elif result_set.model == Uploader:
+        return render_uploaders(result_set, render_format, display_heading)
     else:
         print "Class is " + result_set.model.__name__
 
@@ -1182,4 +1187,132 @@ def render_schemas_as_table(schemas, display_heading=True):
         table.add_row([schema.id, schema.name, schema.namespace,
                        schema.type, schema.subtype or '',
                        str(bool(schema.immutable)), str(bool(schema.hidden))])
+    return heading + table.draw() + "\n"
+
+
+def render_uploader(uploader, render_format):
+    """
+    Render uploader
+
+    :param uploader: The uploader to be rendered.
+    :type uploader: :class:`mytardisclient.models.uploader.Uploader`
+    """
+    if render_format == 'json':
+        return render_uploader_as_json(uploader)
+    else:
+        return render_uploader_as_table(uploader)
+
+
+def render_uploader_as_json(uploader, indent=2, sort_keys=True):
+    """
+    Returns JSON representation of uploader.
+
+    :param uploader: The uploader to be rendered.
+    :type uploader: :class:`mytardisclient.models.uploader.Uploader`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
+    """
+    return json.dumps(uploader.json, indent=indent, sort_keys=sort_keys)
+
+
+def render_uploader_as_table(uploader):
+    """
+    Returns ASCII table view of uploader.
+    """
+    uploader_with_settings = ""
+
+    table = Texttable(max_width=0)
+    table.set_cols_align(['l', 'l'])
+    table.set_cols_valign(['m', 'm'])
+    table.header(["Uploader field", "Value"])
+    table.add_row(["ID", uploader.id])
+    table.add_row(["Name", uploader.name])
+    table.add_row(["Settings Updated", uploader.settings_updated or ''])
+    table.add_row(["Settings Downloaded", uploader.settings_downloaded or ''])
+    uploader_with_settings += table.draw() + "\n"
+
+    uploader_with_settings += "\n"
+    table = Texttable(max_width=0)
+    table.set_cols_align(["r", 'l'])
+    table.set_cols_valign(['m', 'm'])
+    table.header(["UploaderSetting Key", "UploaderSetting Value"])
+    for setting in uploader.settings:
+        table.add_row([setting.key, setting.value])
+    uploader_with_settings += table.draw() + "\n"
+
+    return uploader_with_settings
+
+
+def render_uploaders(uploaders, render_format, display_heading=True):
+    """
+    Render uploaders.
+
+    :param uploaders: The `ResultSet` of uploaders to be rendered.
+    :type uploaders: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: When using the 'table' render format for a
+        `ResultSet` containing multiple records, setting
+        `display_heading` to True ensures that the meta information
+        returned by the query is summarized in a 'heading' before
+        displaying the table.  This meta information can be used to
+        determine whether the query results have been truncated due
+        to pagination.
+    """
+    if render_format == 'json':
+        return render_uploaders_as_json(uploaders)
+    else:
+        return render_uploaders_as_table(uploaders, display_heading)
+
+
+def render_uploaders_as_json(uploaders, indent=2, sort_keys=True):
+    """
+    Returns JSON representation of uploaders.
+
+    :param uploaders: The result set of uploaders to be displayed.
+    :type uploaders: :class:`mytardisclient.models.resultset.ResultSet`
+    :param indent: If indent is a non-negative integer or string, then JSON
+        array elements and object members will be pretty-printed with that
+        indent level.
+    :param sort_keys: If sort_keys is `True` (default: `False`), then the
+        rendered JSON will be sorted by key.
+    """
+    return json.dumps(uploaders.json, indent=indent, sort_keys=sort_keys)
+
+
+def render_uploaders_as_table(uploaders, display_heading=True):
+    """
+    Returns ASCII table view of uploaders.
+
+    :param uploaders: The uploaders to be rendered.
+    :type uploaders: :class:`mytardisclient.models.resultset.ResultSet`
+    :param render_format: The format to display the data in ('table' or
+        'json').
+    :param display_heading: Setting `display_heading` to True ensures
+        that the meta information returned by the query is summarized
+        in a 'heading' before displaying the table.  This meta
+        information can be used to determine whether the query results
+        have been truncated due to pagination.
+    """
+    heading = "\n" \
+        "Model: Uploader\n" \
+        "Query: %s\n" \
+        "Total Count: %s\n" \
+        "Limit: %s\n" \
+        "Offset: %s\n\n" \
+        % (uploaders.url, uploaders.total_count,
+           uploaders.limit,
+           uploaders.offset) if display_heading else ""
+
+    table = Texttable(max_width=0)
+    table.set_cols_align(["r", 'l', 'l', 'l'])
+    table.set_cols_valign(['m', 'm', 'm', 'm'])
+    table.header(["ID", "Name", "Settings Updated", "Settings Downloaded"])
+    for uploader in uploaders:
+        table.add_row([uploader.id, uploader.name,
+                       uploader.settings_updated or '',
+                       uploader.settings_downloaded or ''])
     return heading + table.draw() + "\n"

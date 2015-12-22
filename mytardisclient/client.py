@@ -19,6 +19,7 @@ from mytardisclient.controllers.dataset import DatasetController
 from mytardisclient.controllers.datafile import DataFileController
 from mytardisclient.controllers.storagebox import StorageBoxController
 from mytardisclient.controllers.schema import SchemaController
+from mytardisclient.controllers.uploader import UploaderController
 from mytardisclient.argparser import ArgParser
 
 
@@ -76,6 +77,8 @@ def run():
         StorageBoxController().run_command(args)
     elif args.model == 'schema':
         SchemaController().run_command(args)
+    elif args.model == 'uploader':
+        UploaderController().run_command(args)
 
 
 if __name__ == "__main__":
