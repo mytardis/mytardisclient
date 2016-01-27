@@ -1,9 +1,12 @@
 """
 setup.py for mytardisclient
 
-python setup.py develop
-python setup.py sdist
-etc.
+Update and upload docs:
+  python setup.py build_sphinx
+  python setup.py upload_sphinx
+
+Upload source distribution:
+    python setup.py sdist upload
 """
 from setuptools import setup
 from setuptools import find_packages
