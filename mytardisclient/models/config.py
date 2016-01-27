@@ -39,7 +39,7 @@ handlers=fileHandler,consoleHandler
 class=FileHandler
 level=DEBUG
 formatter=simpleFormatter
-args=('%(file_path)s', 'w')
+args=('%(file_path)s', 'a')
 
 [handler_consoleHandler]
 class=StreamHandler
