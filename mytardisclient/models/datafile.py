@@ -323,7 +323,7 @@ class DataFile(object):
                 "~/.config/mytardisclient/servers/%s/ called %s" \
                 % (local_dataset_path, config.hostname,
                    "%s-%s" % (dataset.description, dataset_id))
-            os.symlink(os.path.abspath(os.path.dirname(file_path)),
+            os.symlink(os.path.abspath(local_dataset_path),
                        os.path.join(config.datasets_path,
                                     "%s-%s" % (dataset.description,
                                                dataset_id)))
