@@ -25,6 +25,18 @@ from mytardisclient.utils.exceptions import DuplicateKey
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
+def md5_sum(file_path, blocksize=65536):
+    """
+    Calculate MD5 checksum without reading the whole file into memory.
+    """
+    hasher = hashlib.md5()
+    with open(file_path, 'rb') as datafile:
+        buf = datafile.read(blocksize)
+        while len(buf) > 0:
+            hasher.update(buf)
+            buf = datafile.read(blocksize)
+        return hasher.hexdigest()
+
 
 class DataFile(object):
     """
@@ -342,7 +354,7 @@ class DataFile(object):
             raise DuplicateKey("A DataFile record already exists for file "
                                "'%s' in dataset ID %s." % (_file_path,
                                                            dataset_id))
-        md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
+        md5sum = md5_sum(file_path)
         replicas = [{
             "url": uri,
             "location": storagebox,
@@ -454,7 +466,7 @@ class DataFile(object):
             raise DuplicateKey("A DataFile record already exists for file "
                                "'%s' in dataset ID %s." % (_file_path,
                                                            dataset_id))
-        md5sum = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
+        md5sum = md5_sum(file_path)
         file_data = {"dataset": "/api/v1/dataset/%s/" % dataset_id,
                      "filename": filename,
                      "directory": directory,
