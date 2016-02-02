@@ -204,7 +204,14 @@ class DataFile(object):
             '/home/james/dataset1'.
         """
         num_datafiles_created = 0
-        for root, _, files in os.walk(dir_path):
+
+        def log_error(err):
+            """
+            Log an error if os.listdir(...) fails during os.walk(...)
+            """
+            logger.error(str(err))
+
+        for root, _, files in os.walk(dir_path, onerror=log_error):
             for filename in files:
                 file_path = os.path.join(root, filename)
                 try:
