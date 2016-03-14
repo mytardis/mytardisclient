@@ -47,7 +47,7 @@ class DatasetController(object):
         # pylint: disable=no-self-use
         datasets = Dataset.list(experiment_id, filters,
                                 limit, offset, order_by)
-        print render(datasets, render_format)
+        print(render(datasets, render_format))
 
     def get(self, dataset_id, render_format):
         """
@@ -55,10 +55,10 @@ class DatasetController(object):
         """
         # pylint: disable=no-self-use
         dataset = Dataset.get(dataset_id)
-        print render(dataset, render_format)
+        print(render(dataset, render_format))
         if render_format == 'table':
             datafiles = DataFile.list(dataset_id)
-            print render(datafiles, render_format)
+            print(render(datafiles, render_format))
 
     def create(self, experiment_id, description, instrument_id, params,
                render_format):
@@ -69,8 +69,8 @@ class DatasetController(object):
         # pylint: disable=no-self-use
         dataset = Dataset.create(experiment_id, description, instrument_id,
                                  params)
-        print render(dataset, render_format)
-        print "Dataset created successfully."
+        print(render(dataset, render_format))
+        print("Dataset created successfully.")
 
     def update(self, dataset_id, description, render_format):
         """
@@ -78,5 +78,5 @@ class DatasetController(object):
         """
         # pylint: disable=no-self-use
         dataset = Dataset.update(dataset_id, description)
-        print render(dataset, render_format)
-        print "Dataset updated successfully."
+        print(render(dataset, render_format))
+        print("Dataset updated successfully.")

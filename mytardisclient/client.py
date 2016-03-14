@@ -33,10 +33,10 @@ def run():
     args = ArgParser().get_args()
 
     if args.model == 'version':
-        print "MyTardis Client v%s" % VERSION
+        print("MyTardis Client v%s" % VERSION)
         sys.exit(0)
     if args.verbose and (not hasattr(args, 'json') or not args.json):
-        print "MyTardis Client v%s" % VERSION
+        print("MyTardis Client v%s" % VERSION)
 
     config_path = DEFAULT_CONFIG_PATH
     if not os.path.exists(config_path) or \
@@ -55,10 +55,10 @@ def run():
     logger.info("MyTardis Client v%s", VERSION)
 
     if args.verbose and (not hasattr(args, 'json') or not args.json):
-        print "General config: %s" % config_path
-        print "Logging config: %s" % config.logging_config_path
-        print "MyTardis URL: %s" % config.url
-        print "Username: %s" % config.username
+        print("General config: %s" % config_path)
+        print("Logging config: %s" % config.logging_config_path)
+        print("MyTardis URL: %s" % config.url)
+        print("Username: %s" % config.username)
 
     if args.model == 'api':
         ApiController().run_command(args)

@@ -78,7 +78,7 @@ def render_single_record(data, render_format):
     elif data.__class__ == Schema:
         return render_schema(data, render_format)
     else:
-        print "Class is " + data.__class__.__name__
+        print("Class is " + data.__class__.__name__)
 
 
 def render_result_set(result_set, render_format, display_heading=True):
@@ -117,7 +117,7 @@ def render_result_set(result_set, render_format, display_heading=True):
     elif result_set.model == Schema:
         return render_schemas(result_set, render_format, display_heading)
     else:
-        print "Class is " + result_set.model.__name__
+        print("Class is " + result_set.model.__name__)
 
 
 def render_api_schema(api_schema, render_format):

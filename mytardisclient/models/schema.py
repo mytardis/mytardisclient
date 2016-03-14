@@ -59,8 +59,8 @@ class Schema(object):
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
-            print "URL: %s" % url
-            print "HTTP %s" % response.status_code
+            print("URL: %s" % url)
+            print("HTTP %s" % response.status_code)
             message = response.text
             raise Exception(message)
         return ResultSet(Schema, url, response.json())
@@ -142,8 +142,8 @@ class ParameterName(object):
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
-            print "URL: %s" % url
-            print "HTTP %s" % response.status_code
+            print("URL: %s" % url)
+            print("HTTP %s" % response.status_code)
             message = response.text
             raise Exception(message)
         parameter_names_json = response.json()
@@ -164,8 +164,8 @@ class ParameterName(object):
             response = requests.get(url=url, headers=config.default_headers)
             logger.debug("GET %s %s", url, response.status_code)
             if response.status_code != 200:
-                print "URL: %s" % url
-                print "HTTP %s" % response.status_code
+                print("URL: %s" % url)
+                print("HTTP %s" % response.status_code)
                 message = response.text
                 raise Exception(message)
             parameter_names_page_json = response.json()

@@ -43,7 +43,7 @@ class InstrumentController(object):
         # pylint: disable=no-self-use
         instruments = Instrument.list(facility_id,
                                       limit, offset, order_by)
-        print render(instruments, render_format)
+        print(render(instruments, render_format))
 
     def get(self, instrument_id, render_format):
         """
@@ -51,7 +51,7 @@ class InstrumentController(object):
         """
         # pylint: disable=no-self-use
         instrument = Instrument.get(instrument_id)
-        print render(instrument, render_format)
+        print(render(instrument, render_format))
 
     def create(self, facility_id, name, render_format):
         """
@@ -59,8 +59,8 @@ class InstrumentController(object):
         """
         # pylint: disable=no-self-use
         instrument = Instrument.create(facility_id, name)
-        print render(instrument, render_format)
-        print "Instrument created successfully."
+        print(render(instrument, render_format))
+        print("Instrument created successfully.")
 
     def update(self, instrument_id, name, render_format):
         """
@@ -68,5 +68,5 @@ class InstrumentController(object):
         """
         # pylint: disable=no-self-use
         instrument = Instrument.update(instrument_id, name)
-        print render(instrument, render_format)
-        print "Instrument updated successfully."
+        print(render(instrument, render_format))
+        print("Instrument updated successfully.")

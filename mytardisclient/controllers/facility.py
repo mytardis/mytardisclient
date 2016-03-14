@@ -37,7 +37,7 @@ class FacilityController(object):
         """
         # pylint: disable=no-self-use
         facilities = Facility.list(limit, offset, order_by)
-        print render(facilities, render_format)
+        print(render(facilities, render_format))
 
     def get(self, facility_id, render_format):
         """
@@ -45,7 +45,7 @@ class FacilityController(object):
         """
         # pylint: disable=no-self-use
         facility = Facility.get(facility_id)
-        print render(facility, render_format)
+        print(render(facility, render_format))
         if render_format == 'table':
             instruments = Instrument.list(facility_id)
-            print render(instruments, render_format)
+            print(render(instruments, render_format))

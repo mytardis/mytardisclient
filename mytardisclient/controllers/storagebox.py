@@ -36,7 +36,7 @@ class StorageBoxController(object):
         """
         # pylint: disable=no-self-use
         storage_boxes = StorageBox.list(limit, offset, order_by)
-        print render(storage_boxes, render_format)
+        print(render(storage_boxes, render_format))
 
     def get(self, storage_box_id, render_format):
         """
@@ -44,4 +44,4 @@ class StorageBoxController(object):
         """
         # pylint: disable=no-self-use
         storage_box = StorageBox.get(storage_box_id)
-        print render(storage_box, render_format)
+        print(render(storage_box, render_format))

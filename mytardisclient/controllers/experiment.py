@@ -44,7 +44,7 @@ class ExperimentController(object):
         # pylint: disable=no-self-use
         # pylint: disable=too-many-arguments
         experiments = Experiment.list(filters, limit, offset, order_by)
-        print render(experiments, render_format)
+        print(render(experiments, render_format))
 
     def get(self, experiment_id, render_format):
         """
@@ -52,10 +52,10 @@ class ExperimentController(object):
         """
         # pylint: disable=no-self-use
         experiment = Experiment.get(experiment_id)
-        print render(experiment, render_format)
+        print(render(experiment, render_format))
         if render_format == 'table':
             datasets = Dataset.list(experiment_id=experiment_id)
-            print render(datasets, render_format, display_heading=False)
+            print(render(datasets, render_format, display_heading=False))
 
     def create(self, title, description, institution, params, render_format):
         """
@@ -64,8 +64,8 @@ class ExperimentController(object):
         # pylint: disable=no-self-use
         # pylint: disable=too-many-arguments
         experiment = Experiment.create(title, description, institution, params)
-        print render(experiment, render_format)
-        print "Experiment created successfully."
+        print(render(experiment, render_format))
+        print("Experiment created successfully.")
 
     def update(self, experiment_id, title, description, render_format):
         """
@@ -74,5 +74,5 @@ class ExperimentController(object):
         # pylint: disable=no-self-use
         experiment = \
             Experiment.update(experiment_id, title, description)
-        print render(experiment, render_format)
-        print "Experiment updated successfully."
+        print(render(experiment, render_format))
+        print("Experiment updated successfully.")
