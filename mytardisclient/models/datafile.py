@@ -452,8 +452,9 @@ class DataFile(object):
             directory, filename = os.path.split(file_path_without_dataset)
         else:
             file_path_components = file_path.split(os.sep)
-            _ = file_path_components.pop(0)  # local_dataset_path
             filename = file_path_components.pop(-1)
+            if len(file_path_components) > 0:
+                _ = file_path_components.pop(0)  # local_dataset_path
             if len(file_path_components) > 0:
                 directory = os.path.join(*file_path_components)
             else:
