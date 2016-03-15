@@ -101,8 +101,8 @@ class ApiSchema(object):
         url = "%s/api/v1/%s/schema/?format=json" % (config.url, model)
         response = requests.get(url=url, headers=config.default_headers)
         if response.status_code != 200:
-            print "HTTP %d" % response.status_code
-            print "url: " + url
+            print("HTTP %d" % response.status_code)
+            print("url: " + url)
             message = response.text
             raise Exception(message)
 

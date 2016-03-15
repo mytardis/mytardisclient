@@ -36,7 +36,7 @@ class SchemaController(object):
         """
         # pylint: disable=no-self-use
         schemas = Schema.list(limit, offset, order_by)
-        print render(schemas, render_format)
+        print(render(schemas, render_format))
 
     def get(self, schema_id, render_format):
         """
@@ -44,4 +44,4 @@ class SchemaController(object):
         """
         # pylint: disable=no-self-use
         schema = Schema.get(schema_id)
-        print render(schema, render_format)
+        print(render(schema, render_format))

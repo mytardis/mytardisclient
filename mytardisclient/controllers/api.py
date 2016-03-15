@@ -34,7 +34,7 @@ class ApiController(object):
         """
         # pylint: disable=no-self-use
         api_endpoints = ApiEndpoint.list()
-        print render(api_endpoints, render_format)
+        print(render(api_endpoints, render_format))
 
     def get(self, model, render_format):
         """
@@ -42,4 +42,4 @@ class ApiController(object):
         """
         # pylint: disable=no-self-use
         api_schema = ApiSchema.get(model)
-        print render(api_schema, render_format)
+        print(render(api_schema, render_format))

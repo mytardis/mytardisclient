@@ -154,7 +154,7 @@ class Dataset(object):
                                   data=json.dumps(updated_fields_json))
         logger.debug("PATCH %s %s", url, response.status_code)
         if response.status_code != 202:
-            print "HTTP %s" % response.status_code
+            print("HTTP %s" % response.status_code)
             message = response.text
             raise Exception(message)
         dataset_json = response.json()

@@ -125,7 +125,7 @@ class Instrument(object):
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         if response.status_code != 202:
-            print "HTTP %s" % response.status_code
+            print("HTTP %s" % response.status_code)
             message = response.text
             raise Exception(message)
         instrument_json = response.json()

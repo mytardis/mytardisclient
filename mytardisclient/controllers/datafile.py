@@ -57,7 +57,7 @@ class DataFileController(object):
         # pylint: disable=no-self-use
         datafiles = DataFile.list(dataset_id, directory, filename,
                                   filters, limit, offset, order_by)
-        print render(datafiles, render_format)
+        print(render(datafiles, render_format))
 
     def get(self, datafile_id, render_format):
         """
@@ -65,7 +65,7 @@ class DataFileController(object):
         """
         # pylint: disable=no-self-use
         datafile = DataFile.get(datafile_id)
-        print render(datafile, render_format)
+        print(render(datafile, render_format))
 
     def create(self, dataset_id, storagebox, dataset_path, path,
                render_format):
@@ -78,12 +78,12 @@ class DataFileController(object):
         if os.path.isdir(path):
             num_created = DataFile.create_datafiles(dataset_id, storagebox,
                                                     dataset_path, path)
-            print "%s datafiles created." % num_created
+            print("%s datafiles created." % num_created)
         else:
             datafile = DataFile.create_datafile(dataset_id, storagebox,
                                                 dataset_path, path)
-            print render(datafile, render_format)
-            print "DataFile created successfully."
+            print(render(datafile, render_format))
+            print("DataFile created successfully.")
 
     def download(self, datafile_id):
         """
@@ -105,8 +105,8 @@ class DataFileController(object):
         """
         # pylint: disable=no-self-use
         datafile = DataFile.update(datafile_id, md5sum)
-        print render(datafile, render_format)
-        print "DataFile updated successfully."
+        print(render(datafile, render_format))
+        print("DataFile updated successfully.")
 
     def verify(self, datafile_id):
         """

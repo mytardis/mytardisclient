@@ -113,8 +113,8 @@ class DataFile(object):
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            print("HTTP %s" % response.status_code)
+            print("URL: %s" % url)
             message = response.text
             raise Exception(message)
         return ResultSet(DataFile, url, response.json())
@@ -134,8 +134,8 @@ class DataFile(object):
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            print("HTTP %s" % response.status_code)
+            print("URL: %s" % url)
             if response.status_code == 404:
                 message = "Datafile with ID %s doesn't exist." % datafile_id
                 raise DoesNotExist(message, url, response, DataFile)
@@ -338,10 +338,10 @@ class DataFile(object):
             os.path.join(config.datasets_path,
                          "%s-%s" % (dataset.description, dataset_id))
         if not os.path.exists(dataset_symlink_path):
-            print "Creating symlink to: %s in " \
+            print("Creating symlink to: %s in " \
                 "~/.config/mytardisclient/servers/%s/ called %s" \
                 % (local_dataset_path, config.hostname,
-                   "%s-%s" % (dataset.description, dataset_id))
+                   "%s-%s" % (dataset.description, dataset_id)))
             os.symlink(os.path.abspath(local_dataset_path),
                        os.path.join(config.datasets_path,
                                     "%s-%s" % (dataset.description,
@@ -376,8 +376,8 @@ class DataFile(object):
                                  data=json.dumps(new_datafile_json))
         logger.debug("POST %s %s", url, response.status_code)
         if response.status_code != 201:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            print("HTTP %s" % response.status_code)
+            print("URL: %s" % url)
             message = response.text
             raise Exception(message)
         logger.info("Created a DataFile record for %s", file_path)
@@ -401,8 +401,8 @@ class DataFile(object):
         response = requests.get(url=url, headers=headers, stream=True)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            print("HTTP %s" % response.status_code)
+            print("URL: %s" % url)
             message = response.text
             raise Exception(message)
         try:
@@ -410,13 +410,13 @@ class DataFile(object):
                 response.headers.get('Content-Disposition', ''))
             filename = params['filename']
         except KeyError:
-            print "response.headers: %s" % response.headers
+            print("response.headers: %s" % response.headers)
             raise
         fileobj = open(filename, 'wb')
         for chunk in response.iter_content(chunk_size=1024):
             if chunk:  # filter out keep-alive new chunks
                 fileobj.write(chunk)
-        print "Downloaded: %s" % filename
+        print("Downloaded: %s" % filename)
 
     @staticmethod
     def upload(dataset_id, dataset_path, file_path):
@@ -485,14 +485,14 @@ class DataFile(object):
         logger.debug("POST %s %s", url, response.status_code)
         file_obj.close()
         if response.status_code != 201:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            print("HTTP %s" % response.status_code)
+            print("URL: %s" % url)
             message = response.text
             raise Exception(message)
         if directory:
-            print "Uploaded: %s/%s" % (directory, file_path)
+            print("Uploaded: %s/%s" % (directory, file_path))
         else:
-            print "Uploaded: %s" % file_path
+            print("Uploaded: %s" % file_path)
 
     @staticmethod
     def update(datafile_id, md5sum):
@@ -517,8 +517,8 @@ class DataFile(object):
                                   data=json.dumps(updated_fields_json))
         logger.debug("PATCH %s %s", url, response.status_code)
         if response.status_code != 202:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            print("HTTP %s" % response.status_code)
+            print("URL: %s" % url)
             message = response.text
             raise Exception(message)
         datafile_json = response.json()
@@ -536,11 +536,11 @@ class DataFile(object):
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            print("HTTP %s" % response.status_code)
+            print("URL: %s" % url)
             message = response.text
             raise Exception(message)
-        print "Requested verification of datafile ID %s." % datafile_id
+        print("Requested verification of datafile ID %s." % datafile_id)
 
     @staticmethod
     def exists(dataset_id, directory, filename):
@@ -603,8 +603,8 @@ class DataFileParameterSet(object):
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code != 200:
-            print "HTTP %s" % response.status_code
-            print "URL: %s" % url
+            print("HTTP %s" % response.status_code)
+            print("URL: %s" % url)
             message = response.text
             raise Exception(message)
         return ResultSet(DataFileParameterSet, url, response.json())
