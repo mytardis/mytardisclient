@@ -87,6 +87,16 @@ class Config(object):
         #: Path for caching results of frequently used queries.
         #: Default: ~/.cache/mytardisclient/mytardisclient.cache
         self.cache_path = CACHE_PATH
+
+        #: Cache backend.
+        #: Default: 'dogpile.cache.dbm'.
+        #: Set to 'dogpile.cache.null' to disable caching.
+        self.cache_backend = 'dogpile.cache.dbm'
+
+        #: Cache expiry time.
+        #: Default: 30 seconds.
+        self.cache_expiry = 30
+
         def key_generator(namespace, function):
             # pylint: disable=unused-argument
             def generate_key(*args, **kwargs):
@@ -98,8 +108,8 @@ class Config(object):
         self.region = \
             make_region(function_key_generator=key_generator) \
                 .configure(
-                    'dogpile.cache.dbm',
-                    expiration_time=30,
+                    self.cache_backend,
+                    expiration_time=self.cache_expiry,
                     arguments={
                         "filename": self.cache_path
                     })
@@ -113,6 +123,8 @@ class Config(object):
                      username=self.username,
                      apikey=self.apikey,
                      cache_path=self.cache_path,
+                     cache_backend=self.cache_backend,
+                     cache_expiry=self.cache_expiry,
                      datasets_path=self.datasets_path)
         return json.dumps(attrs, indent=2)
 
@@ -157,13 +169,7 @@ class Config(object):
             config_parser = ConfigParser()
             config_parser.read(path)
             section = "mytardisclient"
-            fields = ["url", "username", "apikey"]
-
-            # For backwards compatibility:
-            if config_parser.has_option(section, "mytardis_url"):
-                self.url = config_parser.get(section, "mytardis_url")
-            if config_parser.has_option(section, "api_key"):
-                self.apikey = config_parser.get(section, "api_key")
+            fields = ["url", "username", "apikey", "cache_backend", "cache_expiry"]
 
             for field in fields:
                 if config_parser.has_option(section, field):
@@ -217,7 +223,7 @@ class Config(object):
         config_parser = ConfigParser()
         with open(self.path, 'w') as config_file:
             config_parser.add_section("mytardisclient")
-            fields = ["url", "username", "apikey"]
+            fields = ["url", "username", "apikey", "cache_backend", "cache_expiry"]
             for field in fields:
                 config_parser.set("mytardisclient", field, self.__dict__[field])
             config_parser.write(config_file)
