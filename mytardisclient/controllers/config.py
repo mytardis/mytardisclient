@@ -1,6 +1,7 @@
 """
 Controller class for setting up config file.
 """
+from __future__ import print_function
 
 import os
 from mytardisclient.conf import config

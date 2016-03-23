@@ -3,6 +3,8 @@ Views for MyTardis records.
 """
 # pylint: disable=too-many-lines
 
+from __future__ import print_function
+
 import json
 from texttable import Texttable
 

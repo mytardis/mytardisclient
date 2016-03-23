@@ -2,6 +2,7 @@
 Controller class for running commands (list)
 on storage boxes.
 """
+from __future__ import print_function
 
 from mytardisclient.models.storagebox import StorageBox
 from mytardisclient.views import render

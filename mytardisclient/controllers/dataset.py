@@ -2,6 +2,7 @@
 Controller class for running commands (list, get, create, update)
 on dataset records.
 """
+from __future__ import print_function
 
 from mytardisclient.models.dataset import Dataset
 from mytardisclient.models.datafile import DataFile

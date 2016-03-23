@@ -9,6 +9,7 @@ API functionality available for a particular model can be retrieved with:
 
 The 'schema' request above requires authentication.
 """
+from __future__ import print_function
 
 import requests
 

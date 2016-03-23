@@ -2,6 +2,7 @@
 Controller class for running commands (list, get)
 on schemas.
 """
+from __future__ import print_function
 
 from mytardisclient.models.schema import Schema
 from mytardisclient.views import render
