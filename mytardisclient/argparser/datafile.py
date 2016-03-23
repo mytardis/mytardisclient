@@ -175,7 +175,8 @@ def build_datafile_parser(argument_parser):
 
     datafile_upload_help = "Upload a datafile."
     datafile_upload_usage = textwrap.dedent("""\
-        mytardis datafile upload dataset_id [-d DATASET_PATH] file_path
+        mytardis datafile upload
+            [-s STORAGEBOX] [-d DATASET_PATH] dataset_id file_path
 
           EXAMPLE
 
@@ -229,6 +230,9 @@ def build_datafile_parser(argument_parser):
                                             usage=datafile_upload_usage)
     datafile_cmd_upload_parser.add_argument("dataset_id",
                                             help="The dataset ID.")
+    datafile_cmd_upload_parser.add_argument(
+        "-s", "--storagebox",
+        help="The storage box which will store the datafile.")
     datafile_cmd_upload_parser.add_argument(
         "-d", "--dataset_path", help="The local dataset path.")
     datafile_cmd_upload_parser.add_argument("file_path",

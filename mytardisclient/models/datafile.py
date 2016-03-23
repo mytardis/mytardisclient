@@ -2,6 +2,7 @@
 Model class for MyTardis API v1's DataFileResource.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
+from __future__ import print_function
 
 import mimetypes
 import json
@@ -419,7 +420,7 @@ class DataFile(object):
         print("Downloaded: %s" % filename)
 
     @staticmethod
-    def upload(dataset_id, dataset_path, file_path):
+    def upload(dataset_id, storagebox, dataset_path, file_path):
         """
         Upload datafile to dataset with ID dataset_id,
         using HTTP POST.
@@ -438,6 +439,7 @@ class DataFile(object):
             'dataset1/subdir1/datafile1.txt'.
         """
         # pylint: disable=too-many-locals
+        # pylint: disable=too-many-branches
         if not dataset_path and os.path.isabs(file_path):
             raise Exception("Either supply dataset_path or supply a relative "
                             "path to the datafile.")
@@ -475,6 +477,14 @@ class DataFile(object):
                      "size": str(os.stat(file_path).st_size),
                      "mimetype": mimetypes.guess_type(file_path)[0],
                      "created_time": created_time}
+        if storagebox:
+            file_data['replicas'] = [
+                {
+                    "url": "",
+                    "protocol": "file",
+                    "location": storagebox
+                }
+            ]
         file_obj = open(file_path, 'rb')
         headers = {
             "Authorization": "ApiKey %s:%s" % (config.username,

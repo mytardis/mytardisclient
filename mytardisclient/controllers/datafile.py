@@ -3,6 +3,7 @@ Controller class for running commands (list, get, download, upload, update,
                                        verify)
 on datafile records.
 """
+from __future__ import print_function
 
 import os
 
@@ -41,8 +42,8 @@ class DataFileController(object):
         elif command == "download":
             return self.download(args.datafile_id)
         elif command == "upload":
-            return self.upload(args.dataset_id, args.dataset_path,
-                               args.file_path)
+            return self.upload(args.dataset_id, args.storagebox,
+                               args.dataset_path, args.file_path)
         elif command == "update":
             return self.update(args.datafile_id, args.md5sum, render_format)
         elif command == "verify":
@@ -92,12 +93,12 @@ class DataFileController(object):
         # pylint: disable=no-self-use
         DataFile.download(datafile_id)
 
-    def upload(self, dataset_id, dataset_path, file_path):
+    def upload(self, dataset_id, storagebox, dataset_path, file_path):
         """
         Upload datafile.
         """
         # pylint: disable=no-self-use
-        DataFile.upload(dataset_id, dataset_path, file_path)
+        DataFile.upload(dataset_id, storagebox, dataset_path, file_path)
 
     def update(self, datafile_id, md5sum, render_format):
         """
