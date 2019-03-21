@@ -91,7 +91,7 @@ class Config(object):
         #: Cache backend.
         #: Default: 'dogpile.cache.dbm'.
         #: Set to 'dogpile.cache.null' to disable caching.
-        self.cache_backend = 'dogpile.cache.dbm'
+        self.cache_backend = 'dogpile.cache.null'
 
         #: Cache expiry time.
         #: Default: 30 seconds.
