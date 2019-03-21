@@ -7,10 +7,10 @@ usually stored in ~/.config/mytardisclient/mytardisclient.cfg
 
 import os
 import json
-from urlparse import urlparse
 
 from ConfigParser import ConfigParser
 from dogpile.cache import make_region  # pylint: disable=import-error
+from six.moves import urllib
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.config',
                                    'mytardisclient', 'mytardisclient.cfg')
@@ -136,7 +136,7 @@ class Config(object):
 
     @property
     def hostname(self):
-        parsed_url = urlparse(self.url)
+        parsed_url = urllib.parse.urlparse(self.url)
         return parsed_url.netloc
 
     @property
@@ -200,11 +200,11 @@ class Config(object):
             raise Exception("MyTardis API key is missing from config.")
         if self.url == "":
             raise Exception("MyTardis URL is missing from config.")
-        parsed_url = urlparse(self.url)
+        parsed_url = urllib.parse.urlparse(self.url)
         if parsed_url.scheme not in ('http', 'https') or \
                 parsed_url.netloc == '':
-            raise Exception("Invalid MyTardis URL found in config: %s",
-                            self.url)
+            raise Exception("Invalid MyTardis URL found in config: %s"
+                            % self.url)
 
     def save(self, path=None):
         """

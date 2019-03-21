@@ -31,6 +31,7 @@ class FacilityController(object):
                              render_format)
         if command == "get":
             return self.get(args.facility_id, render_format)
+        raise Exception("Invalid command: %s" % args.command)
 
     def list(self, limit, offset, order_by, render_format):
         """

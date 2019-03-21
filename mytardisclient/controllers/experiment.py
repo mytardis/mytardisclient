@@ -29,14 +29,15 @@ class ExperimentController(object):
         if command == "list":
             return self.list(args.filter, args.limit, args.offset,
                              args.order_by, render_format)
-        elif command == "get":
+        if command == "get":
             return self.get(args.experiment_id, render_format)
-        elif command == "create":
+        if command == "create":
             return self.create(args.title, args.description,
                                args.institution, args.params, render_format)
-        elif command == "update":
+        if command == "update":
             return self.update(args.experiment_id, args.title,
                                args.description, render_format)
+        raise Exception("Invalid command: %s" % args.command)
 
     def list(self, filters, limit, offset, order_by, render_format):
         """

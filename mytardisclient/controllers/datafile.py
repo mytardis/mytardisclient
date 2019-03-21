@@ -34,20 +34,21 @@ class DataFileController(object):
             return self.list(args.dataset, args.directory, args.filename,
                              args.filter, args.limit, args.offset,
                              args.order_by, render_format)
-        elif command == "get":
+        if command == "get":
             return self.get(args.datafile_id, render_format)
-        elif command == "create":
+        if command == "create":
             return self.create(args.dataset_id, args.storagebox,
                                args.dataset_path, args.path, render_format)
-        elif command == "download":
+        if command == "download":
             return self.download(args.datafile_id)
-        elif command == "upload":
+        if command == "upload":
             return self.upload(args.dataset_id, args.storagebox,
                                args.dataset_path, args.file_path)
-        elif command == "update":
+        if command == "update":
             return self.update(args.datafile_id, args.md5sum, render_format)
-        elif command == "verify":
+        if command == "verify":
             return self.verify(args.datafile_id)
+        raise Exception("Invalid command: %s" % args.command)
 
     def list(self, dataset_id, directory, filename, filters,
              limit, offset, order_by, render_format):

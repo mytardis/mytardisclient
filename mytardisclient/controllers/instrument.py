@@ -29,12 +29,13 @@ class InstrumentController(object):
             return self.list(args.facility, args.limit,
                              args.offset, args.order_by,
                              render_format)
-        elif command == "get":
+        if command == "get":
             return self.get(args.instrument_id, render_format)
-        elif command == "create":
+        if command == "create":
             return self.create(args.facility_id, args.name, render_format)
-        elif command == "update":
+        if command == "update":
             return self.update(args.instrument_id, args.name, render_format)
+        raise Exception("Invalid command: %s" % args.command)
 
     def list(self, facility_id, limit, offset, order_by, render_format):
         """

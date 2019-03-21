@@ -10,9 +10,9 @@ import logging
 import requests
 
 from mytardisclient.conf import config
+from mytardisclient.utils.exceptions import DoesNotExist
 from .facility import Facility
 from .resultset import ResultSet
-from mytardisclient.utils.exceptions import DoesNotExist
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 

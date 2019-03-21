@@ -28,8 +28,9 @@ class SchemaController(object):
         if command == "list":
             return self.list(args.limit, args.offset, args.order_by,
                              render_format)
-        elif command == "get":
+        if command == "get":
             return self.get(args.schema_id, render_format)
+        raise Exception("Invalid command: %s" % args.command)
 
     def list(self, limit, offset, order_by, render_format):
         """

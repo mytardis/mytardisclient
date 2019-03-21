@@ -44,10 +44,9 @@ def render(data, render_format='table', display_heading=True):
     """
     if data.__class__ == ResultSet:
         return render_result_set(data, render_format, display_heading)
-    elif data.__class__ == ApiEndpoints:
+    if data.__class__ == ApiEndpoints:
         return render_api_endpoints(data, render_format, display_heading)
-    else:
-        return render_single_record(data, render_format)
+    return render_single_record(data, render_format)
 
 
 def render_single_record(data, render_format):
@@ -65,22 +64,21 @@ def render_single_record(data, render_format):
     # pylint: disable=too-many-return-statements
     if data.__class__ == ApiSchema:
         return render_api_schema(data, render_format)
-    elif data.__class__ == Facility:
+    if data.__class__ == Facility:
         return render_facility(data, render_format)
-    elif data.__class__ == Instrument:
+    if data.__class__ == Instrument:
         return render_instrument(data, render_format)
-    elif data.__class__ == Experiment:
+    if data.__class__ == Experiment:
         return render_experiment(data, render_format)
-    elif data.__class__ == Dataset:
+    if data.__class__ == Dataset:
         return render_dataset(data, render_format)
-    elif data.__class__ == DataFile:
+    if data.__class__ == DataFile:
         return render_datafile(data, render_format)
-    elif data.__class__ == StorageBox:
+    if data.__class__ == StorageBox:
         return render_storage_box(data, render_format)
-    elif data.__class__ == Schema:
+    if data.__class__ == Schema:
         return render_schema(data, render_format)
-    else:
-        print("Class is " + data.__class__.__name__)
+    raise Exception("Unexpected class: %s" % data.__class__.__name__)
 
 
 def render_result_set(result_set, render_format, display_heading=True):
@@ -106,20 +104,19 @@ def render_result_set(result_set, render_format, display_heading=True):
     # pylint: disable=too-many-return-statements
     if result_set.model == Facility:
         return render_facilities(result_set, render_format, display_heading)
-    elif result_set.model == Instrument:
+    if result_set.model == Instrument:
         return render_instruments(result_set, render_format, display_heading)
-    elif result_set.model == Experiment:
+    if result_set.model == Experiment:
         return render_experiments(result_set, render_format, display_heading)
-    elif result_set.model == Dataset:
+    if result_set.model == Dataset:
         return render_datasets(result_set, render_format, display_heading)
-    elif result_set.model == DataFile:
+    if result_set.model == DataFile:
         return render_datafiles(result_set, render_format, display_heading)
-    elif result_set.model == StorageBox:
+    if result_set.model == StorageBox:
         return render_storage_boxes(result_set, render_format, display_heading)
-    elif result_set.model == Schema:
+    if result_set.model == Schema:
         return render_schemas(result_set, render_format, display_heading)
-    else:
-        print("Class is " + result_set.model.__name__)
+    raise Exception("Unexpected class: %s" % result_set.model.__name__)
 
 
 def render_api_schema(api_schema, render_format):
@@ -133,8 +130,7 @@ def render_api_schema(api_schema, render_format):
     """
     if render_format == 'json':
         return render_api_schema_as_json(api_schema)
-    else:
-        return render_api_schema_as_table(api_schema)
+    return render_api_schema_as_table(api_schema)
 
 
 def render_api_schema_as_json(api_schema, indent=2, sort_keys=True):
@@ -188,8 +184,7 @@ def render_api_endpoints(api_endpoints, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_api_endpoints_as_json(api_endpoints)
-    else:
-        return render_api_endpoints_as_table(api_endpoints, display_heading)
+    return render_api_endpoints_as_table(api_endpoints, display_heading)
 
 
 def render_api_endpoints_as_json(api_endpoints, indent=2, sort_keys=True):
@@ -248,8 +243,7 @@ def render_facility(facility, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_facility_as_json(facility)
-    else:
-        return render_facility_as_table(facility, display_heading)
+    return render_facility_as_table(facility, display_heading)
 
 
 def render_facility_as_json(facility, indent=2, sort_keys=True):
@@ -308,8 +302,7 @@ def render_facilities(facilities, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_facilities_as_json(facilities)
-    else:
-        return render_facilities_as_table(facilities, display_heading)
+    return render_facilities_as_table(facilities, display_heading)
 
 
 def render_facilities_as_json(facilities, indent=2, sort_keys=True):
@@ -370,8 +363,7 @@ def render_instrument(instrument, render_format):
     """
     if render_format == 'json':
         return render_instrument_as_json(instrument)
-    else:
-        return render_instrument_as_table(instrument)
+    return render_instrument_as_table(instrument)
 
 
 def render_instrument_as_json(instrument, indent=2, sort_keys=True):
@@ -424,8 +416,7 @@ def render_instruments(instruments, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_instruments_as_json(instruments)
-    else:
-        return render_instruments_as_table(instruments, display_heading)
+    return render_instruments_as_table(instruments, display_heading)
 
 
 def render_instruments_as_json(instruments, indent=2, sort_keys=True):
@@ -486,8 +477,7 @@ def render_experiment(experiment, render_format):
     """
     if render_format == 'json':
         return render_experiment_as_json(experiment)
-    else:
-        return render_experiment_as_table(experiment)
+    return render_experiment_as_table(experiment)
 
 
 def render_experiment_as_json(experiment, indent=2, sort_keys=True):
@@ -563,8 +553,7 @@ def render_experiments(experiments, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_experiments_as_json(experiments)
-    else:
-        return render_experiments_as_table(experiments, display_heading)
+    return render_experiments_as_table(experiments, display_heading)
 
 
 def render_experiments_as_json(experiments, indent=2, sort_keys=True):
@@ -626,8 +615,7 @@ def render_dataset(dataset, render_format):
     """
     if render_format == 'json':
         return render_dataset_as_json(dataset)
-    else:
-        return render_dataset_as_table(dataset)
+    return render_dataset_as_table(dataset)
 
 
 def render_dataset_as_json(dataset, indent=2, sort_keys=True):
@@ -701,8 +689,7 @@ def render_datasets(datasets, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_datasets_as_json(datasets)
-    else:
-        return render_datasets_as_table(datasets, display_heading)
+    return render_datasets_as_table(datasets, display_heading)
 
 
 def render_datasets_as_json(datasets, indent=2, sort_keys=True):
@@ -764,8 +751,7 @@ def render_datafile(datafile, render_format):
     """
     if render_format == 'json':
         return render_datafile_as_json(datafile)
-    else:
-        return render_datafile_as_table(datafile)
+    return render_datafile_as_table(datafile)
 
 
 def render_datafile_as_json(datafile, indent=2, sort_keys=True):
@@ -846,8 +832,7 @@ def render_datafiles(datafiles, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_datafiles_as_json(datafiles)
-    else:
-        return render_datafiles_as_table(datafiles, display_heading)
+    return render_datafiles_as_table(datafiles, display_heading)
 
 
 def render_datafiles_as_json(datafiles, indent=2, sort_keys=True):
@@ -912,8 +897,7 @@ def render_storage_box(storage_box, render_format):
     """
     if render_format == 'json':
         return render_storage_box_as_json(storage_box)
-    else:
-        return render_storage_box_as_table(storage_box)
+    return render_storage_box_as_table(storage_box)
 
 
 def render_storage_box_as_json(storage_box, indent=2, sort_keys=True):
@@ -988,8 +972,7 @@ def render_storage_boxes(storage_boxes, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_storage_boxes_as_json(storage_boxes)
-    else:
-        return render_storage_boxes_as_table(storage_boxes, display_heading)
+    return render_storage_boxes_as_table(storage_boxes, display_heading)
 
 
 def render_storage_boxes_as_json(storage_boxes, indent=2, sort_keys=True):
@@ -1052,8 +1035,7 @@ def render_schema(schema, render_format):
     """
     if render_format == 'json':
         return render_schema_as_json(schema)
-    else:
-        return render_schema_as_table(schema)
+    return render_schema_as_table(schema)
 
 
 def render_schema_as_json(schema, indent=2, sort_keys=True):
@@ -1133,8 +1115,7 @@ def render_schemas(schemas, render_format, display_heading=True):
     """
     if render_format == 'json':
         return render_schemas_as_json(schemas)
-    else:
-        return render_schemas_as_table(schemas, display_heading)
+    return render_schemas_as_table(schemas, display_heading)
 
 
 def render_schemas_as_json(schemas, indent=2, sort_keys=True):

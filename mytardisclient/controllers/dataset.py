@@ -30,14 +30,15 @@ class DatasetController(object):
             return self.list(args.exp, args.filter,
                              args.limit, args.offset,
                              args.order_by, render_format)
-        elif command == "get":
+        if command == "get":
             return self.get(args.dataset_id, render_format)
-        elif command == "create":
+        if command == "create":
             return self.create(args.experiment_id, args.description,
                                args.instrument, args.params, render_format)
-        elif command == "update":
+        if command == "update":
             return self.update(args.dataset_id, args.description,
                                render_format)
+        raise Exception("Invalid command: %s" % args.command)
 
     def list(self, experiment_id, filters, limit, offset, order_by,
              render_format):

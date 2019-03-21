@@ -3,15 +3,15 @@ Model class for MyTardis API v1's UserResource.
 See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 import traceback
-import urllib2
 import logging
 
 import requests
+from six.moves import urllib
 
 from mytardisclient.conf import config
-from .group import Group
 from mytardisclient.utils.exceptions import IncompatibleMyTardisVersion
 from mytardisclient.utils.exceptions import DoesNotExist
+from .group import Group
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -95,10 +95,9 @@ class User(object):
             raise DoesNotExist(
                 message="User \"%s\" was not found in MyTardis" % username,
                 url=url, response=response)
-        else:
-            logger.debug("Found user record for username '" + username + "'.")
-            return User(username=username,
-                        user_record_json=user_records_json['objects'][0])
+        logger.debug("Found user record for username '%s'", username)
+        return User(username=username,
+                    user_record_json=user_records_json['objects'][0])
 
     @staticmethod
     def get_user_by_email(email):
@@ -114,7 +113,7 @@ class User(object):
         :return: A :class:`User` instance.
         """
         url = config.url + "/api/v1/user/?format=json&email__iexact=" + \
-            urllib2.quote(email)
+            urllib.parse.quote(email)
         try:
             response = requests.get(url=url, headers=config.default_headers)
         except:
@@ -135,9 +134,8 @@ class User(object):
                 message="User with email \"%s\" was not found in MyTardis"
                 % email,
                 url=url, response=response)
-        else:
-            logger.debug("Found user record for email '" + email + "'.")
-            return User(user_record_json=user_records_json['objects'][0])
+        logger.debug("Found user record for email '%s'", email)
+        return User(user_record_json=user_records_json['objects'][0])
 
 
 # pylint: disable=too-few-public-methods
@@ -146,4 +144,3 @@ class UserProfile(object):
     Used with the DoesNotExist exception when a 404 from MyTardis's API
     is assumed to have been caused by a missing user profile record.
     """
-    pass

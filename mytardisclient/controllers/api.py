@@ -26,8 +26,9 @@ class ApiController(object):
             render_format = 'table'
         if command == "list":
             return self.list(render_format)
-        elif command == "get":
+        if command == "get":
             return self.get(args.api_model, render_format)
+        raise Exception("Invalid command: %s" % args.command)
 
     def list(self, render_format):
         """

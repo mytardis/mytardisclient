@@ -40,8 +40,7 @@ class ResultSet(object):
         if 'include_metadata' in self.model.__init__.__code__.co_varnames:
             return self.model(self.json['objects'][key],
                               include_metadata=False)
-        else:
-            return self.model(self.json['objects'][key])
+        return self.model(self.json['objects'][key])
 
     def __iter__(self):
         """
@@ -49,7 +48,7 @@ class ResultSet(object):
         """
         return self
 
-    def next(self):
+    def __next__(self):
         """
         Return the next item from the :class:`ResultSet`. If there
         are no further items, raise the StopIteration exception.
@@ -60,5 +59,10 @@ class ResultSet(object):
         if 'include_metadata' in self.model.__init__.__code__.co_varnames:
             return self.model(self.json['objects'][self.index],
                               include_metadata=False)
-        else:
-            return self.model(self.json['objects'][self.index])
+        return self.model(self.json['objects'][self.index])
+
+    def next(self):
+        """
+        For Python 2.7 compatibility
+        """
+        return self.__next__()

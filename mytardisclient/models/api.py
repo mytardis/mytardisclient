@@ -150,7 +150,7 @@ class ApiEndpoints(object):
         """
         return self
 
-    def next(self):
+    def __next__(self):
         """
         Return the next item from the :class:`ApiEndpoints` set. If there are
         no further items, raise the StopIteration exception.
@@ -160,3 +160,9 @@ class ApiEndpoints(object):
             raise StopIteration
         model = self.json.keys()[self.index]
         return ApiEndpoint(model, self.json[model])
+
+    def next(self):
+        """
+        For Python 2.7 compatibility
+        """
+        return self.__next__()

@@ -9,20 +9,20 @@ import json
 import os
 import cgi
 import hashlib
-import urllib2
 import logging
 from datetime import datetime
 
 import requests
+from six.moves import urllib
 
 from mytardisclient.conf import config
+from mytardisclient.utils.exceptions import DoesNotExist
+from mytardisclient.utils.exceptions import DuplicateKey
 from .replica import Replica
 from .dataset import Dataset
 from .resultset import ResultSet
 from .schema import Schema
 from .schema import ParameterName
-from mytardisclient.utils.exceptions import DoesNotExist
-from mytardisclient.utils.exceptions import DuplicateKey
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -33,7 +33,7 @@ def md5_sum(file_path, blocksize=65536):
     hasher = hashlib.md5()
     with open(file_path, 'rb') as datafile:
         buf = datafile.read(blocksize)
-        while len(buf) > 0:
+        while buf:
             hasher.update(buf)
             buf = datafile.read(blocksize)
         return hasher.hexdigest()
@@ -68,7 +68,7 @@ class DataFile(object):
         All replicas (DFOs) must be verified and there must be
         at least one replica (DFO).
         """
-        if len(self.replicas) == 0:
+        if not self.replicas:
             return False
         for replica in self.replicas:
             if not replica.verified:
@@ -104,7 +104,7 @@ class DataFile(object):
             filter_components = filters.split('&')
             for filter_component in filter_components:
                 field, value = filter_component.split('=')
-                url += "&%s=%s" % (field, urllib2.quote(value))
+                url += "&%s=%s" % (field, urllib.parse.quote(value))
         if limit:
             url += "&limit=%s" % limit
         if offset:
@@ -180,14 +180,13 @@ class DataFile(object):
         if not dataset_path and os.path.isabs(path):
             raise Exception("Either supply dataset_path or supply a relative "
                             "path to the datafile(s).")
-        elif not os.path.exists(path):
+        if not os.path.exists(path):
             raise Exception("The path doesn't exist: %s" % path)
         if os.path.isdir(path):
             return DataFile.create_datafiles(dataset_id, storagebox,
                                              dataset_path, path)
-        else:
-            return DataFile.create_datafile(dataset_id, storagebox,
-                                            dataset_path, path)
+        return DataFile.create_datafile(dataset_id, storagebox,
+                                        dataset_path, path)
 
     @staticmethod
     def create_datafiles(dataset_id, storagebox, dataset_path, dir_path):
@@ -314,7 +313,7 @@ class DataFile(object):
         if not dataset_path and os.path.isabs(file_path):
             raise Exception("Either supply dataset_path or supply a relative "
                             "path to the datafile.")
-        elif not os.path.exists(file_path):
+        if not os.path.exists(file_path):
             raise Exception("Path doesn't exist: %s" % file_path)
         if os.path.isdir(file_path):
             raise Exception("The path should be a single file: %s" % file_path)
@@ -328,7 +327,7 @@ class DataFile(object):
             file_path_components = file_path.split(os.sep)
             local_dataset_path = file_path_components.pop(0)
             filename = file_path_components.pop(-1)
-            if len(file_path_components) > 0:
+            if file_path_components:
                 directory = os.path.join(*file_path_components)
             else:
                 directory = ""
@@ -386,6 +385,7 @@ class DataFile(object):
             datafile_id = response.headers['location'].split("/")[-2]
             new_datafile = DataFile.get(datafile_id)
             return new_datafile
+        return None
 
     @staticmethod
     def download(datafile_id):
@@ -443,7 +443,7 @@ class DataFile(object):
         if not dataset_path and os.path.isabs(file_path):
             raise Exception("Either supply dataset_path or supply a relative "
                             "path to the datafile.")
-        elif not os.path.exists(file_path):
+        if not os.path.exists(file_path):
             raise Exception("Path doesn't exist: %s" % file_path)
         url = "%s/api/v1/dataset_file/" % config.url
         created_time = datetime.fromtimestamp(
@@ -455,9 +455,9 @@ class DataFile(object):
         else:
             file_path_components = file_path.split(os.sep)
             filename = file_path_components.pop(-1)
-            if len(file_path_components) > 0:
+            if file_path_components:
                 _ = file_path_components.pop(0)  # local_dataset_path
-            if len(file_path_components) > 0:
+            if file_path_components:
                 directory = os.path.join(*file_path_components)
             else:
                 directory = ""
@@ -570,9 +570,9 @@ class DataFile(object):
 
         url = "%s/api/v1/dataset_file/?format=json" % config.url
         url += "&dataset__id=%s" % dataset_id
-        url += "&filename=%s" % urllib2.quote(filename)
+        url += "&filename=%s" % urllib.parse.quote(filename)
         if directory and directory != "":
-            url += "&directory=%s" % urllib2.quote(directory)
+            url += "&directory=%s" % urllib.parse.quote(directory)
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
         if response.status_code < 200 or response.status_code >= 300:
@@ -646,4 +646,3 @@ class DataFileParameter(object):
         :param datafile_param_set: The datafile parameter set to
             list parameters for.
         """
-        pass

@@ -7,9 +7,9 @@ import logging
 import requests
 
 from mytardisclient.conf import config
+from mytardisclient.utils.exceptions import DoesNotExist
 from .resultset import ResultSet
 from .group import Group
-from mytardisclient.utils.exceptions import DoesNotExist
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 

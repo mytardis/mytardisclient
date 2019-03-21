@@ -6,17 +6,17 @@ from __future__ import print_function
 
 import json
 import os
-import urllib2
 import logging
 
 import requests
+from six.moves import urllib
 
 from mytardisclient.conf import config
+from mytardisclient.utils.exceptions import DoesNotExist
 from .resultset import ResultSet
 from .schema import Schema
 from .schema import ParameterName
 from .instrument import Instrument
-from mytardisclient.utils.exceptions import DoesNotExist
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -34,7 +34,7 @@ class Dataset(object):
         self.experiments = []
         self.parameter_sets = []
         if dataset_json:
-            for key in self.__dict__.keys():
+            for key in self.__dict__:
                 if key in dataset_json:
                     self.__dict__[key] = dataset_json[key]
             if dataset_json['instrument']:
@@ -69,7 +69,7 @@ class Dataset(object):
             filter_components = filters.split('&')
             for filter_component in filter_components:
                 field, value = filter_component.split('=')
-                url += "&%s=%s" % (field, urllib2.quote(value))
+                url += "&%s=%s" % (field, urllib.parse.quote(value))
         if limit:
             url += "&limit=%s"  % limit
         if offset:
@@ -223,4 +223,3 @@ class DatasetParameter(object):
         """
         List dataset parameter records in parameter set.
         """
-        pass
