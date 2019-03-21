@@ -1,0 +1,10 @@
+# requirements.txt
+
+ConfigParser
+dogpile.cache
+ndg-httpsclient
+pyasn1
+pyopenssl
+requests
+six
+texttable
