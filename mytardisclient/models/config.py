@@ -182,12 +182,14 @@ class Config(object):
         Default headers to use for API queries
         (including API key authorization).
         """
-        return {
-            "Authorization": "ApiKey %s:%s" % (self.username,
-                                               self.apikey),
+        headers = {
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
+        if self.username and self.apikey:
+            headers["Authorization"] = \
+                "ApiKey %s:%s" % (self.username, self.apikey)
+        return headers
 
     def validate(self):
         """
