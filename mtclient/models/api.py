@@ -11,6 +11,7 @@ The 'schema' request above requires authentication.
 from __future__ import print_function
 
 import requests
+import six
 
 from ..conf import config
 
@@ -73,7 +74,7 @@ class ApiSchema(object):
         self.json = schema_json
         self.fields = schema_json['fields']
         self.filtering = schema_json['filtering'] if 'filtering' in schema_json else {}
-        for key, val in self.filtering.iteritems():
+        for key, val in six.iteritems(self.filtering):
             if val == 1:
                 self.filtering[key] = "ALL"
             elif val == 2:
@@ -155,7 +156,7 @@ class ApiEndpoints(object):
         self.index += 1
         if self.index >= len(self):
             raise StopIteration
-        model = self.json.keys()[self.index]
+        model = list(self.json.keys())[self.index]
         return ApiEndpoint(model, self.json[model])
 
     def next(self):
