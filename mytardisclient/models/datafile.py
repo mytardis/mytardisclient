@@ -317,7 +317,7 @@ class DataFile(object):
             raise Exception("Path doesn't exist: %s" % file_path)
         if os.path.isdir(file_path):
             raise Exception("The path should be a single file: %s" % file_path)
-        dataset = Dataset.get(dataset_id)
+        dataset = Dataset.get(id=dataset_id)
         if dataset_path or os.path.isabs(file_path):
             local_dataset_path = dataset_path
             file_path_without_dataset = os.path.relpath(file_path,

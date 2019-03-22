@@ -56,7 +56,7 @@ class DatasetController(object):
         Display dataset record.
         """
         # pylint: disable=no-self-use
-        dataset = Dataset.get(dataset_id)
+        dataset = Dataset.get(id=dataset_id)
         print(render(dataset, render_format))
         if render_format == 'table':
             datafiles = DataFile.list(dataset_id)

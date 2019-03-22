@@ -86,7 +86,7 @@ class Dataset(Model):
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
-    def get(dataset_id, include_metadata=True):
+    def get(**kwargs):
         """
         Get dataset with ID dataset_id
 
@@ -94,6 +94,13 @@ class Dataset(Model):
 
         :return: A :class:`Dataset` record.
         """
+        if "dataset_id" in kwargs:
+            dataset_id = kwargs["dataset_id"]
+        else:
+            dataset_id = kwargs["id"]
+        include_metadata = True
+        if "include_metadata" in kwargs:
+            include_metadata = kwargs["include_metadata"]
         url = config.url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
         logger.debug("GET %s %s", url, response.status_code)
