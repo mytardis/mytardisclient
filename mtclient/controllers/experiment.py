@@ -4,9 +4,9 @@ on experiment records.
 """
 from __future__ import print_function
 
-from mytardisclient.models.dataset import Dataset
-from mytardisclient.models.experiment import Experiment
-from mytardisclient.views import render
+from mtclient.models.dataset import Dataset
+from mtclient.models.experiment import Experiment
+from mtclient.views import render
 
 
 class ExperimentController(object):
@@ -53,7 +53,7 @@ class ExperimentController(object):
         Display experiment record.
         """
         # pylint: disable=no-self-use
-        experiment = Experiment.get(experiment_id)
+        experiment = Experiment.objects.get(id=experiment_id)
         print(render(experiment, render_format))
         if render_format == 'table':
             datasets = Dataset.list(experiment_id=experiment_id)

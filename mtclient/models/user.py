@@ -1,6 +1,5 @@
 """
 Model class for MyTardis API v1's UserResource.
-See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 import traceback
 import logging
@@ -8,9 +7,9 @@ import logging
 import requests
 from six.moves import urllib
 
-from mytardisclient.conf import config
-from mytardisclient.utils.exceptions import IncompatibleMyTardisVersion
-from mytardisclient.utils.exceptions import DoesNotExist
+from ..conf import config
+from ..utils.exceptions import IncompatibleMyTardisVersion
+from ..utils.exceptions import DoesNotExist
 from .group import Group
 from .model import Model
 
@@ -20,7 +19,6 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class User(Model):
     """
     Model class for MyTardis API v1's UserResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=missing-docstring
     # pylint: disable=too-many-instance-attributes

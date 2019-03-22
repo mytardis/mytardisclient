@@ -8,17 +8,17 @@ from __future__ import print_function
 import json
 from texttable import Texttable
 
-from mytardisclient.models.api import ApiEndpoints
-from mytardisclient.models.api import ApiSchema
-from mytardisclient.models.facility import Facility
-from mytardisclient.models.instrument import Instrument
-from mytardisclient.models.experiment import Experiment
-from mytardisclient.models.dataset import Dataset
-from mytardisclient.models.datafile import DataFile
-from mytardisclient.models.storagebox import StorageBox
-from mytardisclient.models.schema import Schema
-from mytardisclient.models.resultset import ResultSet
-from mytardisclient.utils import human_readable_size_string
+from mtclient.models.api import ApiEndpoints
+from mtclient.models.api import ApiSchema
+from mtclient.models.facility import Facility
+from mtclient.models.instrument import Instrument
+from mtclient.models.experiment import Experiment
+from mtclient.models.dataset import Dataset
+from mtclient.models.datafile import DataFile
+from mtclient.models.storagebox import StorageBox
+from mtclient.models.schema import Schema
+from mtclient.models.resultset import ResultSet
+from mtclient.utils import human_readable_size_string
 
 
 def render(data, render_format='table', display_heading=True):
@@ -29,9 +29,9 @@ def render(data, render_format='table', display_heading=True):
     to display (render) the data in the desired format.
 
     :param data: The data to be displayed.  An instance of a model class
-        (e.g.  :class:`mytardisclient.models.dataset.Dataset`) or an instance of
-        :class:`mytardisclient.models.resultset.ResultSet`
-        or an instance of :class:`mytardisclient.models.api.ApiEndpoints`.
+        (e.g.  :class:`mtclient.models.dataset.Dataset`) or an instance of
+        :class:`mtclient.models.resultset.ResultSet`
+        or an instance of :class:`mtclient.models.api.ApiEndpoints`.
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -57,7 +57,7 @@ def render_single_record(data, render_format):
     to display (render) the data in the desired format.
 
     :param data: The data to be displayed.  An instance of a model class
-        (e.g.  :class:`mytardisclient.models.dataset.Dataset`).
+        (e.g.  :class:`mtclient.models.dataset.Dataset`).
     :param render_format: The format to display the data in ('table' or
         'json').
     """
@@ -90,7 +90,7 @@ def render_result_set(result_set, render_format, display_heading=True):
     desired format.
 
     :param result_set: The result set to be rendered.
-    :type result_set: :class:`mytardisclient.models.resultset.ResultSet`
+    :type result_set: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -124,7 +124,7 @@ def render_api_schema(api_schema, render_format):
     Render API schema
 
     :param api_schema: The API schema model to be displayed.
-    :type api_schema: :class:`mytardisclient.models.api.ApiSchema`
+    :type api_schema: :class:`mtclient.models.api.ApiSchema`
     :param render_format: The format to display the data in ('table' or
         'json').
     """
@@ -138,7 +138,7 @@ def render_api_schema_as_json(api_schema, indent=2, sort_keys=True):
     Returns JSON representation of API schema.
 
     :param api_schema: The API schema model to be displayed.
-    :type api_schema: :class:`mytardisclient.models.api.ApiSchema`
+    :type api_schema: :class:`mtclient.models.api.ApiSchema`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -153,7 +153,7 @@ def render_api_schema_as_table(api_schema):
     Returns ASCII table view of API schema.
 
     :param api_schema: The API schema model to be displayed.
-    :type api_schema: :class:`mytardisclient.models.api.ApiSchema`
+    :type api_schema: :class:`mtclient.models.api.ApiSchema`
     """
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -174,7 +174,7 @@ def render_api_endpoints(api_endpoints, render_format, display_heading=True):
     Render API endpoints
 
     :param api_endpoints: The API endpoints to be rendered.
-    :type api_endpoints: :class:`mytardisclient.models.api.ApiEndpoints`
+    :type api_endpoints: :class:`mtclient.models.api.ApiEndpoints`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for
@@ -192,7 +192,7 @@ def render_api_endpoints_as_json(api_endpoints, indent=2, sort_keys=True):
     Returns JSON representation of api_endpoints.
 
     :param api_endpoints: The API endpoints to be rendered.
-    :type api_endpoints: :class:`mytardisclient.models.api.ApiEndpoints`
+    :type api_endpoints: :class:`mtclient.models.api.ApiEndpoints`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -207,7 +207,7 @@ def render_api_endpoints_as_table(api_endpoints, display_heading=True):
     Returns ASCII table view of api_endpoints.
 
     :param api_endpoints: The API endpoints to be rendered.
-    :type api_endpoints: :class:`mytardisclient.models.api.ApiEndpoints`
+    :type api_endpoints: :class:`mtclient.models.api.ApiEndpoints`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for
@@ -233,7 +233,7 @@ def render_facility(facility, render_format, display_heading=True):
     Render facility
 
     :param facility: The facility to be rendered.
-    :type facility: :class:`mytardisclient.models.facility.Facility`
+    :type facility: :class:`mtclient.models.facility.Facility`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for
@@ -251,7 +251,7 @@ def render_facility_as_json(facility, indent=2, sort_keys=True):
     Returns JSON representation of facility.
 
     :param facility: The facility to be rendered.
-    :type facility: :class:`mytardisclient.models.facility.Facility`
+    :type facility: :class:`mtclient.models.facility.Facility`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -266,7 +266,7 @@ def render_facility_as_table(facility, display_heading=True):
     Returns ASCII table view of facility.
 
     :param facility: The facility to be rendered.
-    :type facility: :class:`mytardisclient.models.facility.Facility`
+    :type facility: :class:`mtclient.models.facility.Facility`
     :param display_heading: When using the 'table' render format for
         an `ApiEndpoints` set, setting `display_heading` to True
         ensures that a heading is displayed before the results table.
@@ -289,7 +289,7 @@ def render_facilities(facilities, render_format, display_heading=True):
     Render facilities
 
     :param facilities: The `ResultSet` of facilities to be rendered.
-    :type facilities: :class:`mytardisclient.models.resultset.ResultSet`
+    :type facilities: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -310,7 +310,7 @@ def render_facilities_as_json(facilities, indent=2, sort_keys=True):
     Returns JSON representation of facilities.
 
     :param facilities: The result set of facilities to be displayed.
-    :type facilities: :class:`mytardisclient.models.resultset.ResultSet`
+    :type facilities: :class:`mtclient.models.resultset.ResultSet`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -325,7 +325,7 @@ def render_facilities_as_table(facilities, display_heading=True):
     Returns ASCII table view of facilities.
 
     :param facilities: The facilities to be rendered.
-    :type facilities: :class:`mytardisclient.models.resultset.ResultSet`
+    :type facilities: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: Setting `display_heading` to True ensures
@@ -357,7 +357,7 @@ def render_instrument(instrument, render_format):
     Render instrument
 
     :param instrument: The instrument to be rendered.
-    :type instrument: :class:`mytardisclient.models.instrument.Instrument`
+    :type instrument: :class:`mtclient.models.instrument.Instrument`
     :param render_format: The format to display the data in ('table' or
         'json').
     """
@@ -371,7 +371,7 @@ def render_instrument_as_json(instrument, indent=2, sort_keys=True):
     Returns JSON representation of instrument.
 
     :param instrument: The instrument to be rendered.
-    :type instrument: :class:`mytardisclient.models.instrument.Instrument`
+    :type instrument: :class:`mtclient.models.instrument.Instrument`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -386,7 +386,7 @@ def render_instrument_as_table(instrument):
     Returns ASCII table view of instrument.
 
     :param instrument: The instrument to be rendered.
-    :type instrument: :class:`mytardisclient.models.instrument.Instrument`
+    :type instrument: :class:`mtclient.models.instrument.Instrument`
     """
     instrument_table = Texttable()
     instrument_table.set_cols_align(['l', 'l'])
@@ -403,7 +403,7 @@ def render_instruments(instruments, render_format, display_heading=True):
     Render instruments
 
     :param instruments: The `ResultSet` of instruments to be rendered.
-    :type instruments: :class:`mytardisclient.models.resultset.ResultSet`
+    :type instruments: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -424,7 +424,7 @@ def render_instruments_as_json(instruments, indent=2, sort_keys=True):
     Returns JSON representation of instruments.
 
     :param instruments: The result set of instruments to be displayed.
-    :type instruments: :class:`mytardisclient.models.resultset.ResultSet`
+    :type instruments: :class:`mtclient.models.resultset.ResultSet`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -439,7 +439,7 @@ def render_instruments_as_table(instruments, display_heading=True):
     Returns ASCII table view of instruments.
 
     :param instruments: The instruments to be rendered.
-    :type instruments: :class:`mytardisclient.models.resultset.ResultSet`
+    :type instruments: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: Setting `display_heading` to True ensures
@@ -471,7 +471,7 @@ def render_experiment(experiment, render_format):
     Render experiment
 
     :param experiment: The experiment to be rendered.
-    :type experiment: :class:`mytardisclient.models.experiment.Experiment`
+    :type experiment: :class:`mtclient.models.experiment.Experiment`
     :param render_format: The format to display the data in ('table' or
         'json').
     """
@@ -485,7 +485,7 @@ def render_experiment_as_json(experiment, indent=2, sort_keys=True):
     Returns JSON representation of experiment.
 
     :param experiment: The experiment to be rendered.
-    :type experiment: :class:`mytardisclient.models.experiment.Experiment`
+    :type experiment: :class:`mtclient.models.experiment.Experiment`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -500,7 +500,7 @@ def render_experiment_as_table(experiment):
     Returns ASCII table view of experiment.
 
     :param experiment: The experiment to be rendered.
-    :type experiment: :class:`mytardisclient.models.experiment.Experiment`
+    :type experiment: :class:`mtclient.models.experiment.Experiment`
     """
     exp_and_param_sets = ""
 
@@ -540,7 +540,7 @@ def render_experiments(experiments, render_format, display_heading=True):
     Render experiments
 
     :param experiments: The `ResultSet` of experiments to be rendered.
-    :type experiments: :class:`mytardisclient.models.resultset.ResultSet`
+    :type experiments: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -561,7 +561,7 @@ def render_experiments_as_json(experiments, indent=2, sort_keys=True):
     Returns JSON representation of experiments.
 
     :param experiments: The result set of experiments to be displayed.
-    :type experiments: :class:`mytardisclient.models.resultset.ResultSet`
+    :type experiments: :class:`mtclient.models.resultset.ResultSet`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -576,7 +576,7 @@ def render_experiments_as_table(experiments, display_heading=True):
     Returns ASCII table view of experiments.
 
     :param experiments: The experiments to be rendered.
-    :type experiments: :class:`mytardisclient.models.resultset.ResultSet`
+    :type experiments: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: Setting `display_heading` to True ensures
@@ -609,7 +609,7 @@ def render_dataset(dataset, render_format):
     Render dataset
 
     :param dataset: The dataset to be rendered.
-    :type dataset: :class:`mytardisclient.models.dataset.Dataset`
+    :type dataset: :class:`mtclient.models.dataset.Dataset`
     :param render_format: The format to display the data in ('table' or
         'json').
     """
@@ -623,7 +623,7 @@ def render_dataset_as_json(dataset, indent=2, sort_keys=True):
     Returns JSON representation of dataset.
 
     :param dataset: The dataset to be rendered.
-    :type dataset: :class:`mytardisclient.models.dataset.Dataset`
+    :type dataset: :class:`mtclient.models.dataset.Dataset`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -638,7 +638,7 @@ def render_dataset_as_table(dataset):
     Returns ASCII table view of dataset.
 
     :param dataset: The dataset to be rendered.
-    :type dataset: :class:`mytardisclient.models.dataset.Dataset`
+    :type dataset: :class:`mtclient.models.dataset.Dataset`
     """
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -676,7 +676,7 @@ def render_datasets(datasets, render_format, display_heading=True):
     Render datasets
 
     :param datasets: The `ResultSet` of datasets to be rendered.
-    :type datasets: :class:`mytardisclient.models.resultset.ResultSet`
+    :type datasets: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -697,7 +697,7 @@ def render_datasets_as_json(datasets, indent=2, sort_keys=True):
     Returns JSON representation of datasets.
 
     :param datasets: The result set of datasets to be displayed.
-    :type datasets: :class:`mytardisclient.models.resultset.ResultSet`
+    :type datasets: :class:`mtclient.models.resultset.ResultSet`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -712,7 +712,7 @@ def render_datasets_as_table(datasets, display_heading=True):
     Returns ASCII table view of datasets.
 
     :param datasets: The datasets to be rendered.
-    :type datasets: :class:`mytardisclient.models.resultset.ResultSet`
+    :type datasets: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: Setting `display_heading` to True ensures
@@ -745,7 +745,7 @@ def render_datafile(datafile, render_format):
     Render datafile
 
     :param datafile: The datafile to be rendered.
-    :type datafile: :class:`mytardisclient.models.datafile.DataFile`
+    :type datafile: :class:`mtclient.models.datafile.DataFile`
     :param render_format: The format to display the data in ('table' or
         'json').
     """
@@ -759,7 +759,7 @@ def render_datafile_as_json(datafile, indent=2, sort_keys=True):
     Returns JSON representation of datafile.
 
     :param datafile: The datafile to be rendered.
-    :type datafile: :class:`mytardisclient.models.datafile.DataFile`
+    :type datafile: :class:`mtclient.models.datafile.DataFile`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -774,7 +774,7 @@ def render_datafile_as_table(datafile):
     Returns ASCII table view of datafile.
 
     :param datafile: The datafile to be rendered.
-    :type datafile: :class:`mytardisclient.models.datafile.DataFile`
+    :type datafile: :class:`mtclient.models.datafile.DataFile`
     """
     table = Texttable()
     table.set_cols_align(['l', 'l'])
@@ -819,7 +819,7 @@ def render_datafiles(datafiles, render_format, display_heading=True):
     Render datafiles
 
     :param datafiles: The `ResultSet` of datafiles to be rendered.
-    :type datafiles: :class:`mytardisclient.models.resultset.ResultSet`
+    :type datafiles: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -840,7 +840,7 @@ def render_datafiles_as_json(datafiles, indent=2, sort_keys=True):
     Returns JSON representation of datafiles.
 
     :param datafiles: The result set of datafiles to be displayed.
-    :type datafiles: :class:`mytardisclient.models.resultset.ResultSet`
+    :type datafiles: :class:`mtclient.models.resultset.ResultSet`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -855,7 +855,7 @@ def render_datafiles_as_table(datafiles, display_heading=True):
     Returns ASCII table view of datafiles.
 
     :param datafiles: The datafiles to be rendered.
-    :type datafiles: :class:`mytardisclient.models.resultset.ResultSet`
+    :type datafiles: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: Setting `display_heading` to True ensures
@@ -893,7 +893,7 @@ def render_storage_box(storage_box, render_format):
     Render storage box
 
     :param storage_box: The storage box to be rendered.
-    :type storage_box: :class:`mytardisclient.models.storagebox.StorageBox`
+    :type storage_box: :class:`mtclient.models.storagebox.StorageBox`
     """
     if render_format == 'json':
         return render_storage_box_as_json(storage_box)
@@ -905,7 +905,7 @@ def render_storage_box_as_json(storage_box, indent=2, sort_keys=True):
     Returns JSON representation of storage_box.
 
     :param storage_box: The storage box to be rendered.
-    :type storage_box: :class:`mytardisclient.models.storagebox.StorageBox`
+    :type storage_box: :class:`mtclient.models.storagebox.StorageBox`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -959,7 +959,7 @@ def render_storage_boxes(storage_boxes, render_format, display_heading=True):
     Render storage boxes.
 
     :param storage_boxes: The `ResultSet` of storage boxes to be rendered.
-    :type storage_boxes: :class:`mytardisclient.models.resultset.ResultSet`
+    :type storage_boxes: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -980,7 +980,7 @@ def render_storage_boxes_as_json(storage_boxes, indent=2, sort_keys=True):
     Returns JSON representation of storage_boxes.
 
     :param storage_boxes: The result set of storage boxes to be displayed.
-    :type storage_boxes: :class:`mytardisclient.models.resultset.ResultSet`
+    :type storage_boxes: :class:`mtclient.models.resultset.ResultSet`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -995,7 +995,7 @@ def render_storage_boxes_as_table(storage_boxes, display_heading=True):
     Returns ASCII table view of storage_boxes.
 
     :param storage_boxes: The storage boxes to be rendered.
-    :type storage_boxes: :class:`mytardisclient.models.resultset.ResultSet`
+    :type storage_boxes: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: Setting `display_heading` to True ensures
@@ -1029,7 +1029,7 @@ def render_schema(schema, render_format):
     Render schema
 
     :param schema: The schema to be rendered.
-    :type schema: :class:`mytardisclient.models.schema.Schema`
+    :type schema: :class:`mtclient.models.schema.Schema`
     :param render_format: The format to display the data in ('table' or
         'json').
     """
@@ -1043,7 +1043,7 @@ def render_schema_as_json(schema, indent=2, sort_keys=True):
     Returns JSON representation of schema.
 
     :param schema: The schema to be rendered.
-    :type schema: :class:`mytardisclient.models.schema.Schema`
+    :type schema: :class:`mtclient.models.schema.Schema`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -1058,7 +1058,7 @@ def render_schema_as_table(schema):
     Returns ASCII table view of schema.
 
     :param schema: The schema to be rendered.
-    :type schema: :class:`mytardisclient.models.schema.Schema`
+    :type schema: :class:`mtclient.models.schema.Schema`
     """
     schema_parameter_names = ""
 
@@ -1102,7 +1102,7 @@ def render_schemas(schemas, render_format, display_heading=True):
     Render schemas
 
     :param schemas: The `ResultSet` of schemas to be rendered.
-    :type schemas: :class:`mytardisclient.models.resultset.ResultSet`
+    :type schemas: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: When using the 'table' render format for a
@@ -1123,7 +1123,7 @@ def render_schemas_as_json(schemas, indent=2, sort_keys=True):
     Returns JSON representation of schemas.
 
     :param schemas: The result set of schemas boxes to be displayed.
-    :type schemas: :class:`mytardisclient.models.resultset.ResultSet`
+    :type schemas: :class:`mtclient.models.resultset.ResultSet`
     :param indent: If indent is a non-negative integer or string, then JSON
         array elements and object members will be pretty-printed with that
         indent level.
@@ -1138,7 +1138,7 @@ def render_schemas_as_table(schemas, display_heading=True):
     Returns ASCII table view of schemas.
 
     :param schemas: The schemas to be rendered.
-    :type schemas: :class:`mytardisclient.models.resultset.ResultSet`
+    :type schemas: :class:`mtclient.models.resultset.ResultSet`
     :param render_format: The format to display the data in ('table' or
         'json').
     :param display_heading: Setting `display_heading` to True ensures

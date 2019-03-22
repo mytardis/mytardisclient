@@ -7,7 +7,7 @@ import os
 
 from six.moves import input
 
-from mytardisclient.conf import config
+from mtclient.conf import config
 
 
 class ConfigController(object):

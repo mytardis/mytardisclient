@@ -7,8 +7,8 @@ from __future__ import print_function
 
 import os
 
-from mytardisclient.models.datafile import DataFile
-from mytardisclient.views import render
+from mtclient.models.datafile import DataFile
+from mtclient.views import render
 
 
 class DataFileController(object):
@@ -66,7 +66,7 @@ class DataFileController(object):
         Display datafile record.
         """
         # pylint: disable=no-self-use
-        datafile = DataFile.get(datafile_id)
+        datafile = DataFile.objects.get(id=datafile_id)
         print(render(datafile, render_format))
 
     def create(self, dataset_id, storagebox, dataset_path, path,

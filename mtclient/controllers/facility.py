@@ -4,9 +4,9 @@ on facility records.
 """
 from __future__ import print_function
 
-from mytardisclient.models.facility import Facility
-from mytardisclient.models.instrument import Instrument
-from mytardisclient.views import render
+from mtclient.models.facility import Facility
+from mtclient.models.instrument import Instrument
+from mtclient.views import render
 
 
 class FacilityController(object):
@@ -46,7 +46,7 @@ class FacilityController(object):
         Display facility record.
         """
         # pylint: disable=no-self-use
-        facility = Facility.get(facility_id)
+        facility = Facility.objects.get(id=facility_id)
         print(render(facility, render_format))
         if render_format == 'table':
             instruments = Instrument.list(facility_id)

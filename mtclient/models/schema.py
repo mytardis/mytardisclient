@@ -6,7 +6,7 @@ from __future__ import print_function
 import logging
 import requests
 
-from mytardisclient.conf import config
+from ..conf import config
 from .model import Model
 from .resultset import ResultSet
 
@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class Schema(Model):
     """
     Model class for MyTardis API v1's SchemaResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-many-instance-attributes
     def __init__(self, schema_json):

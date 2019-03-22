@@ -10,8 +10,8 @@ import logging
 import requests
 from six.moves import urllib
 
-from mytardisclient.conf import config
-from mytardisclient.utils.exceptions import DoesNotExist
+from ..conf import config
+from ..utils.exceptions import DoesNotExist
 from .model import Model
 from .resultset import ResultSet
 from .schema import Schema

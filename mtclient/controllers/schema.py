@@ -4,8 +4,8 @@ on schemas.
 """
 from __future__ import print_function
 
-from mytardisclient.models.schema import Schema
-from mytardisclient.views import render
+from mtclient.models.schema import Schema
+from mtclient.views import render
 
 
 class SchemaController(object):
@@ -45,5 +45,5 @@ class SchemaController(object):
         Display schema record.
         """
         # pylint: disable=no-self-use
-        schema = Schema.get(schema_id)
+        schema = Schema.objects.get(id=schema_id)
         print(render(schema, render_format))

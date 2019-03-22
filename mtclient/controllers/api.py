@@ -3,9 +3,9 @@ Controller class for listing API endpoints.
 """
 from __future__ import print_function
 
-from mytardisclient.models.api import ApiEndpoint
-from mytardisclient.models.api import ApiSchema
-from mytardisclient.views import render
+from mtclient.models.api import ApiEndpoint
+from mtclient.models.api import ApiSchema
+from mtclient.views import render
 
 
 class ApiController(object):

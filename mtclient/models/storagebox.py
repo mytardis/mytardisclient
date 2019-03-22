@@ -1,13 +1,12 @@
 """
 Model class for MyTardis API v1's StorageBoxResource.
-See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 from __future__ import print_function
 
 import logging
 import requests
 
-from mytardisclient.conf import config
+from ..conf import config
 from .model import Model
 from .resultset import ResultSet
 
@@ -17,7 +16,6 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class StorageBox(Model):
     """
     Model class for MyTardis API v1's StorageBoxResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-many-instance-attributes
     def __init__(self, storage_box_json):
@@ -92,7 +90,6 @@ class StorageBox(Model):
 class StorageBoxAttribute(object):
     """
     Model class for MyTardis API v1's StorageBoxAttributeResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     def __init__(self, storage_box_attribute_json):
@@ -104,7 +101,6 @@ class StorageBoxAttribute(object):
 class StorageBoxOption(object):
     """
     Model class for MyTardis API v1's StorageBoxOptionResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     def __init__(self, storage_box_option_json):

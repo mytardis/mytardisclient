@@ -4,8 +4,8 @@ on storage boxes.
 """
 from __future__ import print_function
 
-from mytardisclient.models.storagebox import StorageBox
-from mytardisclient.views import render
+from mtclient.models.storagebox import StorageBox
+from mtclient.views import render
 
 
 class StorageBoxController(object):
@@ -45,5 +45,5 @@ class StorageBoxController(object):
         Display storage box record.
         """
         # pylint: disable=no-self-use
-        storage_box = StorageBox.get(storage_box_id)
+        storage_box = StorageBox.objects.get(id=storage_box_id)
         print(render(storage_box, render_format))

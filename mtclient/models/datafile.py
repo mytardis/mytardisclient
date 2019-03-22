@@ -14,8 +14,8 @@ from datetime import datetime
 import requests
 from six.moves import urllib
 
-from mytardisclient.conf import config
-from mytardisclient.utils.exceptions import DuplicateKey
+from ..conf import config
+from ..utils.exceptions import DuplicateKey
 from .replica import Replica
 from .dataset import Dataset
 from .model import Model
@@ -263,7 +263,7 @@ class DataFile(Model):
 
         :return: A new :class:`DataFile` record.
 
-        See also: :func:`mytardisclient.models.datafile.DataFile.upload`
+        See also: :func:`mtclient.models.datafile.DataFile.upload`
 
         Suppose someone with username james generates a file called
         "results.dat" on a data analysis server called analyzer.example.com

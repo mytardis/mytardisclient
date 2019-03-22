@@ -9,19 +9,19 @@ import sys
 import logging
 import logging.config
 
-from mytardisclient import __version__ as VERSION
-from mytardisclient.models.config import Config
-from mytardisclient.models.config import DEFAULT_CONFIG_PATH
-from mytardisclient.controllers.api import ApiController
-from mytardisclient.controllers.config import ConfigController
-from mytardisclient.controllers.facility import FacilityController
-from mytardisclient.controllers.instrument import InstrumentController
-from mytardisclient.controllers.experiment import ExperimentController
-from mytardisclient.controllers.dataset import DatasetController
-from mytardisclient.controllers.datafile import DataFileController
-from mytardisclient.controllers.storagebox import StorageBoxController
-from mytardisclient.controllers.schema import SchemaController
-from mytardisclient.argparser import ArgParser
+from . import __version__ as VERSION
+from .models.config import Config
+from .models.config import DEFAULT_CONFIG_PATH
+from .controllers.api import ApiController
+from .controllers.config import ConfigController
+from .controllers.facility import FacilityController
+from .controllers.instrument import InstrumentController
+from .controllers.experiment import ExperimentController
+from .controllers.dataset import DatasetController
+from .controllers.datafile import DataFileController
+from .controllers.storagebox import StorageBoxController
+from .controllers.schema import SchemaController
+from .argparser import ArgParser
 
 
 def run():

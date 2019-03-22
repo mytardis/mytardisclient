@@ -1,6 +1,5 @@
 """
 Model class for MyTardis API v1's InstrumentResource.
-See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 from __future__ import print_function
 
@@ -9,8 +8,7 @@ import logging
 
 import requests
 
-from mytardisclient.conf import config
-from mytardisclient.utils.exceptions import DoesNotExist
+from ..conf import config
 from .facility import Facility
 from .model import Model
 from .resultset import ResultSet
@@ -21,7 +19,6 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class Instrument(Model):
     """
     Model class for MyTardis API v1's InstrumentResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     def __init__(self, instrument_json):
         self.id = instrument_json['id']  # pylint: disable=invalid-name

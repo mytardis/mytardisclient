@@ -4,8 +4,8 @@ on instrument records.
 """
 from __future__ import print_function
 
-from mytardisclient.models.instrument import Instrument
-from mytardisclient.views import render
+from mtclient.models.instrument import Instrument
+from mtclient.views import render
 
 
 class InstrumentController(object):
@@ -52,7 +52,7 @@ class InstrumentController(object):
         Display instrument record.
         """
         # pylint: disable=no-self-use
-        instrument = Instrument.get(instrument_id)
+        instrument = Instrument.objects.get(id=instrument_id)
         print(render(instrument, render_format))
 
     def create(self, facility_id, name, render_format):

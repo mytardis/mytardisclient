@@ -7,7 +7,7 @@ import textwrap
 def build_config_parser(argument_parser):
     """
     'mytardis config' prompts users for settings to write to
-    mytardisclient.models.config.DEFAULT_CONFIG_PATH
+    mtclient.models.config.DEFAULT_CONFIG_PATH
     """
     config_help = "Set MyTardis URL, username and API key."
     config_usage = textwrap.dedent("""\

@@ -1,12 +1,11 @@
 """
 Model class for MyTardis API v1's FacilityResource.
-See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 
 import logging
 import requests
 
-from mytardisclient.conf import config
+from ..conf import config
 from .model import Model
 from .resultset import ResultSet
 from .group import Group
@@ -17,7 +16,6 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class Facility(Model):
     """
     Model class for MyTardis API v1's FacilityResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     def __init__(self, facility_json):
         self.id = facility_json['id']  # pylint: disable=invalid-name

@@ -1,6 +1,5 @@
 """
 The api module contains model classes for MyTardis API v1's endpoints.
-See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 
 This following lists all of the supported endpoints: /api/v1/?format=json
 
@@ -13,13 +12,12 @@ from __future__ import print_function
 
 import requests
 
-from mytardisclient.conf import config
+from ..conf import config
 
 
 class ApiEndpoint(object):
     """
     Model class for MyTardis API v1's endpoints.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     def __init__(self, model, endpoint_json):
@@ -62,7 +60,6 @@ class ApiEndpoint(object):
 class ApiSchema(object):
     """
     Model class for MyTardis API v1's schemas.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-few-public-methods

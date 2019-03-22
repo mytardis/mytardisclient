@@ -4,9 +4,9 @@ on dataset records.
 """
 from __future__ import print_function
 
-from mytardisclient.models.dataset import Dataset
-from mytardisclient.models.datafile import DataFile
-from mytardisclient.views import render
+from mtclient.models.dataset import Dataset
+from mtclient.models.datafile import DataFile
+from mtclient.views import render
 
 
 class DatasetController(object):
@@ -56,7 +56,7 @@ class DatasetController(object):
         Display dataset record.
         """
         # pylint: disable=no-self-use
-        dataset = Dataset.get(id=dataset_id)
+        dataset = Dataset.objects.get(id=dataset_id)
         print(render(dataset, render_format))
         if render_format == 'table':
             datafiles = DataFile.list(dataset_id)
