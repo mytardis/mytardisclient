@@ -394,6 +394,8 @@ class DataFile(object):
 
         :param datafile_id: The ID of a datafile to download.
         """
+        from clint.textui import progress
+
         url = "%s/api/v1/dataset_file/%s/download/" \
             % (config.url, datafile_id)
         headers = {
@@ -409,14 +411,29 @@ class DataFile(object):
         try:
             _, params = cgi.parse_header(
                 response.headers.get('Content-Disposition', ''))
-            filename = params['filename']
+            try:
+                filename = params['filename']
+            except KeyError:
+                # If the download request is redirected to S3,
+                # we may not have a filename header in the response,
+                # so we can look up the datafile's filename instead:
+                datafile = DataFile.get(datafile_id)
+                filename = datafile.filename
         except KeyError:
             print("response.headers: %s" % response.headers)
             raise
-        fileobj = open(filename, 'wb')
-        for chunk in response.iter_content(chunk_size=1024):
-            if chunk:  # filter out keep-alive new chunks
-                fileobj.write(chunk)
+        with open(filename, 'wb') as fileobj:
+            total_length = int(response.headers.get('content-length'))
+            hide = total_length < 10000000 # 10 MB
+            for chunk in progress.bar(
+                    response.iter_content(chunk_size=1024),
+                    hide=hide,
+                    label="Downloading: %s " % filename,
+                    expected_size=(total_length / 1024) + 1):
+                # filter out keep-alive new chunks:
+                if chunk:
+                    fileobj.write(chunk)
+                    fileobj.flush()
         print("Downloaded: %s" % filename)
 
     @staticmethod
