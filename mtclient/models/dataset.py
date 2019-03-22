@@ -8,9 +8,9 @@ import os
 import logging
 
 import requests
-from six.moves import urllib
 
 from ..conf import config
+from ..utils import extend_url, add_filters
 from ..utils.exceptions import DoesNotExist
 from .resultset import ResultSet
 from .schema import Schema
@@ -71,17 +71,8 @@ class Dataset(Model):
 
         if experiment_id:
             url += "&experiments__id=%s"  % experiment_id
-        if filters:
-            filter_components = filters.split('&')
-            for filter_component in filter_components:
-                field, value = filter_component.split('=')
-                url += "&%s=%s" % (field, urllib.parse.quote(value))
-        if limit:
-            url += "&limit=%s"  % limit
-        if offset:
-            url += "&offset=%s"  % offset
-        if order_by:
-            url += "&order_by=%s"  % order_by
+        url = add_filters(url, filters)
+        url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ResultSet(Dataset, url, response.json())

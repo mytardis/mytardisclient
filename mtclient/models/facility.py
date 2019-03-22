@@ -6,6 +6,7 @@ import logging
 import requests
 
 from ..conf import config
+from ..utils import extend_url
 from .model import Model
 from .resultset import ResultSet
 from .group import Group
@@ -44,12 +45,7 @@ class Facility(Model):
             `ResultSet` object`.
         """
         url = config.url + "/api/v1/facility/?format=json"
-        if limit:
-            url += "&limit=%s" % limit
-        if offset:
-            url += "&offset=%s" % offset
-        if order_by:
-            url += "&order_by=%s" % order_by
+        url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ResultSet(Facility, url, response.json())

@@ -15,6 +15,7 @@ import requests
 from six.moves import urllib
 
 from ..conf import config
+from ..utils import extend_url, add_filters
 from ..utils.exceptions import DuplicateKey
 from .replica import Replica
 from .dataset import Dataset
@@ -105,18 +106,9 @@ class DataFile(Model):
         if directory:
             url += "&directory=%s" % directory
         if filename:
-            url += "&filename=%s" % filename
-        if filters:
-            filter_components = filters.split('&')
-            for filter_component in filter_components:
-                field, value = filter_component.split('=')
-                url += "&%s=%s" % (field, urllib.parse.quote(value))
-        if limit:
-            url += "&limit=%s" % limit
-        if offset:
-            url += "&offset=%s" % offset
-        if order_by:
-            url += "&order_by=%s" % order_by
+            url += "&filename=%s" % urllib.parse.quote(filename)
+        url = add_filters(url, filters)
+        url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ResultSet(DataFile, url, response.json())

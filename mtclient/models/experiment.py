@@ -8,9 +8,9 @@ import os
 import logging
 
 import requests
-from six.moves import urllib
 
 from ..conf import config
+from ..utils import extend_url, add_filters
 from ..utils.exceptions import DoesNotExist
 from .model import Model
 from .resultset import ResultSet
@@ -61,17 +61,8 @@ class Experiment(Model):
             `ResultSet` object.
         """
         url = "%s/api/v1/experiment/?format=json" % config.url
-        if filters:
-            filter_components = filters.split('&')
-            for filter_component in filter_components:
-                field, value = filter_component.split('=')
-                url += "&%s=%s" % (field, urllib.parse.quote(value))
-        if limit:
-            url += "&limit=%s" % limit
-        if offset:
-            url += "&offset=%s" % offset
-        if order_by:
-            url += "&order_by=%s" % order_by
+        url = add_filters(url, filters)
+        url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ResultSet(Experiment, url, response.json())
