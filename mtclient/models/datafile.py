@@ -388,7 +388,7 @@ class DataFile(Model):
 
         :param datafile_id: The ID of a datafile to download.
         """
-        from clint.textui import progress
+        from clint.textui import progress  # pylint: disable=import-error
 
         url = "%s/api/v1/dataset_file/%s/download/" \
             % (config.url, datafile_id)
