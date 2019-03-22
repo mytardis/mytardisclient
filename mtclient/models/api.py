@@ -27,14 +27,17 @@ class ApiEndpoint(object):
         self.list_endpoint = endpoint_json['list_endpoint']
         self.schema = endpoint_json['schema']
 
-    def __unicode__(self):
+    def __str__(self):
+        """
+        Return a string representation of an API endpoint
+        """
         return "%s: %s, %s" % (self.model, self.list_endpoint, self.schema)
 
-    def __str__(self):
-        return self.__unicode__()
-
     def __repr__(self):
-        return self.__unicode__()
+        """
+        Return a string representation of an API endpoint
+        """
+        return self.__str__()
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="ApiEndpoint")

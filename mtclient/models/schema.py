@@ -114,14 +114,11 @@ class ParameterName(object):
         self.comparison_type = \
             _comparison_types[parametername_json['comparison_type']]
 
-    def __unicode__(self):
-        return self.full_name
-
     def __str__(self):
-        return self.__unicode__()
-
-    def __repr__(self):
-        return self.__unicode__()
+        """
+        Return a string representation of a parameter name
+        """
+        return "<%s: %s>" % (type(self).__name__, self.full_name)
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="ParameterName")
