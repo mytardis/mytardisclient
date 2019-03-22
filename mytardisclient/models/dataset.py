@@ -18,13 +18,14 @@ from .schema import Schema
 from .schema import ParameterName
 from .instrument import Instrument
 
+from .model import Model
+
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class Dataset(object):
+class Dataset(Model):
     """
     Model class for MyTardis API v1's DatasetResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     def __init__(self, dataset_json=None, include_metadata=True):
         self.json = dataset_json
