@@ -46,6 +46,18 @@ class Dataset(Model):
                     self.parameter_sets.append(
                         DatasetParameterSet(dataset_param_set_json))
 
+    def __str__(self):
+        """
+        Return a string representation of a dataset
+        """
+        return "<%s: %s>" % (type(self).__name__, self.description)
+
+    def __repr__(self):
+        """
+        Return a string representation of a dataset
+        """
+        return self.__str__()
+
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
     def list(experiment_id=None, filters=None,
