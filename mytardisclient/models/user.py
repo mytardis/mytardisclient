@@ -12,11 +12,12 @@ from mytardisclient.conf import config
 from mytardisclient.utils.exceptions import IncompatibleMyTardisVersion
 from mytardisclient.utils.exceptions import DoesNotExist
 from .group import Group
+from .model import Model
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class User(object):
+class User(Model):
     """
     Model class for MyTardis API v1's UserResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
@@ -62,7 +63,10 @@ class User(object):
                 raise IncompatibleMyTardisVersion(message)
 
     def __str__(self):
-        return "User: " + self.username
+        """
+        Return a string representation of a user
+        """
+        return "<%s: %s>" % (type(self).__name__, self.username)
 
     @staticmethod
     def get_user_by_username(username):
@@ -77,20 +81,10 @@ class User(object):
         :return: A :class:`User` instance.
         """
         url = config.url + "/api/v1/user/?format=json&username=" + username
-        try:
-            response = requests.get(url=url, headers=config.default_headers)
-        except:
-            raise Exception(traceback.format_exc())
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
-        try:
-            user_records_json = response.json()
-        except:
-            logger.error(traceback.format_exc())
-            raise
+        response = requests.get(url=url, headers=config.default_headers)
+        response.raise_for_status()
+        user_records_json = response.json()
         num_user_records_found = user_records_json['meta']['total_count']
-
         if num_user_records_found == 0:
             raise DoesNotExist(
                 message="User \"%s\" was not found in MyTardis" % username,
@@ -114,19 +108,9 @@ class User(object):
         """
         url = config.url + "/api/v1/user/?format=json&email__iexact=" + \
             urllib.parse.quote(email)
-        try:
-            response = requests.get(url=url, headers=config.default_headers)
-        except:
-            raise Exception(traceback.format_exc())
-        if response.status_code != 200:
-            logger.debug(url)
-            message = response.text
-            raise Exception(message)
-        try:
-            user_records_json = response.json()
-        except:
-            logger.error(traceback.format_exc())
-            raise
+        response = requests.get(url=url, headers=config.default_headers)
+        response.raise_for_status()
+        user_records_json = response.json()
         num_user_records_found = user_records_json['meta']['total_count']
 
         if num_user_records_found == 0:

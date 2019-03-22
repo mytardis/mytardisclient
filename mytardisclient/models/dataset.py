@@ -1,6 +1,5 @@
 """
 Model class for MyTardis API v1's DatasetResource.
-See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 from __future__ import print_function
 
@@ -52,12 +51,6 @@ class Dataset(Model):
         """
         return "<%s: %s>" % (type(self).__name__, self.description)
 
-    def __repr__(self):
-        """
-        Return a string representation of a dataset
-        """
-        return self.__str__()
-
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
     def list(experiment_id=None, filters=None,
@@ -90,10 +83,7 @@ class Dataset(Model):
         if order_by:
             url += "&order_by=%s"  % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         return ResultSet(Dataset, url, response.json())
 
     @staticmethod
@@ -115,11 +105,7 @@ class Dataset(Model):
             include_metadata = kwargs["include_metadata"]
         url = config.url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
-
+        response.raise_for_status()
         datasets_json = response.json()
         if datasets_json['meta']['total_count'] == 0:
             message = "Dataset matching filter doesn't exist."
@@ -157,10 +143,7 @@ class Dataset(Model):
         url = config.url + "/api/v1/dataset/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_dataset_json))
-        logger.debug("POST %s %s", url, response.status_code)
-        if response.status_code != 201:
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         dataset_json = response.json()
         return Dataset(dataset_json)
 
@@ -173,11 +156,7 @@ class Dataset(Model):
         url = "%s/api/v1/dataset/%s/" % (config.url, dataset_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
-        logger.debug("PATCH %s %s", url, response.status_code)
-        if response.status_code != 202:
-            print("HTTP %s" % response.status_code)
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         dataset_json = response.json()
         return Dataset(dataset_json)
 
@@ -185,7 +164,6 @@ class Dataset(Model):
 class DatasetParameterSet(object):
     """
     Model class for MyTardis API v1's DatasetParameterSetResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     def __init__(self, dataset_paramset_json):
@@ -213,17 +191,13 @@ class DatasetParameterSet(object):
         url = "%s/api/v1/datasetparameterset/?format=json" % config.url
         url += "&datasets__id=%s"  % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         return ResultSet(DatasetParameterSet, url, response.json())
 
 
 class DatasetParameter(object):
     """
     Model class for MyTardis API v1's DatasetParameterResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes

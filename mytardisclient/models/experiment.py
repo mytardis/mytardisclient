@@ -1,6 +1,5 @@
 """
 Model class for MyTardis API v1's ExperimentResource.
-See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 from __future__ import print_function
 
@@ -13,6 +12,7 @@ from six.moves import urllib
 
 from mytardisclient.conf import config
 from mytardisclient.utils.exceptions import DoesNotExist
+from .model import Model
 from .resultset import ResultSet
 from .schema import Schema
 from .schema import ParameterName
@@ -20,10 +20,9 @@ from .schema import ParameterName
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class Experiment(object):
+class Experiment(Model):
     """
     Model class for MyTardis API v1's ExperimentResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     def __init__(self, experiment_json=None, include_metadata=True):
         self.json = experiment_json
@@ -40,6 +39,12 @@ class Experiment(object):
             for exp_param_set_json in experiment_json['parameter_sets']:
                 self.parameter_sets.append(
                     ExperimentParameterSet(exp_param_set_json))
+
+    def __str__(self):
+        """
+        Return a string representation of an experiment
+        """
+        return "<%s: %s>" % (type(self).__name__, self.title)
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
@@ -68,32 +73,31 @@ class Experiment(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            logger.error("HTTP %s", response.status_code)
-            logger.error("GET %s", url)
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         return ResultSet(Experiment, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
-    def get(exp_id, include_metadata=True):
+    def get(**kwargs):
         """
-        Get experiment with ID exp_id
+        Get experiment by ID
 
         :param exp_id: The ID of an experiment to retrieve.
 
         :return: An :class:`Experiment` record.
         """
+        if "exp_id" in kwargs:
+            exp_id = kwargs["exp_id"]
+        else:
+            exp_id = kwargs["id"]
+        include_metadata = True
+        if "include_metadata" in kwargs:
+            include_metadata = kwargs["include_metadata"]
+
         url = "%s/api/v1/experiment/?format=json&id=%s" \
             % (config.url, exp_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
-
+        response.raise_for_status()
         experiments_json = response.json()
         if experiments_json['meta']['total_count'] == 0:
             message = "Experiment matching filter doesn't exist."
@@ -128,10 +132,7 @@ class Experiment(object):
         url = config.url + "/api/v1/experiment/"
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_exp_json))
-        logger.debug("POST %s %s", url, response.status_code)
-        if response.status_code != 201:
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         experiment_json = response.json()
         return Experiment(experiment_json)
 
@@ -147,12 +148,7 @@ class Experiment(object):
             (config.url, experiment_id)
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
-        logger.debug("PATCH %s %s", url, response.status_code)
-        if response.status_code != 202:
-            print("HTTP %s" % response.status_code)
-            print("URL: %s" % url)
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         experiment_json = response.json()
         return Experiment(experiment_json)
 
@@ -160,7 +156,6 @@ class Experiment(object):
 class ExperimentParameterSet(object):
     """
     Model class for MyTardis API v1's ExperimentParameterSetResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     def __init__(self, expparamset_json):
@@ -188,17 +183,13 @@ class ExperimentParameterSet(object):
         url = "%s/api/v1/experimentparameterset/?format=json" % config.url
         url += "&experiments__id=%s" % experiment_id
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         return ResultSet(ExperimentParameterSet, url, response.json())
 
 
 class ExperimentParameter(object):
     """
     Model class for MyTardis API v1's ExperimentParameterResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes

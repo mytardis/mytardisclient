@@ -1,6 +1,5 @@
 """
 Model class for MyTardis API v1's SchemaResource.
-See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
 """
 from __future__ import print_function
 
@@ -8,13 +7,13 @@ import logging
 import requests
 
 from mytardisclient.conf import config
-from mytardisclient.utils.exceptions import DoesNotExist
+from .model import Model
 from .resultset import ResultSet
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class Schema(object):
+class Schema(Model):
     """
     Model class for MyTardis API v1's SchemaResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
@@ -36,7 +35,10 @@ class Schema(object):
         self.parameter_names = ParameterName.list(schema_id=self.id)
 
     def __str__(self):
-        return self.name
+        """
+        Return a string representation of a schema
+        """
+        return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Schema")
@@ -59,34 +61,28 @@ class Schema(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            print("URL: %s" % url)
-            print("HTTP %s" % response.status_code)
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         return ResultSet(Schema, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Schema")
-    def get(schema_id):
+    def get(**kwargs):
         """
-        Get schema with ID schema_id
+        Get schema by ID
 
         :param schema_id: The ID of a schema to retrieve.
 
         :return: A :class:`Schema` record.
+
+        :raises requests.exceptions.HTTPError:
         """
+        if "schema_id" in kwargs:
+            schema_id = kwargs["schema_id"]
+        else:
+            schema_id = kwargs["id"]
         url = "%s/api/v1/schema/%s/?format=json" % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            if response.status_code == 404:
-                message = "Schema ID %s doesn't exist." % schema_id
-                raise DoesNotExist(message, url, response, Schema)
-            message = response.text
-            raise Exception(message)
-
+        response.raise_for_status()
         schema_json = response.json()
         return Schema(schema_json=schema_json)
 
@@ -94,13 +90,13 @@ class Schema(object):
 class ParameterName(object):
     """
     Model class for MyTardis API v1's ParameterNameResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
     def __init__(self, parametername_json):
         self.json = parametername_json
-        self.schema = Schema.get(parametername_json['schema'].split('/')[-2])
+        schema_id = parametername_json['schema'].split('/')[-2]
+        self.schema = Schema.objects.get(id=schema_id)
         self.id = parametername_json['id']  # pylint: disable=invalid-name
         self.name = parametername_json['name']
         self.full_name = parametername_json['full_name']
@@ -142,12 +138,7 @@ class ParameterName(object):
         url = "%s/api/v1/parametername/?format=json&schema__id=%s" \
             % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            print("URL: %s" % url)
-            print("HTTP %s" % response.status_code)
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         parameter_names_json = response.json()
         num_records = len(parameter_names_json['objects'])
 
@@ -164,12 +155,7 @@ class ParameterName(object):
             url = "%s/api/v1/parametername/?format=json" % config.url
             url += "&offset=%s" % offset
             response = requests.get(url=url, headers=config.default_headers)
-            logger.debug("GET %s %s", url, response.status_code)
-            if response.status_code != 200:
-                print("URL: %s" % url)
-                print("HTTP %s" % response.status_code)
-                message = response.text
-                raise Exception(message)
+            response.raise_for_status()
             parameter_names_page_json = response.json()
             num_records += len(parameter_names_page_json['objects'])
             parameter_names_page_json['objects'] = \
@@ -192,13 +178,6 @@ class ParameterName(object):
         url = "%s/api/v1/parametername/%s/?format=json" % (config.url,
                                                            parametername_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            if response.status_code == 404:
-                message = "Parameter Name ID %s doesn't exist." % parametername_id
-                raise DoesNotExist(message, url, response, ParameterName)
-            message = response.text
-            raise Exception(message)
-
+        response.raise_for_status()
         parametername_json = response.json()
         return ParameterName(parametername_json=parametername_json)

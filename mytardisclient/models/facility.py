@@ -7,14 +7,14 @@ import logging
 import requests
 
 from mytardisclient.conf import config
-from mytardisclient.utils.exceptions import DoesNotExist
+from .model import Model
 from .resultset import ResultSet
 from .group import Group
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class Facility(object):
+class Facility(Model):
     """
     Model class for MyTardis API v1's FacilityResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
@@ -27,7 +27,10 @@ class Facility(object):
             Group(group_json=facility_json['manager_group'])
 
     def __str__(self):
-        return self.name
+        """
+        Return a string representation of a facility
+        """
+        return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Facility")
@@ -50,32 +53,28 @@ class Facility(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         return ResultSet(Facility, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="Facility")
-    def get(facility_id):
+    def get(**kwargs):
         """
-        Get facility with ID facility_id
+        Get facility by ID
 
         :param facility_id: The ID of a facility to retrieve.
 
         :return: A :class:`Facility` record.
-        """
-        url = "%s/api/v1/facility/?format=json&id=%s" % (config.url,
-                                                         facility_id)
-        response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
 
-        facilities_json = response.json()
-        if facilities_json['meta']['total_count'] == 0:
-            message = "Facility matching filter doesn't exist."
-            raise DoesNotExist(message, url, response, Facility)
-        return Facility(facility_json=facilities_json['objects'][0])
+        :raises requests.exceptions.HTTPError:
+        """
+        if "facility_id" in kwargs:
+            facility_id = kwargs["facility_id"]
+        else:
+            facility_id = kwargs["id"]
+        url = "%s/api/v1/facility/%s/?format=json" % (config.url,
+                                                      facility_id)
+        response = requests.get(url=url, headers=config.default_headers)
+        response.raise_for_status()
+        facility_json = response.json()
+        return Facility(facility_json=facility_json)

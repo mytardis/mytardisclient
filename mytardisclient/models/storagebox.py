@@ -8,12 +8,13 @@ import logging
 import requests
 
 from mytardisclient.conf import config
+from .model import Model
 from .resultset import ResultSet
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class StorageBox(object):
+class StorageBox(Model):
     """
     Model class for MyTardis API v1's StorageBoxResource.
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
@@ -35,7 +36,10 @@ class StorageBox(object):
             self.options.append(StorageBoxOption(option_json))
 
     def __str__(self):
-        return self.name
+        """
+        Return a string representation of a storage box
+        """
+        return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="StorageBox")
@@ -58,32 +62,29 @@ class StorageBox(object):
         if order_by:
             url += "&order_by=%s" % order_by
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            print("URL: %s" % url)
-            print("HTTP %s" % response.status_code)
-            message = response.text
-            raise Exception(message)
+        response.raise_for_status()
         return ResultSet(StorageBox, url, response.json())
 
     @staticmethod
     @config.region.cache_on_arguments(namespace="StorageBox")
-    def get(storage_box_id):
+    def get(**kwargs):
         """
-        Get storage box with ID storage_box_id
+        Get storage box by ID
 
         :param storage_box_id: The ID of a storage box to retrieve.
 
         :return: A :class:`StorageBox` record.
+
+        :raises requests.exceptions.HTTPError:
         """
+        if "storage_box_id" in kwargs:
+            storage_box_id = kwargs["storage_box_id"]
+        else:
+            storage_box_id = kwargs["id"]
         url = "%s/api/v1/storagebox/%s/?format=json" % \
             (config.url, storage_box_id)
         response = requests.get(url=url, headers=config.default_headers)
-        logger.debug("GET %s %s", url, response.status_code)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
-
+        response.raise_for_status()
         storage_box_json = response.json()
         return StorageBox(storage_box_json=storage_box_json)
 
