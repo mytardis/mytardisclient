@@ -8,7 +8,7 @@ usually stored in ~/.config/mytardisclient/mytardisclient.cfg
 import os
 import json
 
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from dogpile.cache import make_region  # pylint: disable=import-error
 from six.moves import urllib
 
