@@ -51,15 +51,15 @@ class ResultSet(object):
     def __next__(self):
         """
         Return the next item from the :class:`ResultSet`. If there
-        are no further items, raise the StopIteration exception.
+        are no further items, return.
         """
         self.index += 1
         if self.index >= len(self):
-            raise StopIteration
+            return
         if 'include_metadata' in self.model.__init__.__code__.co_varnames:
-            return self.model(self.json['objects'][self.index],
-                              include_metadata=False)
-        return self.model(self.json['objects'][self.index])
+            yield self.model(self.json['objects'][self.index],
+                             include_metadata=False)
+        yield self.model(self.json['objects'][self.index])
 
     def next(self):
         """
