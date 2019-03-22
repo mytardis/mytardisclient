@@ -9,7 +9,8 @@ Install::
 
 Documentation: https://pythonhosted.org/mytardisclient/
 
-Example::
+Example
+~~~~~~~
 
 Determine the location of the configuration file where the MyTardis URL is specified::
 
@@ -17,8 +18,7 @@ Determine the location of the configuration file where the MyTardis URL is speci
   >>> config.path
   '/Users/james/.config/mytardisclient/mytardisclient.cfg'
   >>> config.url
-  'https://mytardisdemo.erc.monash.edu'
-
+  'https://mytardis.example.com'
 
 Use the mytardisclient's Dataset model class to look up a public dataset
 (with ID 125) from the MyTardis server, using its RESTful API::
