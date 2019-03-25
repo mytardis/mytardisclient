@@ -17,8 +17,6 @@ from six.moves import urllib
 from ..conf import config
 from ..utils import extend_url, add_filters
 from ..utils.exceptions import DuplicateKey
-from .replica import Replica
-from .dataset import Dataset
 from .model import Model
 from .resultset import ResultSet
 from .schema import Schema
@@ -46,6 +44,8 @@ class DataFile(Model):
     """
     # pylint: disable=too-many-instance-attributes
     def __init__(self, datafile_json, include_metadata=False):
+        from .replica import Replica
+
         self.json = datafile_json
         self.id = datafile_json['id']  # pylint: disable=invalid-name
         self.dataset = datafile_json['dataset']
@@ -307,6 +307,8 @@ class DataFile(Model):
         # pylint: disable=too-many-locals
         # pylint: disable=too-many-branches
         # pylint: disable=too-many-statements
+        from .dataset import Dataset
+
         if not dataset_path and os.path.isabs(file_path):
             raise Exception("Either supply dataset_path or supply a relative "
                             "path to the datafile.")
@@ -335,10 +337,10 @@ class DataFile(Model):
             os.path.join(config.datasets_path,
                          "%s-%s" % (dataset.description, dataset_id))
         if not os.path.exists(dataset_symlink_path):
-            print("Creating symlink to: %s in " \
-                "~/.config/mytardisclient/servers/%s/ called %s" \
-                % (local_dataset_path, config.hostname,
-                   "%s-%s" % (dataset.description, dataset_id)))
+            print("Creating symlink to: %s in "
+                  "~/.config/mytardisclient/servers/%s/ called %s"
+                  % (local_dataset_path, config.hostname,
+                     "%s-%s" % (dataset.description, dataset_id)))
             os.symlink(os.path.abspath(local_dataset_path),
                        os.path.join(config.datasets_path,
                                     "%s-%s" % (dataset.description,
@@ -415,7 +417,7 @@ class DataFile(Model):
                 return
         with open(filename, 'wb') as fileobj:
             total_length = int(response.headers.get('content-length'))
-            hide = total_length < 10000000 # 10 MB
+            hide = total_length < 10000000  # 10 MB
             for chunk in progress.bar(
                     response.iter_content(chunk_size=1024),
                     hide=hide,
