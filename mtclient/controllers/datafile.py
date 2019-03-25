@@ -8,6 +8,7 @@ from __future__ import print_function
 import os
 
 from mtclient.models.datafile import DataFile
+from mtclient.utils import get_render_format
 from mtclient.views import render
 
 
@@ -26,10 +27,7 @@ class DataFileController(object):
         """
         # pylint: disable=too-many-return-statements
         command = args.command
-        if hasattr(args, 'json') and args.json:
-            render_format = 'json'
-        else:
-            render_format = 'table'
+        render_format = get_render_format(args)
         if command == "list":
             return self.list(args.dataset, args.directory, args.filename,
                              args.filter, args.limit, args.offset,

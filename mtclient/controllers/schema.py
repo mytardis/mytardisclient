@@ -5,6 +5,7 @@ on schemas.
 from __future__ import print_function
 
 from mtclient.models.schema import Schema
+from mtclient.utils import get_render_format
 from mtclient.views import render
 
 
@@ -21,10 +22,7 @@ class SchemaController(object):
         Generic run command method.
         """
         command = args.command
-        if hasattr(args, 'json') and args.json:
-            render_format = 'json'
-        else:
-            render_format = 'table'
+        render_format = get_render_format(args)
         if command == "list":
             return self.list(args.limit, args.offset, args.order_by,
                              render_format)

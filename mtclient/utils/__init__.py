@@ -39,3 +39,13 @@ def add_filters(url, filters):
             field, value = filter_component.split('=')
             url += "&%s=%s" % (field, urllib.parse.quote(value))
     return url
+
+
+def get_render_format(args):
+    """
+    Determine how to render the output (ASCII table or JSON)
+    depending on whether --json was supplied as a command-line arg
+    """
+    if hasattr(args, 'json') and args.json:
+        return 'json'
+    return 'table'

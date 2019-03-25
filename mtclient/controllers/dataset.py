@@ -6,6 +6,7 @@ from __future__ import print_function
 
 from mtclient.models.dataset import Dataset
 from mtclient.models.datafile import DataFile
+from mtclient.utils import get_render_format
 from mtclient.views import render
 
 
@@ -22,10 +23,7 @@ class DatasetController(object):
         Generic run command method.
         """
         command = args.command
-        if hasattr(args, 'json') and args.json:
-            render_format = 'json'
-        else:
-            render_format = 'table'
+        render_format = get_render_format(args)
         if command == "list":
             return self.list(args.exp, args.filter,
                              args.limit, args.offset,
