@@ -2,7 +2,6 @@
 argparser/__init__.py
 """
 from argparse import ArgumentParser
-import textwrap
 
 from .api import build_api_parser
 from .config import build_config_parser
