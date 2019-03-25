@@ -27,8 +27,8 @@ class Experiment(Model):
             for key in self.__dict__:
                 if key in experiment_json:
                     self.__dict__[key] = experiment_json[key]
+        self.parameter_sets = []
         if include_metadata:
-            self.parameter_sets = []
             for exp_param_set_json in experiment_json['parameter_sets']:
                 self.parameter_sets.append(
                     ExperimentParameterSet(exp_param_set_json))

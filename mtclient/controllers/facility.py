@@ -6,43 +6,27 @@ from __future__ import print_function
 
 from mtclient.models.facility import Facility
 from mtclient.models.instrument import Instrument
-from mtclient.utils import get_render_format
 from mtclient.views import render
 
+from .cli import ModelCliController
 
-class FacilityController(object):
+
+class FacilityController(ModelCliController):
     """
     Controller class for running commands (list, get, create, update)
     on facility records.
     """
-    def run_command(self, args):
-        """
-        Generic run command method.
-        """
-        command = args.command
-        render_format = get_render_format(args)
-        if command == "list":
-            return self.list(args.limit, args.offset, args.order_by,
-                             render_format)
-        if command == "get":
-            return self.get(args.facility_id, render_format)
-        raise Exception("Invalid command: %s" % args.command)
+    def __init__(self):
+        super(FacilityController, self).__init__()
+        self.allowed_commands = ["list", "get"]
+        self.primary_key_arg = "facility_id"
+        self.model = Facility
 
-    def list(self, limit, offset, order_by, render_format):
+    def get(self, args, render_format):
         """
-        Display list of facility records.
+        Display facility record
         """
-        # pylint: disable=no-self-use
-        facilities = Facility.list(limit, offset, order_by)
-        print(render(facilities, render_format))
-
-    def get(self, facility_id, render_format):
-        """
-        Display facility record.
-        """
-        # pylint: disable=no-self-use
-        facility = Facility.objects.get(id=facility_id)
-        print(render(facility, render_format))
+        super(FacilityController, self).get(args, render_format)
         if render_format == 'table':
-            instruments = Instrument.list(facility_id)
+            instruments = Instrument.list(args.facility_id)
             print(render(instruments, render_format))

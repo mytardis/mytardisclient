@@ -8,106 +8,86 @@ from __future__ import print_function
 import os
 
 from mtclient.models.datafile import DataFile
-from mtclient.utils import get_render_format
 from mtclient.views import render
 
+from .cli import ModelCliController
 
-class DataFileController(object):
+
+class DataFileController(ModelCliController):
     """
     Controller class for running commands (list, get, download, upload, update,
                                            verify))
     on datafile records.
     """
-    def run_command(self, args):
-        """
-        Generic run command method.
-        """
-        # pylint: disable=too-many-return-statements
-        command = args.command
-        render_format = get_render_format(args)
-        if command == "list":
-            return self.list(args.dataset, args.directory, args.filename,
-                             args.filter, args.limit, args.offset,
-                             args.order_by, render_format)
-        if command == "get":
-            return self.get(args.datafile_id, render_format)
-        if command == "create":
-            return self.create(args.dataset_id, args.storagebox,
-                               args.dataset_path, args.path, render_format)
-        if command == "download":
-            return self.download(args.datafile_id)
-        if command == "upload":
-            return self.upload(args.dataset_id, args.storagebox,
-                               args.dataset_path, args.file_path)
-        if command == "update":
-            return self.update(args.datafile_id, args.md5sum, render_format)
-        if command == "verify":
-            return self.verify(args.datafile_id)
-        raise Exception("Invalid command: %s" % args.command)
+    def __init__(self):
+        super(DataFileController, self).__init__()
+        self.allowed_commands = [
+            "list", "get", "create", "update", "download", "upload", "verify"]
+        self.primary_key_arg = "datafile_id"
+        self.model = DataFile
 
-    def list(self, dataset_id, directory, filename, filters,
-             limit, offset, order_by, render_format):
+    def list(self, args, render_format):
         """
         Display list of datafile records.
         """
-        # pylint: disable=too-many-arguments
         # pylint: disable=no-self-use
-        datafiles = DataFile.list(dataset_id, directory, filename,
-                                  filters, limit, offset, order_by)
+        datafiles = DataFile.list(
+            args.dataset, args.directory, args.filename, args.filter,
+            args.limit, args.offset, args.order_by)
         print(render(datafiles, render_format))
 
-    def get(self, datafile_id, render_format):
+    def get(self, args, render_format):
         """
         Display datafile record.
         """
         # pylint: disable=no-self-use
-        datafile = DataFile.objects.get(id=datafile_id)
+        datafile = DataFile.objects.get(id=args.datafile_id)
         print(render(datafile, render_format))
 
-    def create(self, dataset_id, storagebox, dataset_path, path,
-               render_format):
+    def create(self, args, render_format):
         """
         Create datafile record(s) for an existing file or for all files
         within a directory.
         """
-        # pylint: disable=too-many-arguments
         # pylint: disable=no-self-use
-        if os.path.isdir(path):
-            num_created = DataFile.create_datafiles(dataset_id, storagebox,
-                                                    dataset_path, path)
+        if os.path.isdir(args.path):
+            num_created = DataFile.create_datafiles(
+                args.dataset_id, args.storagebox, args.dataset_path, args.path)
             print("%s datafiles created." % num_created)
         else:
-            datafile = DataFile.create_datafile(dataset_id, storagebox,
-                                                dataset_path, path)
+            datafile = DataFile.create_datafile(
+                args.dataset_id, args.storagebox, args.dataset_path, args.path)
             print(render(datafile, render_format))
             print("DataFile created successfully.")
 
-    def download(self, datafile_id):
+    def download(self, args, _render_format):
         """
         Download datafile.
         """
         # pylint: disable=no-self-use
-        DataFile.download(datafile_id)
+        DataFile.download(args.datafile_id)
 
-    def upload(self, dataset_id, storagebox, dataset_path, file_path):
+    def upload(self, args, _render_format):
         """
         Upload datafile.
         """
         # pylint: disable=no-self-use
-        DataFile.upload(dataset_id, storagebox, dataset_path, file_path)
+        DataFile.upload(
+            args.dataset_id, args.storagebox, args.dataset_path,
+            args.file_path)
 
-    def update(self, datafile_id, md5sum, render_format):
+    def update(self, args, render_format):
         """
         Update datafile record.
         """
         # pylint: disable=no-self-use
-        datafile = DataFile.update(datafile_id, md5sum)
+        datafile = DataFile.update(args.datafile_id, args.md5sum)
         print(render(datafile, render_format))
         print("DataFile updated successfully.")
 
-    def verify(self, datafile_id):
+    def verify(self, args, _render_format):
         """
         Ask MyTardis to verify a datafile.
         """
         # pylint: disable=no-self-use
-        DataFile.verify(datafile_id)
+        DataFile.verify(args.datafile_id)

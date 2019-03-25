@@ -20,12 +20,12 @@ class ApiController(object):
         command = args.command
         render_format = get_render_format(args)
         if command == "list":
-            return self.list(render_format)
+            return self.list(args, render_format)
         if command == "get":
-            return self.get(args.api_model, render_format)
+            return self.get(args, render_format)
         raise Exception("Invalid command: %s" % args.command)
 
-    def list(self, render_format):
+    def list(self, _args, render_format):
         """
         Display list of API endpoints.
         """
@@ -33,10 +33,10 @@ class ApiController(object):
         api_endpoints = ApiEndpoint.list()
         print(render(api_endpoints, render_format))
 
-    def get(self, model, render_format):
+    def get(self, args, render_format):
         """
         Display schema for a model's API endpoint.
         """
         # pylint: disable=no-self-use
-        api_schema = ApiSchema.get(model)
+        api_schema = ApiSchema.get(args.api_model)
         print(render(api_schema, render_format))

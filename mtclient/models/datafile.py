@@ -56,8 +56,8 @@ class DataFile(Model):
         self.replicas = []
         for replica_json in datafile_json['replicas']:
             self.replicas.append(Replica(replica_json))
+        self.parameter_sets = []
         if include_metadata:
-            self.parameter_sets = []
             for datafile_param_set_json in datafile_json['parameter_sets']:
                 self.parameter_sets.append(
                     DataFileParameterSet(datafile_param_set_json))

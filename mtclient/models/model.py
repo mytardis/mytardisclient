@@ -54,6 +54,8 @@ class ModelMetaclass(type):
         if not hasattr(cls, "_objects"):
             cls._objects = Manager()
 
+        setattr(cls._objects, "get", getattr(cls, "get"))
+
         list_method = getattr(cls, "list")
         setattr(cls._objects, "all", list_method)
 
