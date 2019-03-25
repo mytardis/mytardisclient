@@ -22,7 +22,6 @@ class ResultSet(object):
         self.model = model
         self.url = url
         self.json = json
-        self.index = -1
         self.total_count = self.json['meta']['total_count']
         self.limit = self.json['meta']['limit']
         self.offset = self.json['meta']['offset']
@@ -46,23 +45,9 @@ class ResultSet(object):
         """
         Return the ResultSet's iterator object, which is itself.
         """
-        return self
-
-    def __next__(self):
-        """
-        Return the next item from the :class:`ResultSet`. If there
-        are no further items, return.
-        """
-        self.index += 1
-        if self.index >= len(self):
-            return
+        kwargs = {}
         if 'include_metadata' in self.model.__init__.__code__.co_varnames:
-            yield self.model(self.json['objects'][self.index],
-                             include_metadata=False)
-        yield self.model(self.json['objects'][self.index])
-
-    def next(self):
-        """
-        For Python 2.7 compatibility
-        """
-        return self.__next__()
+            kwargs['include_metadata'] = False
+        for index in range(len(self.json['objects'])):
+            args = [self.json['objects'][index]]
+            yield self.model(*args, **kwargs)

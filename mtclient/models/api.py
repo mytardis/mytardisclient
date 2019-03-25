@@ -54,10 +54,7 @@ class ApiEndpoint(object):
         """
         url = "%s/api/v1/?format=json" % config.url
         response = requests.get(url=url, headers=config.default_headers)
-        if response.status_code != 200:
-            message = response.text
-            raise Exception(message)
-
+        response.raise_for_status()
         endpoints_json = response.json()
         return ApiEndpoints(endpoints_json)
 
@@ -102,12 +99,7 @@ class ApiSchema(object):
             model = "dataset_file"
         url = "%s/api/v1/%s/schema/?format=json" % (config.url, model)
         response = requests.get(url=url, headers=config.default_headers)
-        if response.status_code != 200:
-            print("HTTP %d" % response.status_code)
-            print("url: " + url)
-            message = response.text
-            raise Exception(message)
-
+        response.raise_for_status()
         api_schema = response.json()
         return ApiSchema(model, api_schema)
 
@@ -126,7 +118,6 @@ class ApiEndpoints(object):
         :param json: The JSON returned by the /api/v1/ query.
         """
         self.json = json
-        self.index = -1
         self.total_count = len(self.json.keys())
 
     def __len__(self):
@@ -147,23 +138,8 @@ class ApiEndpoints(object):
 
     def __iter__(self):
         """
-        Return the :class:`ApiEndpoints`'s iterator object, which is itself.
+        Iterate the :class:`ApiEndpoints` set.
         """
-        return self
-
-    def __next__(self):
-        """
-        Return the next item from the :class:`ApiEndpoints` set. If there are
-        no further items, return.
-        """
-        self.index += 1
-        if self.index >= len(self):
-            return
-        model = list(self.json.keys())[self.index]
-        yield ApiEndpoint(model, self.json[model])
-
-    def next(self):
-        """
-        For Python 2.7 compatibility
-        """
-        return self.__next__()
+        for index in range(0, len(self)):
+            model = list(self.json.keys())[index]
+            yield ApiEndpoint(model, self.json[model])
