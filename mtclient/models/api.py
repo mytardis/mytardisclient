@@ -58,6 +58,7 @@ class ApiEndpoint(object):
         endpoints_json = response.json()
         return ApiEndpoints(endpoints_json)
 
+
 class ApiSchema(object):
     """
     Model class for MyTardis API v1's schemas.
