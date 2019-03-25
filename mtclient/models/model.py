@@ -11,7 +11,20 @@ class Manager(object):
     """
     @classmethod
     def get(cls, **kwargs):
-        pass
+        """
+        Override this with a method to retrieve a single instance of the model
+        """
+
+    @classmethod
+    def all(cls, **kwargs):
+        """
+        Override this to retrieve all instances of the model
+
+        Initially this is being imlemented for result sets, with the intention
+        to also implement it for query sets, for which Model.objects.all() will
+        return a generator which will not trigger any API requests until we
+        attempt to index it or convert it to a list etc.
+        """
 
 
 class ModelMetaclass(type):
@@ -38,6 +51,7 @@ class Model(with_metaclass(ModelMetaclass, object)):
     """
     Base class for models to inherit from
     """
+    # pylint: disable=too-few-public-methods
     def __repr__(self):
         """
         Return a string representation
