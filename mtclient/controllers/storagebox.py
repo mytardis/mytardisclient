@@ -14,9 +14,6 @@ class StorageBoxController(object):
     Controller class for running commands (list)
     on storage boxes.
     """
-    def __init__(self):
-        pass
-
     def run_command(self, args):
         """
         Generic run command method.

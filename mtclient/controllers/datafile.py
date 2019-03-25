@@ -18,9 +18,6 @@ class DataFileController(object):
                                            verify))
     on datafile records.
     """
-    def __init__(self):
-        pass
-
     def run_command(self, args):
         """
         Generic run command method.

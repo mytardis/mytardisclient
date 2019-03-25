@@ -13,9 +13,6 @@ class ApiController(object):
     """
     Controller class for listing API endpoints.
     """
-    def __init__(self):
-        pass
-
     def run_command(self, args):
         """
         Generic run command method.

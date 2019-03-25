@@ -14,9 +14,6 @@ class InstrumentController(object):
     Controller class for running commands (list, get, create, update)
     on instrument records.
     """
-    def __init__(self):
-        pass
-
     def run_command(self, args):
         """
         Generic run command method.

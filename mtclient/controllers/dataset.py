@@ -15,9 +15,6 @@ class DatasetController(object):
     Controller class for running commands (list, get, create, update)
     on dataset records.
     """
-    def __init__(self):
-        pass
-
     def run_command(self, args):
         """
         Generic run command method.
