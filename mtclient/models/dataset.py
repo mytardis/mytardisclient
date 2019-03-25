@@ -80,20 +80,26 @@ class Dataset(Model):
     @staticmethod
     @config.region.cache_on_arguments(namespace="Dataset")
     def get(**kwargs):
-        """
-        Get dataset with ID dataset_id
+        r"""
+        Retrieve a single dataset record
 
-        :param dataset_id: The ID of a dataset to retrieve.
+        :param \**kwargs:
+          See below
+
+        :Keyword Arguments:
+            * *id* (``int``) --
+              ID of the Dataset to retrieve
 
         :return: A :class:`Dataset` record.
+
+        :raises requests.exceptions.HTTPError:
         """
-        if "dataset_id" in kwargs:
-            dataset_id = kwargs["dataset_id"]
-        else:
-            dataset_id = kwargs["id"]
-        include_metadata = True
-        if "include_metadata" in kwargs:
-            include_metadata = kwargs["include_metadata"]
+        dataset_id = kwargs.get("id")
+        if not dataset_id:
+            raise NotImplementedError(
+                "Only the id keyword argument is supported for Dataset get "
+                "at this stage.")
+        include_metadata = kwargs.get("include_metadata", True)
         url = config.url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()

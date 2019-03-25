@@ -62,19 +62,25 @@ class Schema(Model):
     @staticmethod
     @config.region.cache_on_arguments(namespace="Schema")
     def get(**kwargs):
-        """
-        Get schema by ID
+        r"""
+        Retrieve a single schema record
 
-        :param schema_id: The ID of a schema to retrieve.
+        :param \**kwargs:
+          See below
+
+        :Keyword Arguments:
+            * *id* (``int``) --
+              ID of the Schema to retrieve
 
         :return: A :class:`Schema` record.
 
         :raises requests.exceptions.HTTPError:
         """
-        if "schema_id" in kwargs:
-            schema_id = kwargs["schema_id"]
-        else:
-            schema_id = kwargs["id"]
+        schema_id = kwargs.get("id")
+        if not schema_id:
+            raise NotImplementedError(
+                "Only the id keyword argument is supported for Schema get "
+                "at this stage.")
         url = "%s/api/v1/schema/%s/?format=json" % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()

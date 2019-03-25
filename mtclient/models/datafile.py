@@ -116,20 +116,26 @@ class DataFile(Model):
     @staticmethod
     @config.region.cache_on_arguments(namespace="DataFile")
     def get(**kwargs):
-        """
-        Retrieve DataFile record by ID
+        r"""
+        Retrieve a single datafile record
 
-        :param datafile_id: The ID of a datafile to retrieve.
+        :param \**kwargs:
+          See below
+
+        :Keyword Arguments:
+            * *id* (``int``) --
+              ID of the DataFile to retrieve
 
         :return: A :class:`DataFile` record.
+
+        :raises requests.exceptions.HTTPError:
         """
-        if "datafile_id" in kwargs:
-            datafile_id = kwargs["datafile_id"]
-        else:
-            datafile_id = kwargs["id"]
-        include_metadata = True
-        if "include_metadata" in kwargs:
-            include_metadata = kwargs["include_metadata"]
+        datafile_id = kwargs.get("id")
+        if not datafile_id:
+            raise NotImplementedError(
+                "Only the id keyword argument is supported for DataFile get "
+                "at this stage.")
+        include_metadata = kwargs.get("include_metadata", True)
         url = "%s/api/v1/dataset_file/%s/?format=json" % \
             (config.url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
@@ -403,6 +409,11 @@ class DataFile(Model):
         except KeyError:
             print("response.headers: %s" % response.headers)
             raise
+        if os.path.exists(filename):
+            from ..utils.confirmation import query_yes_no
+            overwrite = query_yes_no("Overwrite '%s'?" % filename)
+            if not overwrite:
+                return
         with open(filename, 'wb') as fileobj:
             total_length = int(response.headers.get('content-length'))
             hide = total_length < 10000000 # 10 MB

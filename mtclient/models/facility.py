@@ -53,19 +53,25 @@ class Facility(Model):
     @staticmethod
     @config.region.cache_on_arguments(namespace="Facility")
     def get(**kwargs):
-        """
+        r"""
         Get facility by ID
 
-        :param facility_id: The ID of a facility to retrieve.
+        :param \**kwargs:
+          See below
+
+        :Keyword Arguments:
+            * *id* (``int``) --
+              ID of the DataFile to retrieve
 
         :return: A :class:`Facility` record.
 
         :raises requests.exceptions.HTTPError:
         """
-        if "facility_id" in kwargs:
-            facility_id = kwargs["facility_id"]
-        else:
-            facility_id = kwargs["id"]
+        facility_id = kwargs.get("id")
+        if not facility_id:
+            raise NotImplementedError(
+                "Only the id keyword argument is supported for Facility get "
+                "at this stage.")
         url = "%s/api/v1/facility/%s/?format=json" % (config.url,
                                                       facility_id)
         response = requests.get(url=url, headers=config.default_headers)

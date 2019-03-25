@@ -62,19 +62,25 @@ class StorageBox(Model):
     @staticmethod
     @config.region.cache_on_arguments(namespace="StorageBox")
     def get(**kwargs):
-        """
-        Get storage box by ID
+        r"""
+        Retrieve a single storage box record
 
-        :param storage_box_id: The ID of a storage box to retrieve.
+        :param \**kwargs:
+          See below
+
+        :Keyword Arguments:
+            * *id* (``int``) --
+              ID of the StorageBox to retrieve
 
         :return: A :class:`StorageBox` record.
 
         :raises requests.exceptions.HTTPError:
         """
-        if "storage_box_id" in kwargs:
-            storage_box_id = kwargs["storage_box_id"]
-        else:
-            storage_box_id = kwargs["id"]
+        storage_box_id = kwargs.get("id")
+        if not storage_box_id:
+            raise NotImplementedError(
+                "Only the id keyword argument is supported for StorageBox get "
+                "at this stage.")
         url = "%s/api/v1/storagebox/%s/?format=json" % \
             (config.url, storage_box_id)
         response = requests.get(url=url, headers=config.default_headers)

@@ -58,19 +58,25 @@ class Instrument(Model):
     @staticmethod
     @config.region.cache_on_arguments(namespace="Instrument")
     def get(**kwargs):
-        """
-        Get instrument with ID instrument_id
+        r"""
+        Retrieve a single instrument record
 
-        :param instrument_id: The ID of an instrument to retrieve.
+        :param \**kwargs:
+          See below
 
-        :return: An :class:`Instrument` record.
+        :Keyword Arguments:
+            * *id* (``int``) --
+              ID of the Instrument to retrieve
+
+        :return: A :class:`Instrument` record.
 
         :raises requests.exceptions.HTTPError:
         """
-        if "instrument_id" in kwargs:
-            instrument_id = kwargs["instrument_id"]
-        else:
-            instrument_id = kwargs["id"]
+        instrument_id = kwargs.get("id")
+        if not instrument_id:
+            raise NotImplementedError(
+                "Only the id keyword argument is supported for Instrument get "
+                "at this stage.")
         url = "%s/api/v1/instrument/%s/?format=json" % \
             (config.url, instrument_id)
         response = requests.get(url=url, headers=config.default_headers)

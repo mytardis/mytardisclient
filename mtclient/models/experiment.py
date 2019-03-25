@@ -70,21 +70,26 @@ class Experiment(Model):
     @staticmethod
     @config.region.cache_on_arguments(namespace="Experiment")
     def get(**kwargs):
-        """
-        Get experiment by ID
+        r"""
+        Retrieve a single experiment record
 
-        :param exp_id: The ID of an experiment to retrieve.
+        :param \**kwargs:
+          See below
+
+        :Keyword Arguments:
+            * *id* (``int``) --
+              ID of the Experiment to retrieve
 
         :return: An :class:`Experiment` record.
-        """
-        if "exp_id" in kwargs:
-            exp_id = kwargs["exp_id"]
-        else:
-            exp_id = kwargs["id"]
-        include_metadata = True
-        if "include_metadata" in kwargs:
-            include_metadata = kwargs["include_metadata"]
 
+        :raises requests.exceptions.HTTPError:
+        """
+        exp_id = kwargs.get("id")
+        if not exp_id:
+            raise NotImplementedError(
+                "Only the id keyword argument is supported for Experiment get "
+                "at this stage.")
+        include_metadata = kwargs.get("include_metadata", True)
         url = "%s/api/v1/experiment/?format=json&id=%s" \
             % (config.url, exp_id)
         response = requests.get(url=url, headers=config.default_headers)
