@@ -26,7 +26,7 @@ def build_instrument_parser(argument_parser):
             [--facility FACILITY] [--limit LIMIT] [--offset OFFSET] [--order_by ORDER_BY] [--json]
 
           EXAMPLE
-       
+
           $ mytardis instrument list --facility 1
 
           Model: Instrument

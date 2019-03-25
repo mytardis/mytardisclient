@@ -27,7 +27,7 @@ def build_experiment_parser(argument_parser):
             [--filter FILTER]
 
           EXAMPLE
-       
+
           $ mytardis experiment list
 
           Model: Experiment

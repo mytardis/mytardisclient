@@ -29,7 +29,7 @@ def build_datafile_parser(argument_parser):
             [--filter FILTER]
 
           EXAMPLE
-       
+
           $ mytardis datafile list --dataset 35
 
           Model: DataFile
