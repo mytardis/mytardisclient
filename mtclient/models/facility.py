@@ -61,7 +61,7 @@ class Facility(Model):
 
         :Keyword Arguments:
             * *id* (``int``) --
-              ID of the DataFile to retrieve
+              ID of the Facility to retrieve
 
         :return: A :class:`Facility` record.
 
