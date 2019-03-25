@@ -62,6 +62,8 @@ def render_single_record(data, render_format):
         'json').
     """
     # pylint: disable=too-many-return-statements
+    if not data:
+        return ""
     if data.__class__ == ApiSchema:
         return render_api_schema(data, render_format)
     if data.__class__ == Facility:
