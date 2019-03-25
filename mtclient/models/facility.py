@@ -6,9 +6,7 @@ import logging
 import requests
 
 from ..conf import config
-from ..utils import extend_url
 from .model import Model
-from .resultset import ResultSet
 from .group import Group
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -44,6 +42,9 @@ class Facility(Model):
         :return: A list of :class:`Facility` records, encapsulated in a
             `ResultSet` object`.
         """
+        from ..utils import extend_url
+        from .resultset import ResultSet
+
         url = config.url + "/api/v1/facility/?format=json"
         url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)

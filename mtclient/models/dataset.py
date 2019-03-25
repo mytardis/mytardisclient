@@ -3,15 +3,11 @@ Model class for MyTardis API v1's DatasetResource.
 """
 from __future__ import print_function
 
-import json
-import os
 import logging
 
 import requests
 
 from ..conf import config
-from ..utils import extend_url, add_filters
-from ..utils.exceptions import DoesNotExist
 from .resultset import ResultSet
 from .schema import Schema
 from .schema import ParameterName
@@ -67,6 +63,8 @@ class Dataset(Model):
         :return: A list of :class:`Dataset` records, encapsulated in a
             `ResultSet` object.
         """
+        from ..utils import extend_url, add_filters
+
         url = "%s/api/v1/dataset/?format=json" % config.url
 
         if experiment_id:
@@ -94,6 +92,8 @@ class Dataset(Model):
 
         :raises requests.exceptions.HTTPError:
         """
+        from ..utils.exceptions import DoesNotExist
+
         dataset_id = kwargs.get("id")
         if not dataset_id:
             raise NotImplementedError(
@@ -125,6 +125,9 @@ class Dataset(Model):
 
         :return: A new :class:`Dataset` record.
         """
+        import json
+        import os
+
         new_dataset_json = {
             "description": description,
             "experiments": ["/api/v1/experiment/%s/" % experiment_id],
@@ -149,6 +152,8 @@ class Dataset(Model):
         """
         Update an dataset record.
         """
+        import json
+
         updated_fields_json = {'description': description}
         url = "%s/api/v1/dataset/%s/" % (config.url, dataset_id)
         response = requests.patch(headers=config.default_headers, url=url,

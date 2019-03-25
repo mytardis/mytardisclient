@@ -3,19 +3,12 @@ Model class for MyTardis API v1's ExperimentResource.
 """
 from __future__ import print_function
 
-import json
-import os
 import logging
 
 import requests
 
 from ..conf import config
-from ..utils import extend_url, add_filters
-from ..utils.exceptions import DoesNotExist
 from .model import Model
-from .resultset import ResultSet
-from .schema import Schema
-from .schema import ParameterName
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -60,6 +53,9 @@ class Experiment(Model):
         :return: A list of :class:`Experiment` records, encapsulated in a
             `ResultSet` object.
         """
+        from ..utils import extend_url, add_filters
+        from .resultset import ResultSet
+
         url = "%s/api/v1/experiment/?format=json" % config.url
         url = add_filters(url, filters)
         url = extend_url(url, limit, offset, order_by)
@@ -84,6 +80,8 @@ class Experiment(Model):
 
         :raises requests.exceptions.HTTPError:
         """
+        from ..utils.exceptions import DoesNotExist
+
         exp_id = kwargs.get("id")
         if not exp_id:
             raise NotImplementedError(
@@ -114,6 +112,9 @@ class Experiment(Model):
 
         :return: A new :class:`Dataset` record.
         """
+        import json
+        import os
+
         new_exp_json = {
             "title": title,
             "description": description,
@@ -137,6 +138,8 @@ class Experiment(Model):
         """
         Update an experiment record.
         """
+        import json
+
         updated_fields_json = dict()
         updated_fields_json['title'] = title
         updated_fields_json['description'] = description
@@ -155,6 +158,7 @@ class ExperimentParameterSet(object):
     """
     # pylint: disable=too-few-public-methods
     def __init__(self, expparamset_json):
+        from .schema import Schema
         self.json = expparamset_json
         self.id = expparamset_json['id']  # pylint: disable=invalid-name
         self.experiment = expparamset_json['experiment']
@@ -176,6 +180,8 @@ class ExperimentParameterSet(object):
         :return: A list of :class:`ExperimentParameterSet` records,
             encapsulated in a `ResultSet` object`.
         """
+        from .resultset import ResultSet
+
         url = "%s/api/v1/experimentparameterset/?format=json" % config.url
         url += "&experiments__id=%s" % experiment_id
         response = requests.get(url=url, headers=config.default_headers)
@@ -190,6 +196,7 @@ class ExperimentParameter(object):
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
     def __init__(self, expparam_json):
+        from .schema import ParameterName
         self.json = expparam_json
         self.id = expparam_json['id']  # pylint: disable=invalid-name
         self.name = ParameterName.get(expparam_json['name'].split('/')[-2])

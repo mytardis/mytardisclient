@@ -9,7 +9,6 @@ import logging
 import requests
 
 from ..conf import config
-from ..utils import extend_url
 from .facility import Facility
 from .model import Model
 from .resultset import ResultSet
@@ -47,6 +46,8 @@ class Instrument(Model):
         :return: A list of :class:`Instrument` records, encapsulated in a
             ResultSet object.
         """
+        from ..utils import extend_url
+
         url = "%s/api/v1/instrument/?format=json" % config.url
         if facility_id:
             url += "&facility__id=%s" % facility_id
