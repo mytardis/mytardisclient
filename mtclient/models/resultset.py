@@ -25,6 +25,18 @@ class ResultSet(object):
         self.total_count = self.json['meta']['total_count']
         self.limit = self.json['meta']['limit']
         self.offset = self.json['meta']['offset']
+        self._objects = None
+
+    def __repr__(self):
+        """
+        String representation
+        """
+        if not self._objects:
+            self._objects = []
+            for index in range(len(self.json['objects'])):
+                self._objects.append(self.model(self.json['objects'][index]))
+        return "<ResultSet [%s]>" % ", ".join(str(obj) for obj in self._objects)
+
 
     def __len__(self):
         """
