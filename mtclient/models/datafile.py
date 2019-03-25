@@ -45,7 +45,7 @@ class DataFile(Model):
     Model class for MyTardis API v1's DataFileResource.
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, datafile_json, include_metadata=True):
+    def __init__(self, datafile_json, include_metadata=False):
         self.json = datafile_json
         self.id = datafile_json['id']  # pylint: disable=invalid-name
         self.dataset = datafile_json['dataset']
@@ -135,7 +135,7 @@ class DataFile(Model):
             raise NotImplementedError(
                 "Only the id keyword argument is supported for DataFile get "
                 "at this stage.")
-        include_metadata = kwargs.get("include_metadata", True)
+        include_metadata = kwargs.get("include_metadata", False)
         url = "%s/api/v1/dataset_file/%s/?format=json" % \
             (config.url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)

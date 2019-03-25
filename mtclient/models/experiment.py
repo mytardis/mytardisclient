@@ -24,7 +24,7 @@ class Experiment(Model):
     """
     Model class for MyTardis API v1's ExperimentResource.
     """
-    def __init__(self, experiment_json=None, include_metadata=True):
+    def __init__(self, experiment_json=None, include_metadata=False):
         self.json = experiment_json
         self.id = None  # pylint: disable=invalid-name
         self.title = None
@@ -89,7 +89,7 @@ class Experiment(Model):
             raise NotImplementedError(
                 "Only the id keyword argument is supported for Experiment get "
                 "at this stage.")
-        include_metadata = kwargs.get("include_metadata", True)
+        include_metadata = kwargs.get("include_metadata", False)
         url = "%s/api/v1/experiment/?format=json&id=%s" \
             % (config.url, exp_id)
         response = requests.get(url=url, headers=config.default_headers)

@@ -26,7 +26,7 @@ class Dataset(Model):
     """
     Model class for MyTardis API v1's DatasetResource.
     """
-    def __init__(self, dataset_json=None, include_metadata=True):
+    def __init__(self, dataset_json=None, include_metadata=False):
         self.json = dataset_json
         self.id = None  # pylint: disable=invalid-name
         self.description = None
@@ -99,7 +99,7 @@ class Dataset(Model):
             raise NotImplementedError(
                 "Only the id keyword argument is supported for Dataset get "
                 "at this stage.")
-        include_metadata = kwargs.get("include_metadata", True)
+        include_metadata = kwargs.get("include_metadata", False)
         url = config.url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
