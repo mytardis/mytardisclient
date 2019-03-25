@@ -411,8 +411,7 @@ class DataFile(Model):
             raise
         if os.path.exists(filename):
             from ..utils.confirmation import query_yes_no
-            overwrite = query_yes_no("Overwrite '%s'?" % filename)
-            if not overwrite:
+            if not query_yes_no("Overwrite '%s'?" % filename):
                 return
         with open(filename, 'wb') as fileobj:
             total_length = int(response.headers.get('content-length'))
