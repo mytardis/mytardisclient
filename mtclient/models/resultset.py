@@ -37,7 +37,6 @@ class ResultSet(object):
                 self._objects.append(self.model(self.json['objects'][index]))
         return "<ResultSet [%s]>" % ", ".join(str(obj) for obj in self._objects)
 
-
     def __len__(self):
         """
         Return number of records in ResultSet
