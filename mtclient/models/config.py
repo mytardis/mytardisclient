@@ -107,12 +107,12 @@ class Config(object):
             os.makedirs(os.path.dirname(self.cache_path))
         self.region = \
             make_region(function_key_generator=key_generator) \
-                .configure(
-                    self.cache_backend,
-                    expiration_time=self.cache_expiry,
-                    arguments={
-                        "filename": self.cache_path
-                    })
+            .configure(
+                self.cache_backend,
+                expiration_time=self.cache_expiry,
+                arguments={
+                    "filename": self.cache_path
+                })
 
         if path:
             self.load()
