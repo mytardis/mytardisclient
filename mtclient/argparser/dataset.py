@@ -11,7 +11,7 @@ def build_dataset_parser(argument_parser):
     # pylint: disable=too-many-locals
     dataset_help = \
         "Display a list of dataset records or a single dataset record."
-    dataset_usage = "mytardis dataset [-h] {list,get,create,update} ..."
+    dataset_usage = "mytardis dataset [-h] {list,get,create,update,download} ..."
     dataset_parser = \
         argument_parser.model_parsers.add_parser("dataset",
                                                  help=dataset_help,
@@ -27,7 +27,7 @@ def build_dataset_parser(argument_parser):
             [--filter FILTER]
 
           EXAMPLE
-       
+
           $ mytardis dataset list --exp 20
 
           Model: Dataset
@@ -250,3 +250,19 @@ def build_dataset_parser(argument_parser):
         "dataset_id", help="The ID of the dataset to update.")
     dataset_cmd_update_parser.add_argument(
         "--description", help="The new description of the dataset.")
+
+    dataset_download_help = "Download a dataset."
+    dataset_download_usage = textwrap.dedent("""\
+        mytardis dataset download dataset_id
+
+          EXAMPLE
+
+          $ mytardis dataset download 99
+          Downloaded: hello.txt
+            """)
+    dataset_cmd_download_parser = \
+        dataset_command_parsers.add_parser("download",
+                                           help=dataset_download_help,
+                                           usage=dataset_download_usage)
+    dataset_cmd_download_parser.add_argument("dataset_id",
+                                             help="The dataset ID.")

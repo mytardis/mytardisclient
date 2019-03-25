@@ -5,7 +5,6 @@ on dataset records.
 from __future__ import print_function
 
 from mtclient.models.dataset import Dataset
-from mtclient.models.datafile import DataFile
 from mtclient.views import render
 
 from .cli import ModelCliController
@@ -18,7 +17,7 @@ class DatasetController(ModelCliController):
     """
     def __init__(self):
         super(DatasetController, self).__init__()
-        self.allowed_commands = ["list", "get", "create", "update"]
+        self.allowed_commands = ["list", "get", "create", "update", "download"]
         self.primary_key_arg = "dataset_id"
         self.model = Dataset
 
@@ -39,6 +38,7 @@ class DatasetController(ModelCliController):
         dataset = Dataset.objects.get(id=args.dataset_id)
         print(render(dataset, render_format))
         if render_format == 'table':
+            from mtclient.models.datafile import DataFile
             datafiles = DataFile.list(args.dataset_id)
             print(render(datafiles, render_format))
 
@@ -60,3 +60,10 @@ class DatasetController(ModelCliController):
         dataset = Dataset.update(args.dataset_id, args.description)
         print(render(dataset, render_format))
         print("Dataset updated successfully.")
+
+    def download(self, args, _render_format):
+        """
+        Download dataset.
+        """
+        # pylint: disable=no-self-use
+        Dataset.download(args.dataset_id)

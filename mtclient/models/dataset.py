@@ -6,6 +6,7 @@ from __future__ import print_function
 import logging
 
 import requests
+from six.moves import urllib
 
 from ..conf import config
 from .resultset import ResultSet
@@ -68,7 +69,7 @@ class Dataset(Model):
         url = "%s/api/v1/dataset/?format=json" % config.url
 
         if experiment_id:
-            url += "&experiments__id=%s"  % experiment_id
+            url += "&experiments__id=%s" % experiment_id
         url = add_filters(url, filters)
         url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
@@ -162,6 +163,33 @@ class Dataset(Model):
         dataset_json = response.json()
         return Dataset(dataset_json)
 
+    @staticmethod
+    def download(dataset_id):
+        """
+        Download a dataset
+        """
+        import os
+        from .datafile import DataFile
+
+        dataset = Dataset.objects.get(id=dataset_id)
+        path = urllib.parse.quote(
+            dataset.description.encode('utf-8'), safe=" ,")
+        if os.path.exists(path):
+            from ..utils.confirmation import query_yes_no
+            if not query_yes_no("Overwrite '%s/'?" % path):
+                return
+        else:
+            os.makedirs(path)
+        print("Downloading to: %s/" % path)
+        working_dir = os.getcwd()
+        os.chdir(path)
+        try:
+            for datafile in DataFile.objects.filter(dataset__id=dataset_id):
+                DataFile.download(datafile.id)
+        finally:
+            os.chdir(working_dir)
+        print("Downloaded to: %s/" % path)
+
 
 class DatasetParameterSet(object):
     """
@@ -191,7 +219,7 @@ class DatasetParameterSet(object):
             encapsulated in a `ResultSet` object`.
         """
         url = "%s/api/v1/datasetparameterset/?format=json" % config.url
-        url += "&datasets__id=%s"  % dataset_id
+        url += "&datasets__id=%s" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ResultSet(DatasetParameterSet, url, response.json())
