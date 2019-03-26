@@ -43,6 +43,18 @@ class ResultSet(object):
         """
         return len(self.response_dict['objects'])
 
+    def __bool__(self):
+        """
+        Return True if there's a list one object in the result set
+        """
+        return len(self) > 0
+
+    def __nonzero__(self):
+        """
+        For Python 2.x
+        """
+        return self.__bool__()
+
     def __getitem__(self, key):
         """
         Get a record from the query set.
@@ -62,3 +74,21 @@ class ResultSet(object):
         for index in range(len(self.response_dict['objects'])):
             args = [self.response_dict['objects'][index]]
             yield self.model(*args, **kwargs)
+
+    @staticmethod
+    def empty(model):
+        """
+        Return an empty result set
+        """
+        response_dict = {
+            "meta": {
+                "limit": 20,
+                "next": None,
+                "offset": 0,
+                "previous": None,
+                "total_count": 0
+            },
+            "objects": [
+            ]
+        }
+        return ResultSet(model, None, response_dict)

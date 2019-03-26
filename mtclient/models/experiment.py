@@ -194,7 +194,8 @@ class ExperimentParameter(object):
         from .schema import ParameterName
         self.response_dict = response_dict
         self.id = response_dict['id']  # pylint: disable=invalid-name
-        self.name = ParameterName.get(response_dict['name'].split('/')[-2])
+        pname_id = response_dict['name'].split('/')[-2]
+        self.name = ParameterName.objects.get(id=pname_id)
         self.string_value = response_dict['string_value']
         self.numerical_value = response_dict['numerical_value']
         self.datetime_value = response_dict['datetime_value']

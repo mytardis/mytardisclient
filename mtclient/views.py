@@ -1092,6 +1092,9 @@ def render_schema_as_table(schema):
     table.add_row(["Hidden", str(bool(schema.hidden))])
     schema_parameter_names += table.draw() + "\n"
 
+    if not schema.parameter_names:
+        return schema_parameter_names
+
     schema_parameter_names += "\n"
     table = Texttable(max_width=0)
     table.set_cols_align(["r", 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l', 'l'])

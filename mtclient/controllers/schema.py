@@ -2,7 +2,8 @@
 Controller class for running commands (list, get)
 on schemas.
 """
-from mtclient.models.schema import Schema
+from ..models.schema import Schema
+from ..views import render
 
 from .cli import ModelCliController
 
@@ -16,3 +17,11 @@ class SchemaController(ModelCliController):
         self.allowed_commands = ["list", "get"]
         self.primary_key_arg = "schema_id"
         self.model = Schema
+
+    def get(self, args, render_format):
+        """
+        Display a single record
+        """
+        primary_key = getattr(args, "schema_id")
+        instance = Schema.objects.get(id=primary_key, param_names=args.params)
+        print(render(instance, render_format))

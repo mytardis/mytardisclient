@@ -67,7 +67,7 @@ def build_schema_parser(argument_parser):
 
     schema_get_help = "Display a single schema record."
     schema_get_usage = textwrap.dedent("""\
-        mytardis schema get [-h] [--json] schema_id
+        mytardis schema get [--params] [--json] schema_id
 
           EXAMPLE
 
@@ -101,5 +101,7 @@ def build_schema_parser(argument_parser):
                                           help=schema_get_help,
                                           usage=schema_get_usage)
     schema_command_get_parser.add_argument("schema_id", help="The schema ID.")
+    schema_command_get_parser.add_argument(
+        "--params", action='store_true', help="Display parameter names.")
     schema_command_get_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")

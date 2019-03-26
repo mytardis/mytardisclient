@@ -19,7 +19,7 @@ class Schema(Model):
     Model class for MyTardis API v1's SchemaResource.
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, response_dict):
+    def __init__(self, response_dict, param_names=False):
         self.response_dict = response_dict
         self.id = response_dict['id']  # pylint: disable=invalid-name
         self.name = response_dict['name']
@@ -32,7 +32,10 @@ class Schema(Model):
         self.type = _schema_types[type_index]  # pylint: disable=invalid-name
         self.subtype = response_dict['subtype']
 
-        self.parameter_names = ParameterName.list(schema_id=self.id)
+        if param_names:
+            self.parameter_names = ParameterName.list(schema_id=self.id)
+        else:
+            self.parameter_names = ResultSet.empty(ParameterName)
 
     def __str__(self):
         """
@@ -79,13 +82,14 @@ class Schema(Model):
             raise NotImplementedError(
                 "Only the id keyword argument is supported for Schema get "
                 "at this stage.")
+        param_names = kwargs.get("param_names", False)
         url = "%s/api/v1/schema/%s/?format=json" % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        return Schema(response.json())
+        return Schema(response.json(), param_names)
 
 
-class ParameterName(object):
+class ParameterName(Model):
     """
     Model class for MyTardis API v1's ParameterNameResource.
     """
@@ -160,16 +164,26 @@ class ParameterName(object):
         return ResultSet(ParameterName, url, parameter_names_json)
 
     @staticmethod
-    def get(parametername_id):
-        """
-        Get parameter name with id parametername_id
+    def get(**kwargs):
+        r"""
+        Retrieve a single parameter name record
 
-        :param parametername_id: The ID of a parameter name to retrieve.
+        :param \**kwargs:
+          See below
+
+        :Keyword Arguments:
+            * *id* (``int``) --
+              ID of the ParameterName to retrieve
 
         :return: A :class:`ParameterName` record.
         """
+        pname_id = kwargs.get("id")
+        if not pname_id:
+            raise NotImplementedError(
+                "Only the id keyword argument is supported for ParameterName "
+                "get at this stage.")
         url = "%s/api/v1/parametername/%s/?format=json" % (config.url,
-                                                           parametername_id)
+                                                           pname_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ParameterName(response.json())
