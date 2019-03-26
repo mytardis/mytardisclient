@@ -106,8 +106,7 @@ class ApiSchema(object):
         url = "%s/api/v1/%s/schema/?format=json" % (config.url, model)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        api_schema = response.json()
-        return ApiSchema(model, api_schema)
+        return ApiSchema(model, response.json())
 
 
 class ApiEndpoints(object):
