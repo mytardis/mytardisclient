@@ -83,7 +83,6 @@ class DataFile(Model):
         return True
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="DataFile")
     def list(dataset_id=None, directory="", filename=None, filters=None,
              limit=None, offset=None, order_by=None):
         """
@@ -114,7 +113,6 @@ class DataFile(Model):
         return ResultSet(DataFile, url, response.json())
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="DataFile")
     def get(**kwargs):
         r"""
         Retrieve a single datafile record
@@ -592,7 +590,6 @@ class DataFileParameterSet(object):
             self.parameters.append(DataFileParameter(datafile_param_json))
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="DataFileParameterSet")
     def list(datafile_id):
         """
         List datafile parameter sets associated with datafile ID
@@ -628,7 +625,6 @@ class DataFileParameter(object):
         self.value = datafile_param_json['value']
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="DataFileParameter")
     def list(datafile_param_set):
         """
         List datafile parameter records in parameter set.

@@ -41,7 +41,6 @@ class Schema(Model):
         return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Schema")
     def list(limit=None, offset=None, order_by=None):
         """
         Retrieve a list of schemas.
@@ -60,7 +59,6 @@ class Schema(Model):
         return ResultSet(Schema, url, response.json())
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Schema")
     def get(**kwargs):
         r"""
         Retrieve a single schema record
@@ -123,7 +121,6 @@ class ParameterName(object):
         return "<%s: %s>" % (type(self).__name__, self.full_name)
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="ParameterName")
     def list(schema_id):
         """
         Retrieve the list of parameter name records in a schema.
@@ -164,7 +161,6 @@ class ParameterName(object):
         return ResultSet(ParameterName, url, parameter_names_json)
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="ParameterName")
     def get(parametername_id):
         """
         Get parameter name with id parametername_id

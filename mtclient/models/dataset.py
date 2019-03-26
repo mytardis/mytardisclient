@@ -49,7 +49,6 @@ class Dataset(Model):
         return "<%s: %s>" % (type(self).__name__, self.description)
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Dataset")
     def list(experiment_id=None, filters=None,
              limit=None, offset=None, order_by=None):
         """
@@ -77,7 +76,6 @@ class Dataset(Model):
         return ResultSet(Dataset, url, response.json())
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Dataset")
     def get(**kwargs):
         r"""
         Retrieve a single dataset record
@@ -206,7 +204,6 @@ class DatasetParameterSet(object):
             self.parameters.append(DatasetParameter(dataset_param_json))
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="DatasetParameterSet")
     def list(dataset_id):
         """
         List dataset parameter sets associated with dataset ID
@@ -242,7 +239,6 @@ class DatasetParameter(object):
         self.value = dataset_param_json['value']
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="DatasetParameter")
     def list(dataset_param_set):
         """
         List dataset parameter records in parameter set.

@@ -40,7 +40,6 @@ class Experiment(Model):
         return "<%s: %s>" % (type(self).__name__, self.title)
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Experiment")
     def list(filters=None, limit=None, offset=None, order_by=None):
         """
         Retrieve a list of experiments.
@@ -64,7 +63,6 @@ class Experiment(Model):
         return ResultSet(Experiment, url, response.json())
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Experiment")
     def get(**kwargs):
         r"""
         Retrieve a single experiment record
@@ -168,7 +166,6 @@ class ExperimentParameterSet(object):
             self.parameters.append(ExperimentParameter(exp_param_json))
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="ExperimentParameterSet")
     def list(experiment_id):
         """
         List experiment parameter sets associated with experiment ID
@@ -207,7 +204,6 @@ class ExperimentParameter(object):
         self.value = expparam_json['value']
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="ExperimentParameter")
     def list(exp_param_set):
         """
         List experiment parameter records in parameter set.

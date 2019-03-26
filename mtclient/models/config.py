@@ -9,13 +9,10 @@ import os
 import json
 
 from configparser import ConfigParser
-from dogpile.cache import make_region  # pylint: disable=import-error
 from six.moves import urllib
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.config',
                                    'mytardisclient', 'mytardisclient.cfg')
-CACHE_PATH = os.path.join(os.path.expanduser('~'), '.cache',
-                          'mytardisclient', 'mytardisclient.cache')
 DATASETS_PATH_PREFIX = os.path.join(os.path.expanduser('~'), '.config',
                                     'mytardisclient', 'servers')
 LOGFILE_PATH = os.path.join(os.path.expanduser('~'), '.mytardisclient.log')
@@ -84,36 +81,6 @@ class Config(object):
         #: The MyTardis API key, e.g. '644be179cc6773c30fc471bad61b50c90897146c'
         self.apikey = ""
 
-        #: Path for caching results of frequently used queries.
-        #: Default: ~/.cache/mytardisclient/mytardisclient.cache
-        self.cache_path = CACHE_PATH
-
-        #: Cache backend.
-        #: Default: 'dogpile.cache.null'.
-        #: Set to 'dogpile.cache.dbm' to enable caching.
-        self.cache_backend = 'dogpile.cache.null'
-
-        #: Cache expiry time.
-        #: Default: 30 seconds.
-        self.cache_expiry = 30
-
-        def key_generator(namespace, function):
-            # pylint: disable=unused-argument
-            def generate_key(*args, **kwargs):
-                return "%s(%s,%s)" % \
-                    (function.__name__, str(args), str(kwargs))
-            return generate_key
-        if not os.path.exists(os.path.dirname(self.cache_path)):
-            os.makedirs(os.path.dirname(self.cache_path))
-        self.region = \
-            make_region(function_key_generator=key_generator) \
-            .configure(
-                self.cache_backend,
-                expiration_time=self.cache_expiry,
-                arguments={
-                    "filename": self.cache_path
-                })
-
         if path:
             self.load()
 
@@ -122,9 +89,6 @@ class Config(object):
                      url=self.url,
                      username=self.username,
                      apikey=self.apikey,
-                     cache_path=self.cache_path,
-                     cache_backend=self.cache_backend,
-                     cache_expiry=self.cache_expiry,
                      datasets_path=self.datasets_path)
         return json.dumps(attrs, indent=2)
 
@@ -169,7 +133,7 @@ class Config(object):
             config_parser = ConfigParser()
             config_parser.read(path)
             section = "mytardisclient"
-            fields = ["url", "username", "apikey", "cache_backend", "cache_expiry"]
+            fields = ["url", "username", "apikey"]
 
             for field in fields:
                 if config_parser.has_option(section, field):
@@ -225,7 +189,7 @@ class Config(object):
         config_parser = ConfigParser()
         with open(self.path, 'w') as config_file:
             config_parser.add_section("mytardisclient")
-            fields = ["url", "username", "apikey", "cache_backend", "cache_expiry"]
+            fields = ["url", "username", "apikey"]
             for field in fields:
                 config_parser.set("mytardisclient", field, self.__dict__[field])
             config_parser.write(config_file)

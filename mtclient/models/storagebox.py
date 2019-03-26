@@ -39,7 +39,6 @@ class StorageBox(Model):
         return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="StorageBox")
     def list(limit=None, offset=None, order_by=None):
         """
         Retrieve a list of storage boxes.
@@ -61,7 +60,6 @@ class StorageBox(Model):
         return ResultSet(StorageBox, url, response.json())
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="StorageBox")
     def get(**kwargs):
         r"""
         Retrieve a single storage box record

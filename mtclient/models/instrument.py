@@ -33,7 +33,6 @@ class Instrument(Model):
         return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Instrument")
     def list(facility_id=None, limit=None, offset=None, order_by=None):
         """
         Retrieve a list of instruments in a facility with ID facility_id.
@@ -57,7 +56,6 @@ class Instrument(Model):
         return ResultSet(Instrument, url, response.json())
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Instrument")
     def get(**kwargs):
         r"""
         Retrieve a single instrument record

@@ -51,7 +51,6 @@ def run():
 
     logging.config.fileConfig(config.logging_config_path,
                               disable_existing_loggers=False)
-    logging.getLogger("dogpile.core.dogpile").setLevel(logging.WARNING)
     logging.getLogger("requests").setLevel(logging.WARNING)
     logger = logging.getLogger(__name__)
     logger.info("MyTardis Client v%s", VERSION)

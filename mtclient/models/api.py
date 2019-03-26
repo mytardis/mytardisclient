@@ -40,7 +40,6 @@ class ApiEndpoint(object):
         return self.__str__()
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="ApiEndpoint")
     def list():
         """
         Retrieve a list of API endpoints, encapsulated in
@@ -87,7 +86,6 @@ class ApiSchema(object):
         self.default_limit = schema_json['default_limit']
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="ApiEndpoint")
     def get(model):
         """
         Get a list of API-accessible functionality for a particular model.

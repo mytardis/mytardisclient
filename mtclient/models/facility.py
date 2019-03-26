@@ -30,7 +30,6 @@ class Facility(Model):
         return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Facility")
     def list(limit=None, offset=None, order_by=None):
         """
         Retrieve a list of facilities.
@@ -52,7 +51,6 @@ class Facility(Model):
         return ResultSet(Facility, url, response.json())
 
     @staticmethod
-    @config.region.cache_on_arguments(namespace="Facility")
     def get(**kwargs):
         r"""
         Get facility by ID
