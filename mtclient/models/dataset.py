@@ -23,22 +23,22 @@ class Dataset(Model):
     """
     Model class for MyTardis API v1's DatasetResource.
     """
-    def __init__(self, dataset_json=None, include_metadata=False):
-        self.json = dataset_json
+    def __init__(self, response_dict=None, include_metadata=False):
+        self.response_dict = response_dict
         self.id = None  # pylint: disable=invalid-name
         self.description = None
         self.instrument = None
         self.experiments = []
         self.parameter_sets = []
-        if dataset_json:
+        if response_dict:
             for key in self.__dict__:
-                if key in dataset_json:
-                    self.__dict__[key] = dataset_json[key]
-            if dataset_json['instrument']:
-                self.instrument = Instrument(dataset_json['instrument'])
+                if key in response_dict:
+                    self.__dict__[key] = response_dict[key]
+            if response_dict['instrument']:
+                self.instrument = Instrument(response_dict['instrument'])
             if include_metadata:
                 self.parameter_sets = []
-                for dataset_param_set_json in dataset_json['parameter_sets']:
+                for dataset_param_set_json in response_dict['parameter_sets']:
                     self.parameter_sets.append(
                         DatasetParameterSet(dataset_param_set_json))
 
@@ -106,7 +106,7 @@ class Dataset(Model):
         if datasets_json['meta']['total_count'] == 0:
             message = "Dataset matching filter doesn't exist."
             raise DoesNotExist(message, url, response, Dataset)
-        return Dataset(dataset_json=datasets_json['objects'][0],
+        return Dataset(response_dict=datasets_json['objects'][0],
                        include_metadata=include_metadata)
 
     @staticmethod
@@ -143,8 +143,7 @@ class Dataset(Model):
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_dataset_json))
         response.raise_for_status()
-        dataset_json = response.json()
-        return Dataset(dataset_json)
+        return Dataset(response.json())
 
     @staticmethod
     def update(dataset_id, description):
@@ -194,13 +193,13 @@ class DatasetParameterSet(object):
     Model class for MyTardis API v1's DatasetParameterSetResource.
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, dataset_paramset_json):
-        self.json = dataset_paramset_json
-        self.id = dataset_paramset_json['id']  # pylint: disable=invalid-name
-        self.dataset = dataset_paramset_json['dataset']
-        self.schema = Schema(dataset_paramset_json['schema'])
+    def __init__(self, response_dict):
+        self.response_dict = response_dict
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.dataset = response_dict['dataset']
+        self.schema = Schema(response_dict['schema'])
         self.parameters = []
-        for dataset_param_json in dataset_paramset_json['parameters']:
+        for dataset_param_json in response_dict['parameters']:
             self.parameters.append(DatasetParameter(dataset_param_json))
 
     @staticmethod
@@ -228,15 +227,15 @@ class DatasetParameter(object):
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, dataset_param_json):
-        self.json = dataset_param_json
-        self.id = dataset_param_json['id']  # pylint: disable=invalid-name
-        self.name = ParameterName.get(dataset_param_json['name'].split('/')[-2])
-        self.string_value = dataset_param_json['string_value']
-        self.numerical_value = dataset_param_json['numerical_value']
-        self.datetime_value = dataset_param_json['datetime_value']
-        self.link_id = dataset_param_json['link_id']
-        self.value = dataset_param_json['value']
+    def __init__(self, response_dict):
+        self.response_dict = response_dict
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.name = ParameterName.get(response_dict['name'].split('/')[-2])
+        self.string_value = response_dict['string_value']
+        self.numerical_value = response_dict['numerical_value']
+        self.datetime_value = response_dict['datetime_value']
+        self.link_id = response_dict['link_id']
+        self.value = response_dict['value']
 
     @staticmethod
     def list(dataset_param_set):

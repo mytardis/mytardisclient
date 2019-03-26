@@ -17,19 +17,19 @@ class StorageBox(Model):
     Model class for MyTardis API v1's StorageBoxResource.
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, storage_box_json):
-        self.id = storage_box_json['id']  # pylint: disable=invalid-name
-        self.name = storage_box_json['name']
-        self.description = storage_box_json['description']
-        self.django_storage_class = storage_box_json['django_storage_class']
-        self.max_size = storage_box_json['max_size']
-        self.status = storage_box_json['status']
-        self.json = storage_box_json
+    def __init__(self, response_dict):
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.name = response_dict['name']
+        self.description = response_dict['description']
+        self.django_storage_class = response_dict['django_storage_class']
+        self.max_size = response_dict['max_size']
+        self.status = response_dict['status']
+        self.response_dict = response_dict
         self.attributes = []
-        for attribute_json in storage_box_json['attributes']:
+        for attribute_json in response_dict['attributes']:
             self.attributes.append(StorageBoxAttribute(attribute_json))
         self.options = []
-        for option_json in storage_box_json['options']:
+        for option_json in response_dict['options']:
             self.options.append(StorageBoxOption(option_json))
 
     def __str__(self):
@@ -84,8 +84,7 @@ class StorageBox(Model):
             (config.url, storage_box_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        storage_box_json = response.json()
-        return StorageBox(storage_box_json=storage_box_json)
+        return StorageBox(response.json())
 
 
 class StorageBoxAttribute(object):
@@ -93,10 +92,10 @@ class StorageBoxAttribute(object):
     Model class for MyTardis API v1's StorageBoxAttributeResource.
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, storage_box_attribute_json):
-        self.key = storage_box_attribute_json['key']
-        self.value = storage_box_attribute_json['value']
-        self.json = storage_box_attribute_json
+    def __init__(self, response_dict):
+        self.key = response_dict['key']
+        self.value = response_dict['value']
+        self.response_dict = response_dict
 
 
 class StorageBoxOption(object):
@@ -104,7 +103,7 @@ class StorageBoxOption(object):
     Model class for MyTardis API v1's StorageBoxOptionResource.
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, storage_box_option_json):
-        self.key = storage_box_option_json['key']
-        self.value = storage_box_option_json['value']
-        self.json = storage_box_option_json
+    def __init__(self, response_dict):
+        self.key = response_dict['key']
+        self.value = response_dict['value']
+        self.response_dict = response_dict

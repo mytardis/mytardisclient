@@ -21,11 +21,19 @@ class ApiEndpoint(object):
     Model class for MyTardis API v1's endpoints.
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, model, endpoint_json):
-        self.json = endpoint_json
+    def __init__(self, model, endpoint_dict):
+        """
+        :param model: The name of the API model resource, e.g. 'dataset_file'
+        :param endpoint_dict: A dictionary with two keys: 'list_endpoint' and
+            'schema', e.g. {"list_endpoint": "/api/v1/dataset_file/",
+            "schema": "/api/v1/dataset_file/schema/"}. This dictionary is
+            obtained by isolating a single model resource from the
+            deserialized response from /api/v1/?format=json
+        """
+        self.response_dict = endpoint_dict
         self.model = model
-        self.list_endpoint = endpoint_json['list_endpoint']
-        self.schema = endpoint_json['schema']
+        self.list_endpoint = endpoint_dict['list_endpoint']
+        self.schema = endpoint_dict['schema']
 
     def __str__(self):
         """
@@ -54,8 +62,7 @@ class ApiEndpoint(object):
         url = "%s/api/v1/?format=json" % config.url
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        endpoints_json = response.json()
-        return ApiEndpoints(endpoints_json)
+        return ApiEndpoints(response.json())
 
 
 class ApiSchema(object):
@@ -64,26 +71,26 @@ class ApiSchema(object):
     """
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-few-public-methods
-    def __init__(self, model, schema_json):
+    def __init__(self, model, response_dict):
         """
         :param model: The name of an API-accessible model, e.g. 'dataset_file'.
-        :param schema_json: The JSON returned from an /api/v1/model/schema/
-            query.
+        :param response_dict: The JSON-deserialized response from an
+            /api/v1/model/schema/ query
         """
         self.model = model
-        self.json = schema_json
-        self.fields = schema_json['fields']
-        self.filtering = schema_json['filtering'] if 'filtering' in schema_json else {}
+        self.response_dict = response_dict
+        self.fields = response_dict['fields']
+        self.filtering = response_dict['filtering'] if 'filtering' in response_dict else {}
         for key, val in six.iteritems(self.filtering):
             if val == 1:
                 self.filtering[key] = "ALL"
             elif val == 2:
                 self.filtering[key] = "ALL_WITH_RELATIONS"
-        self.ordering = schema_json['ordering'] if 'ordering' in schema_json else {}
-        self.allowed_list_http_methods = schema_json['allowed_list_http_methods']
-        self.allowed_detail_http_methods = schema_json['allowed_detail_http_methods']
-        self.default_format = schema_json['default_format']
-        self.default_limit = schema_json['default_limit']
+        self.ordering = response_dict['ordering'] if 'ordering' in response_dict else {}
+        self.allowed_list_http_methods = response_dict['allowed_list_http_methods']
+        self.allowed_detail_http_methods = response_dict['allowed_detail_http_methods']
+        self.default_format = response_dict['default_format']
+        self.default_limit = response_dict['default_limit']
 
     @staticmethod
     def get(model):
@@ -109,22 +116,21 @@ class ApiEndpoints(object):
     with model names as keys.
     """
     # pylint: disable=too-few-public-methods
-    # pylint: disable=too-many-instance-attributes
-    def __init__(self, json):
+    def __init__(self, response_dict):
         """
         Dictionary of API endpoints with model names as keys.
 
-        :param json: The JSON returned by the /api/v1/ query.
+        :param response_dict: The deserialized response from the /api/v1/ query
         """
-        self.json = json
-        self.total_count = len(self.json.keys())
+        self.response_dict = response_dict
+        self.total_count = len(self.response_dict.keys())
 
     def __len__(self):
         """
         Return the number of models accessible via the API.
         :return: The number of models accessible via the API.
         """
-        return len(self.json.keys())
+        return len(self.response_dict.keys())
 
     def __getitem__(self, model):
         """
@@ -133,12 +139,12 @@ class ApiEndpoints(object):
         :param model: The name of an API-accessible model, e.g. 'dataset_file'.
         :return: The :class:`ApiEndpoint` object for that supplied model.
         """
-        return ApiEndpoint(model, self.json[model])
+        return ApiEndpoint(model, self.response_dict[model])
 
     def __iter__(self):
         """
         Iterate the :class:`ApiEndpoints` set.
         """
         for index in range(0, len(self)):
-            model = list(self.json.keys())[index]
-            yield ApiEndpoint(model, self.json[model])
+            model = list(self.response_dict.keys())[index]
+            yield ApiEndpoint(model, self.response_dict[model])

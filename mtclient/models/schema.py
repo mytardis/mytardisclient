@@ -19,18 +19,18 @@ class Schema(Model):
     Model class for MyTardis API v1's SchemaResource.
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, schema_json):
-        self.json = schema_json
-        self.id = schema_json['id']  # pylint: disable=invalid-name
-        self.name = schema_json['name']
-        self.hidden = schema_json['hidden']
-        self.immutable = schema_json['immutable']
-        self.namespace = schema_json['namespace']
-        type_index = schema_json['type']
+    def __init__(self, response_dict):
+        self.response_dict = response_dict
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.name = response_dict['name']
+        self.hidden = response_dict['hidden']
+        self.immutable = response_dict['immutable']
+        self.namespace = response_dict['namespace']
+        type_index = response_dict['type']
         _schema_types = ['', 'Experiment schema', 'Dataset schema', 'Datafile schema',
                          'None', 'Instrument schema']
         self.type = _schema_types[type_index]  # pylint: disable=invalid-name
-        self.subtype = schema_json['subtype']
+        self.subtype = response_dict['subtype']
 
         self.parameter_names = ParameterName.list(schema_id=self.id)
 
@@ -82,8 +82,7 @@ class Schema(Model):
         url = "%s/api/v1/schema/%s/?format=json" % (config.url, schema_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        schema_json = response.json()
-        return Schema(schema_json=schema_json)
+        return Schema(response.json())
 
 
 class ParameterName(object):
@@ -92,27 +91,27 @@ class ParameterName(object):
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, parametername_json):
-        self.json = parametername_json
-        schema_id = parametername_json['schema'].split('/')[-2]
+    def __init__(self, response_dict):
+        self.response_dict = response_dict
+        schema_id = response_dict['schema'].split('/')[-2]
         self.schema = Schema.objects.get(id=schema_id)
-        self.id = parametername_json['id']  # pylint: disable=invalid-name
-        self.name = parametername_json['name']
-        self.full_name = parametername_json['full_name']
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.name = response_dict['name']
+        self.full_name = response_dict['full_name']
         _type_choices = ['', 'Numeric', 'String', 'URL', 'Link',
                          'Filename', 'DateTime', 'Long String', 'JSON']
-        self.data_type = _type_choices[parametername_json['data_type']]
-        self.units = parametername_json['units']
-        self.immutable = parametername_json['immutable']
-        self.is_searchable = parametername_json['is_searchable']
-        self.order = parametername_json['order']
-        self.choices = parametername_json['choices']
+        self.data_type = _type_choices[response_dict['data_type']]
+        self.units = response_dict['units']
+        self.immutable = response_dict['immutable']
+        self.is_searchable = response_dict['is_searchable']
+        self.order = response_dict['order']
+        self.choices = response_dict['choices']
         _comparison_types = \
             ['', 'Exact value', 'Not equal',
              'Range', 'Greater than', 'Greater than or equal to',
              'Less than', 'Less than or equal to', 'Contains']
         self.comparison_type = \
-            _comparison_types[parametername_json['comparison_type']]
+            _comparison_types[response_dict['comparison_type']]
 
     def __str__(self):
         """
@@ -173,5 +172,4 @@ class ParameterName(object):
                                                            parametername_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        parametername_json = response.json()
-        return ParameterName(parametername_json=parametername_json)
+        return ParameterName(response.json())

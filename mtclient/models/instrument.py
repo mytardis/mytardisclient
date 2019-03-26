@@ -20,11 +20,11 @@ class Instrument(Model):
     """
     Model class for MyTardis API v1's InstrumentResource.
     """
-    def __init__(self, instrument_json):
-        self.id = instrument_json['id']  # pylint: disable=invalid-name
-        self.name = instrument_json['name']
-        self.json = instrument_json
-        self.facility = Facility(instrument_json['facility'])
+    def __init__(self, response_dict):
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.name = response_dict['name']
+        self.response_dict = response_dict
+        self.facility = Facility(response_dict['facility'])
 
     def __str__(self):
         """
@@ -80,8 +80,7 @@ class Instrument(Model):
             (config.url, instrument_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        instrument_json = response.json()
-        return Instrument(instrument_json=instrument_json)
+        return Instrument(response.json())
 
     @staticmethod
     def create(facility_id, name):
@@ -101,8 +100,7 @@ class Instrument(Model):
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_instrument_json))
         response.raise_for_status()
-        instrument_json = response.json()
-        return Instrument(instrument_json)
+        return Instrument(response.json())
 
     @staticmethod
     def update(instrument_id, name):
@@ -121,5 +119,4 @@ class Instrument(Model):
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         response.raise_for_status()
-        instrument_json = response.json()
-        return Instrument(instrument_json)
+        return Instrument(response.json())

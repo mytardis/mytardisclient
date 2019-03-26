@@ -17,19 +17,19 @@ class Experiment(Model):
     """
     Model class for MyTardis API v1's ExperimentResource.
     """
-    def __init__(self, experiment_json=None, include_metadata=False):
-        self.json = experiment_json
+    def __init__(self, response_dict=None, include_metadata=False):
+        self.response_dict = response_dict
         self.id = None  # pylint: disable=invalid-name
         self.title = None
         self.description = None
         self.institution_name = None
-        if experiment_json:
+        if response_dict:
             for key in self.__dict__:
-                if key in experiment_json:
-                    self.__dict__[key] = experiment_json[key]
+                if key in response_dict:
+                    self.__dict__[key] = response_dict[key]
         self.parameter_sets = []
         if include_metadata:
-            for exp_param_set_json in experiment_json['parameter_sets']:
+            for exp_param_set_json in response_dict['parameter_sets']:
                 self.parameter_sets.append(
                     ExperimentParameterSet(exp_param_set_json))
 
@@ -94,7 +94,7 @@ class Experiment(Model):
         if experiments_json['meta']['total_count'] == 0:
             message = "Experiment matching filter doesn't exist."
             raise DoesNotExist(message, url, response, Experiment)
-        return Experiment(experiment_json=experiments_json['objects'][0],
+        return Experiment(response_dict=experiments_json['objects'][0],
                           include_metadata=include_metadata)
 
     @staticmethod
@@ -128,8 +128,7 @@ class Experiment(Model):
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_exp_json))
         response.raise_for_status()
-        experiment_json = response.json()
-        return Experiment(experiment_json)
+        return Experiment(response.json())
 
     @staticmethod
     def update(experiment_id, title, description):
@@ -146,8 +145,7 @@ class Experiment(Model):
         response = requests.patch(headers=config.default_headers, url=url,
                                   data=json.dumps(updated_fields_json))
         response.raise_for_status()
-        experiment_json = response.json()
-        return Experiment(experiment_json)
+        return Experiment(response.json())
 
 
 class ExperimentParameterSet(object):
@@ -155,14 +153,14 @@ class ExperimentParameterSet(object):
     Model class for MyTardis API v1's ExperimentParameterSetResource.
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, expparamset_json):
+    def __init__(self, response_dict):
         from .schema import Schema
-        self.json = expparamset_json
-        self.id = expparamset_json['id']  # pylint: disable=invalid-name
-        self.experiment = expparamset_json['experiment']
-        self.schema = Schema(expparamset_json['schema'])
+        self.response_dict = response_dict
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.experiment = response_dict['experiment']
+        self.schema = Schema(response_dict['schema'])
         self.parameters = []
-        for exp_param_json in expparamset_json['parameters']:
+        for exp_param_json in response_dict['parameters']:
             self.parameters.append(ExperimentParameter(exp_param_json))
 
     @staticmethod
@@ -192,16 +190,16 @@ class ExperimentParameter(object):
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, expparam_json):
+    def __init__(self, response_dict):
         from .schema import ParameterName
-        self.json = expparam_json
-        self.id = expparam_json['id']  # pylint: disable=invalid-name
-        self.name = ParameterName.get(expparam_json['name'].split('/')[-2])
-        self.string_value = expparam_json['string_value']
-        self.numerical_value = expparam_json['numerical_value']
-        self.datetime_value = expparam_json['datetime_value']
-        self.link_id = expparam_json['link_id']
-        self.value = expparam_json['value']
+        self.response_dict = response_dict
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.name = ParameterName.get(response_dict['name'].split('/')[-2])
+        self.string_value = response_dict['string_value']
+        self.numerical_value = response_dict['numerical_value']
+        self.datetime_value = response_dict['datetime_value']
+        self.link_id = response_dict['link_id']
+        self.value = response_dict['value']
 
     @staticmethod
     def list(exp_param_set):

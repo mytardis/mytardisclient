@@ -147,7 +147,8 @@ def render_api_schema_as_json(api_schema, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(api_schema.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        api_schema.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_api_schema_as_table(api_schema):
@@ -201,7 +202,8 @@ def render_api_endpoints_as_json(api_endpoints, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(api_endpoints.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        api_endpoints.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_api_endpoints_as_table(api_endpoints, display_heading=True):
@@ -260,7 +262,8 @@ def render_facility_as_json(facility, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(facility.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        facility.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_facility_as_table(facility, display_heading=True):
@@ -319,7 +322,8 @@ def render_facilities_as_json(facilities, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(facilities.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        facilities.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_facilities_as_table(facilities, display_heading=True):
@@ -380,7 +384,8 @@ def render_instrument_as_json(instrument, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(instrument.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        instrument.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_instrument_as_table(instrument):
@@ -433,7 +438,8 @@ def render_instruments_as_json(instruments, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(instruments.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        instruments.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_instruments_as_table(instruments, display_heading=True):
@@ -494,7 +500,8 @@ def render_experiment_as_json(experiment, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(experiment.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        experiment.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_experiment_as_table(experiment):
@@ -570,7 +577,8 @@ def render_experiments_as_json(experiments, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(experiments.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        experiments.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_experiments_as_table(experiments, display_heading=True):
@@ -632,7 +640,8 @@ def render_dataset_as_json(dataset, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(dataset.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        dataset.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_dataset_as_table(dataset):
@@ -706,7 +715,8 @@ def render_datasets_as_json(datasets, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(datasets.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        datasets.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_datasets_as_table(datasets, display_heading=True):
@@ -768,7 +778,8 @@ def render_datafile_as_json(datafile, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(datafile.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        datafile.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_datafile_as_table(datafile):
@@ -849,7 +860,8 @@ def render_datafiles_as_json(datafiles, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(datafiles.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        datafiles.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_datafiles_as_table(datafiles, display_heading=True):
@@ -914,7 +926,8 @@ def render_storage_box_as_json(storage_box, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(storage_box.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        storage_box.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_storage_box_as_table(storage_box):
@@ -989,7 +1002,8 @@ def render_storage_boxes_as_json(storage_boxes, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(storage_boxes.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        storage_boxes.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_storage_boxes_as_table(storage_boxes, display_heading=True):
@@ -1052,7 +1066,8 @@ def render_schema_as_json(schema, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(schema.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        schema.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_schema_as_table(schema):
@@ -1132,7 +1147,8 @@ def render_schemas_as_json(schemas, indent=2, sort_keys=True):
     :param sort_keys: If sort_keys is `True` (default: `False`), then the
         rendered JSON will be sorted by key.
     """
-    return json.dumps(schemas.json, indent=indent, sort_keys=sort_keys)
+    return json.dumps(
+        schemas.response_dict, indent=indent, sort_keys=sort_keys)
 
 
 def render_schemas_as_table(schemas, display_heading=True):

@@ -43,22 +43,22 @@ class DataFile(Model):
     Model class for MyTardis API v1's DataFileResource.
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, datafile_json, include_metadata=False):
+    def __init__(self, response_dict, include_metadata=False):
         from .replica import Replica
 
-        self.json = datafile_json
-        self.id = datafile_json['id']  # pylint: disable=invalid-name
-        self.dataset = datafile_json['dataset']
-        self.directory = datafile_json['directory'] or ""
-        self.filename = datafile_json['filename']
-        self.size = datafile_json['size']
-        self.md5sum = datafile_json['md5sum']
+        self.response_dict = response_dict
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.dataset = response_dict['dataset']
+        self.directory = response_dict['directory'] or ""
+        self.filename = response_dict['filename']
+        self.size = response_dict['size']
+        self.md5sum = response_dict['md5sum']
         self.replicas = []
-        for replica_json in datafile_json['replicas']:
+        for replica_json in response_dict['replicas']:
             self.replicas.append(Replica(replica_json))
         self.parameter_sets = []
         if include_metadata:
-            for datafile_param_set_json in datafile_json['parameter_sets']:
+            for datafile_param_set_json in response_dict['parameter_sets']:
                 self.parameter_sets.append(
                     DataFileParameterSet(datafile_param_set_json))
 
@@ -138,9 +138,7 @@ class DataFile(Model):
             (config.url, datafile_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        datafile_json = response.json()
-        return DataFile(datafile_json=datafile_json,
-                        include_metadata=include_metadata)
+        return DataFile(response.json(), include_metadata=include_metadata)
 
     @staticmethod
     def create(dataset_id, storagebox, dataset_path, path):
@@ -580,13 +578,13 @@ class DataFileParameterSet(object):
     See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
-    def __init__(self, datafile_paramset_json):
-        self.json = datafile_paramset_json
-        self.id = datafile_paramset_json['id']  # pylint: disable=invalid-name
-        self.datafile = datafile_paramset_json['datafile']
-        self.schema = Schema(datafile_paramset_json['schema'])
+    def __init__(self, response_dict):
+        self.response_dict = response_dict
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.datafile = response_dict['datafile']
+        self.schema = Schema(response_dict['schema'])
         self.parameters = []
-        for datafile_param_json in datafile_paramset_json['parameters']:
+        for datafile_param_json in response_dict['parameters']:
             self.parameters.append(DataFileParameter(datafile_param_json))
 
     @staticmethod
@@ -614,15 +612,15 @@ class DataFileParameter(object):
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, datafile_param_json):
-        self.json = datafile_param_json
-        self.id = datafile_param_json['id']  # pylint: disable=invalid-name
-        self.name = ParameterName.get(datafile_param_json['name'].split('/')[-2])
-        self.string_value = datafile_param_json['string_value']
-        self.numerical_value = datafile_param_json['numerical_value']
-        self.datetime_value = datafile_param_json['datetime_value']
-        self.link_id = datafile_param_json['link_id']
-        self.value = datafile_param_json['value']
+    def __init__(self, response_dict):
+        self.response_dict = response_dict
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.name = ParameterName.get(response_dict['name'].split('/')[-2])
+        self.string_value = response_dict['string_value']
+        self.numerical_value = response_dict['numerical_value']
+        self.datetime_value = response_dict['datetime_value']
+        self.link_id = response_dict['link_id']
+        self.value = response_dict['value']
 
     @staticmethod
     def list(datafile_param_set):

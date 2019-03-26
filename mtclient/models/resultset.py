@@ -14,17 +14,17 @@ class ResultSet(object):
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, model, url, json):
+    def __init__(self, model, url, response_dict):
         """
         Each record in the result set can be
         represented as an object of class model
         """
         self.model = model
         self.url = url
-        self.json = json
-        self.total_count = self.json['meta']['total_count']
-        self.limit = self.json['meta']['limit']
-        self.offset = self.json['meta']['offset']
+        self.response_dict = response_dict
+        self.total_count = self.response_dict['meta']['total_count']
+        self.limit = self.response_dict['meta']['limit']
+        self.offset = self.response_dict['meta']['offset']
         self._objects = None
 
     def __repr__(self):
@@ -33,24 +33,24 @@ class ResultSet(object):
         """
         if not self._objects:
             self._objects = []
-            for index in range(len(self.json['objects'])):
-                self._objects.append(self.model(self.json['objects'][index]))
+            for index in range(len(self.response_dict['objects'])):
+                self._objects.append(self.model(self.response_dict['objects'][index]))
         return "<ResultSet [%s]>" % ", ".join(str(obj) for obj in self._objects)
 
     def __len__(self):
         """
         Return number of records in ResultSet
         """
-        return len(self.json['objects'])
+        return len(self.response_dict['objects'])
 
     def __getitem__(self, key):
         """
         Get a record from the query set.
         """
         if 'include_metadata' in self.model.__init__.__code__.co_varnames:
-            return self.model(self.json['objects'][key],
+            return self.model(self.response_dict['objects'][key],
                               include_metadata=False)
-        return self.model(self.json['objects'][key])
+        return self.model(self.response_dict['objects'][key])
 
     def __iter__(self):
         """
@@ -59,6 +59,6 @@ class ResultSet(object):
         kwargs = {}
         if 'include_metadata' in self.model.__init__.__code__.co_varnames:
             kwargs['include_metadata'] = False
-        for index in range(len(self.json['objects'])):
-            args = [self.json['objects'][index]]
+        for index in range(len(self.response_dict['objects'])):
+            args = [self.response_dict['objects'][index]]
             yield self.model(*args, **kwargs)

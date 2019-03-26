@@ -16,12 +16,12 @@ class Facility(Model):
     """
     Model class for MyTardis API v1's FacilityResource.
     """
-    def __init__(self, facility_json):
-        self.id = facility_json['id']  # pylint: disable=invalid-name
-        self.name = facility_json['name']
-        self.json = facility_json
+    def __init__(self, response_dict):
+        self.id = response_dict['id']  # pylint: disable=invalid-name
+        self.name = response_dict['name']
+        self.response_dict = response_dict
         self.manager_group = \
-            Group(group_json=facility_json['manager_group'])
+            Group(group_json=response_dict['manager_group'])
 
     def __str__(self):
         """
@@ -75,5 +75,4 @@ class Facility(Model):
                                                       facility_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        facility_json = response.json()
-        return Facility(facility_json=facility_json)
+        return Facility(response.json())
