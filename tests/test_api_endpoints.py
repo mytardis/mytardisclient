@@ -11,7 +11,6 @@ from mtclient.conf import config
 from mtclient.models.api import ApiEndpoint, ApiSchema
 
 config.url = "https://mytardis-test.example.com"
-config.cache_backend = "dogpile.cache.null"
 
 
 def test_api_list():
