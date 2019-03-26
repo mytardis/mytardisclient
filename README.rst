@@ -35,7 +35,7 @@ Tests
 
 Tests can be run with::
 
-  py.test --cov=mtclient tests
+  pytest --cov=mtclient tests
 
 
 Building Documentation
