@@ -29,3 +29,19 @@ Use mytardisclient's Dataset model class to look up a public dataset
 
 The syntax is intended to be similar to Django ORM syntax, however it is not
 nearly as powerful yet.
+
+Tests
+~~~~~
+
+Tests can be run with::
+
+  py.test --cov=mtclient tests
+
+
+Building Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Documentation can be built with::
+
+ cd docs/
+ make html
