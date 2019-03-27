@@ -153,9 +153,7 @@ def build_datafile_parser(argument_parser):
     datafile_command_create_parser.add_argument(
         "path",
         help="The file to be represented in the datafile record, or "
-        "a directory containing the datafiles to create records for. "
-        "If a relative path is provided, the first component will be "
-        "assumed to be the local dataset path.")
+        "a directory containing the datafiles to create records for.")
 
     datafile_download_help = "Download a datafile."
     datafile_download_usage = textwrap.dedent("""\
