@@ -37,6 +37,9 @@ Tests can be run with::
 
   pytest --cov=mtclient tests
 
+or::
+
+  pytest --cov=mtclient tests --cov-report=html
 
 Building Documentation
 ~~~~~~~~~~~~~~~~~~~~~~
