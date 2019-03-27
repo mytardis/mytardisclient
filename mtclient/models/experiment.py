@@ -78,23 +78,16 @@ class Experiment(Model):
 
         :raises requests.exceptions.HTTPError:
         """
-        from ..utils.exceptions import DoesNotExist
-
         exp_id = kwargs.get("id")
         if not exp_id:
             raise NotImplementedError(
                 "Only the id keyword argument is supported for Experiment get "
                 "at this stage.")
         include_metadata = kwargs.get("include_metadata", False)
-        url = "%s/api/v1/experiment/?format=json&id=%s" \
-            % (config.url, exp_id)
+        url = "%s/api/v1/experiment/%s/?format=json" % (config.url, exp_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        experiments_json = response.json()
-        if experiments_json['meta']['total_count'] == 0:
-            message = "Experiment matching filter doesn't exist."
-            raise DoesNotExist(message, url, response, Experiment)
-        return Experiment(response_dict=experiments_json['objects'][0],
+        return Experiment(response_dict=response.json(),
                           include_metadata=include_metadata)
 
     @staticmethod
