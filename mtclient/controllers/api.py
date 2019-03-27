@@ -23,7 +23,7 @@ class ApiController(object):
             return self.list(args, render_format)
         if command == "get":
             return self.get(args, render_format)
-        raise Exception("Invalid command: %s" % args.command)
+        raise NotImplementedError("Invalid command: %s" % args.command)
 
     def list(self, _args, render_format):
         """
