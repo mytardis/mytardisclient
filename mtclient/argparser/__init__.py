@@ -24,6 +24,8 @@ class ArgParser(object):
         self.parser = ArgumentParser(prog='mytardis', description=description)
         self.parser.add_argument(
             "--verbose", action='store_true', help="More verbose output.")
+        self.parser.add_argument(
+            "--version", action='store_true', help="Display version.")
         self.model_parsers = \
             self.parser.add_subparsers(help='available models', dest='model')
 
@@ -37,7 +39,8 @@ class ArgParser(object):
         if args.model not in ('api', 'config', 'version',
                               'facility', 'instrument',
                               'experiment', 'dataset', 'datafile',
-                              'storagebox', 'schema'):
+                              'storagebox', 'schema') and \
+                not args.version:
             self.parser.error(
                 "model should be one of 'api', 'config', 'version', "
                 "'facility', 'instrument', "
