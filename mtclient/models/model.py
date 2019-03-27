@@ -38,6 +38,12 @@ class Manager(object):
         we attempt to index it or convert it to a list etc.
         """
 
+    @classmethod
+    def create(cls, **kwargs):
+        """
+        Override this with a method to create a single instance of the model
+        """
+
 
 class ModelMetaclass(type):
     """
@@ -55,6 +61,8 @@ class ModelMetaclass(type):
             cls._objects = Manager()
 
         setattr(cls._objects, "get", getattr(cls, "get"))
+        if hasattr(cls, "create"):
+            setattr(cls._objects, "create", getattr(cls, "create"))
 
         list_method = getattr(cls, "list")
         setattr(cls._objects, "all", list_method)
