@@ -93,4 +93,4 @@ class Model(with_metaclass(ModelMetaclass, object)):
         """
         if hasattr(self, "__str__"):
             return self.__str__()
-        return repr(self)
+        return super(Model, self).__repr__()
