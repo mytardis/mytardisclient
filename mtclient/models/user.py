@@ -11,16 +11,14 @@ from ..conf import config
 from ..utils.exceptions import IncompatibleMyTardisVersion
 from ..utils.exceptions import DoesNotExist
 from .group import Group
-from .model import Model
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class User(Model):
+class User(object):
     """
     Model class for MyTardis API v1's UserResource.
     """
-    # pylint: disable=missing-docstring
     # pylint: disable=too-many-instance-attributes
     def __init__(self,
                  username=None, name=None,
@@ -65,6 +63,12 @@ class User(Model):
         Return a string representation of a user
         """
         return "<%s: %s>" % (type(self).__name__, self.username)
+
+    def __repr__(self):
+        """
+        Return a string representation
+        """
+        return self.__str__()
 
     @staticmethod
     def get_user_by_username(username):
