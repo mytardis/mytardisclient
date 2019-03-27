@@ -93,8 +93,6 @@ def test_api_list_cli_table(capfd):
     with requests_mock.Mocker() as mocker:
         list_api_endpoints_url = "%s/api/v1/?format=json" % config.url
         mocker.get(list_api_endpoints_url, text=mock_api_list_response)
-        api_controller = ApiController()
-        args = Namespace(model='api', command='list', json=True, verbose=False)
 
         sys_argv = sys.argv
         sys.argv = ['mytardis', 'api', 'list']
@@ -213,10 +211,6 @@ def test_api_get_cli_table(capfd):
     with requests_mock.Mocker() as mocker:
         get_api_schema_url = "%s/api/v1/dataset/schema/?format=json" % config.url
         mocker.get(get_api_schema_url, text=mock_api_get_response)
-        api_controller = ApiController()
-        args = Namespace(
-            model='api', api_model='dataset', command='get', json=False,
-            verbose=False)
 
         sys_argv = sys.argv
         sys.argv = ['mytardis', 'api', 'get', 'dataset']
