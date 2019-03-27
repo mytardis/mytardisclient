@@ -161,15 +161,15 @@ class Config(object):
         API key and MyTardis URL.
         """
         if self.username == "":
-            raise Exception("MyTardis username is missing from config.")
+            raise LookupError("MyTardis username is missing from config.")
         if self.apikey == "":
-            raise Exception("MyTardis API key is missing from config.")
+            raise LookupError("MyTardis API key is missing from config.")
         if self.url == "":
-            raise Exception("MyTardis URL is missing from config.")
+            raise LookupError("MyTardis URL is missing from config.")
         parsed_url = urllib.parse.urlparse(self.url)
         if parsed_url.scheme not in ('http', 'https') or \
                 parsed_url.netloc == '':
-            raise Exception("Invalid MyTardis URL found in config: %s"
+            raise LookupError("Invalid MyTardis URL found in config: %s"
                             % self.url)
 
     def save(self, path=None):
