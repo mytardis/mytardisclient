@@ -91,22 +91,16 @@ class Dataset(Model):
 
         :raises requests.exceptions.HTTPError:
         """
-        from ..utils.exceptions import DoesNotExist
-
         dataset_id = kwargs.get("id")
         if not dataset_id:
             raise NotImplementedError(
                 "Only the id keyword argument is supported for Dataset get "
                 "at this stage.")
         include_metadata = kwargs.get("include_metadata", False)
-        url = config.url + "/api/v1/dataset/?format=json" + "&id=%s" % dataset_id
+        url = config.url + "/api/v1/dataset/%s/?format=json" % dataset_id
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        datasets_json = response.json()
-        if datasets_json['meta']['total_count'] == 0:
-            message = "Dataset matching filter doesn't exist."
-            raise DoesNotExist(message, url, response, Dataset)
-        return Dataset(response_dict=datasets_json['objects'][0],
+        return Dataset(response_dict=response.json(),
                        include_metadata=include_metadata)
 
     @staticmethod
