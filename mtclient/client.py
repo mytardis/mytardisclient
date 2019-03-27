@@ -53,7 +53,8 @@ def run():
                               disable_existing_loggers=False)
     logging.getLogger("requests").setLevel(logging.WARNING)
     logger = logging.getLogger(__name__)
-    logger.info("MyTardis Client v%s", VERSION)
+    if not args.json:
+        logger.info("MyTardis Client v%s", VERSION)
 
     if args.verbose and (not hasattr(args, 'json') or not args.json):
         print("General config: %s" % config_path)
