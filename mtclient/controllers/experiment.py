@@ -40,7 +40,8 @@ class ExperimentController(ModelCliController):
         print(render(experiment, render_format))
         if render_format == 'table':
             datasets = Dataset.list(experiment_id=args.experiment_id)
-            print(render(datasets, render_format, display_heading=False))
+            if datasets:
+                print(render(datasets, render_format, display_heading=False))
 
     def create(self, args, render_format):
         """
