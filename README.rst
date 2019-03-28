@@ -1,5 +1,12 @@
 mytardisclient
 --------------
+|travis| |codecov|
+
+.. |travis| image:: https://travis-ci.org/jameswettenhall/mytardisclient.svg?branch=master
+    :target: https://travis-ci.org/jameswettenhall/mytardisclient
+ 
+.. |codecov| image:: https://codecov.io/gh/jameswettenhall/mytardisclient/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/jameswettenhall/mytardisclient
 
 Command Line Interface and Python classes for interacting with MyTardis's REST API.
 
