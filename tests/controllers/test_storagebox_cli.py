@@ -15,8 +15,6 @@ import mtclient.client
 from mtclient.conf import config
 from mtclient.controllers.storagebox import StorageBoxController
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_storagebox_list_cli_json(capfd):
     """
@@ -118,7 +116,7 @@ def test_storagebox_list_cli_table(capfd):
     mock_boxes_list_response = json.dumps(mock_boxes_list)
     expected = textwrap.dedent("""
         Model: StorageBox
-        Query: https://mytardis-test.example.com/api/v1/storagebox/?format=json
+        Query: %s/api/v1/storagebox/?format=json
         Total Count: 1
         Limit: 20
         Offset: 0
@@ -128,7 +126,7 @@ def test_storagebox_list_cli_table(capfd):
         +====+=======================================+=========================+
         |  1 | local box at /home/mytardis/var/local | Storage box description |
         +----+---------------------------------------+-------------------------+
-    """)
+    """) % config.url
     with requests_mock.Mocker() as mocker:
         boxes_list_url = "%s/api/v1/storagebox/?format=json" % config.url
         mocker.get(boxes_list_url, text=mock_boxes_list_response)

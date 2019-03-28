@@ -10,8 +10,6 @@ import requests_mock
 from mtclient.conf import config
 from mtclient.models.schema import Schema, ParameterName
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_schema_list():
     """

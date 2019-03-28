@@ -15,8 +15,6 @@ import mtclient.client
 from mtclient.conf import config
 from mtclient.controllers.dataset import DatasetController
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_dataset_list_cli_json(capfd):
     """
@@ -98,7 +96,7 @@ def test_dataset_list_cli_table(capfd):
     mock_ds_list_response = json.dumps(mock_dataset_list)
     expected = textwrap.dedent("""
         Model: Dataset
-        Query: https://mytardis-test.example.com/api/v1/dataset/?format=json
+        Query: %s/api/v1/dataset/?format=json
         Total Count: 1
         Limit: 20
         Offset: 0
@@ -108,7 +106,7 @@ def test_dataset_list_cli_table(capfd):
         +============+=======================+=====================+============+
         |          1 | /api/v1/experiment/1/ | dataset description | None       |
         +------------+-----------------------+---------------------+------------+
-    """)
+    """) % config.url
     with requests_mock.Mocker() as mocker:
         dataset_list_url = "%s/api/v1/dataset/?format=json" % config.url
         mocker.get(dataset_list_url, text=mock_ds_list_response)

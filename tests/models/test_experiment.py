@@ -10,8 +10,6 @@ import requests_mock
 from mtclient.conf import config
 from mtclient.models.experiment import Experiment
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_experiment_list():
     """

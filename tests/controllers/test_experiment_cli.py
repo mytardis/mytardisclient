@@ -15,8 +15,6 @@ import mtclient.client
 from mtclient.conf import config
 from mtclient.controllers.experiment import ExperimentController
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_experiment_list_cli_json(capfd):
     """
@@ -112,7 +110,7 @@ def test_experiment_list_cli_table(capfd):
     mock_experiment_list_response = json.dumps(mock_experiment_list)
     expected = textwrap.dedent("""
         Model: Experiment
-        Query: https://mytardis-test.example.com/api/v1/experiment/?format=json&order_by=-created_time
+        Query: %s/api/v1/experiment/?format=json&order_by=-created_time
         Total Count: 1
         Limit: 20
         Offset: 0
@@ -122,7 +120,7 @@ def test_experiment_list_cli_table(capfd):
         +====+===================+=================+
         |  1 | Monash University | Test Experiment |
         +----+-------------------+-----------------+
-    """)
+    """) % config.url
     with requests_mock.Mocker() as mocker:
         experiment_list_url = "%s/api/v1/experiment/?format=json" % config.url
         mocker.get(experiment_list_url, text=mock_experiment_list_response)

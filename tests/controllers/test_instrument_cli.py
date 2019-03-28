@@ -13,8 +13,6 @@ import requests_mock
 import mtclient.client
 from mtclient.conf import config
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_instrument_get_cli_table(capfd):
     """

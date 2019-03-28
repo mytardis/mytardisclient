@@ -15,8 +15,6 @@ import mtclient.client
 from mtclient.conf import config
 from mtclient.controllers.datafile import DataFileController
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_datafile_list_cli_json(capfd):
     """
@@ -126,7 +124,7 @@ def test_datafile_list_cli_table(capfd):
     mock_df_list_response = json.dumps(mock_datafile_list)
     expected = textwrap.dedent("""
         Model: DataFile
-        Query: https://mytardis-test.example.com/api/v1/dataset_file/?format=json
+        Query: %s/api/v1/dataset_file/?format=json
         Total Count: 1
         Limit: 20
         Offset: 0
@@ -136,7 +134,7 @@ def test_datafile_list_cli_table(capfd):
         +=============+===============+=======================================+======================+==========+===========+=========+
         |           1 | testfile1.txt | local box at /home/mytardis/var/local | subdir/testfile1.txt | True     |  32 bytes | bogus   |
         +-------------+---------------+---------------------------------------+----------------------+----------+-----------+---------+
-    """)
+    """) % config.url
     with requests_mock.Mocker() as mocker:
         datafile_list_url = "%s/api/v1/dataset_file/?format=json" % config.url
         mocker.get(datafile_list_url, text=mock_df_list_response)

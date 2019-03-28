@@ -12,8 +12,6 @@ from mtclient.conf import config
 from mtclient.models.instrument import Instrument
 from mtclient.views import render
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_render_instrument():
     """

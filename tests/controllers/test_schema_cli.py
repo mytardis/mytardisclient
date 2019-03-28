@@ -15,8 +15,6 @@ import mtclient.client
 from mtclient.conf import config
 from mtclient.controllers.schema import SchemaController
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_schema_list_cli_json(capfd):
     """
@@ -96,7 +94,7 @@ def test_schema_list_cli_table(capfd):
     mock_schema_list_response = json.dumps(mock_schema_list)
     expected = textwrap.dedent("""
         Model: Schema
-        Query: https://mytardis-test.example.com/api/v1/schema/?format=json
+        Query: %s/api/v1/schema/?format=json
         Total Count: 1
         Limit: 20
         Offset: 0
@@ -106,7 +104,7 @@ def test_schema_list_cli_table(capfd):
         +====+=============+===========================+===================+=========+===========+========+
         |  1 | Schema Name | http://schema/namespace/1 | Experiment schema |         | True      | True   |
         +----+-------------+---------------------------+-------------------+---------+-----------+--------+
-    """)
+    """) % config.url
     with requests_mock.Mocker() as mocker:
         schema_list_url = "%s/api/v1/schema/?format=json" % config.url
         mocker.get(schema_list_url, text=mock_schema_list_response)

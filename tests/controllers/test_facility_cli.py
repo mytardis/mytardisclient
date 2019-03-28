@@ -15,8 +15,6 @@ import mtclient.client
 from mtclient.conf import config
 from mtclient.controllers.facility import FacilityController
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_facility_list_cli_json(capfd):
     """
@@ -96,7 +94,7 @@ def test_facility_list_cli_table(capfd):
     mock_facility_list_response = json.dumps(mock_facility_list)
     expected = textwrap.dedent("""
         Model: Facility
-        Query: https://mytardis-test.example.com/api/v1/facility/?format=json
+        Query: %s/api/v1/facility/?format=json
         Total Count: 1
         Limit: 20
         Offset: 0
@@ -106,7 +104,7 @@ def test_facility_list_cli_table(capfd):
         +====+===============+========================+
         |  1 | Test Facility | test-facility-managers |
         +----+---------------+------------------------+
-    """)
+    """) % config.url
     with requests_mock.Mocker() as mocker:
         facility_list_url = "%s/api/v1/facility/?format=json" % config.url
         mocker.get(facility_list_url, text=mock_facility_list_response)
@@ -208,7 +206,7 @@ def test_facility_get_cli_table(capfd):
 
 
         Model: Instrument
-        Query: https://mytardis-test.example.com/api/v1/instrument/?format=json&facility__id=1
+        Query: %s/api/v1/instrument/?format=json&facility__id=1
         Total Count: 1
         Limit: 20
         Offset: 0
@@ -218,7 +216,7 @@ def test_facility_get_cli_table(capfd):
         +====+=================+===========================+
         |  1 | Test Instrument | <Facility: Test Facility> |
         +----+-----------------+---------------------------+
-    """)
+    """) % config.url
     with requests_mock.Mocker() as mocker:
         get_facility_url = "%s/api/v1/facility/1/?format=json" % config.url
         mocker.get(get_facility_url, text=mock_facility_get_response)

@@ -15,8 +15,6 @@ import mtclient.client
 from mtclient.conf import config
 from mtclient.controllers.api import ApiController
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_api_list_cli_json(capfd):
     """

@@ -10,8 +10,6 @@ import requests_mock
 from mtclient.conf import config
 from mtclient.models.dataset import Dataset
 
-config.url = "https://mytardis-test.example.com"
-
 
 def test_dataset_list():
     """
