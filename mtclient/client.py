@@ -28,8 +28,6 @@ def run():
     """
     Main function for command-line interface.
     """
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-statements
     # pylint: disable=too-many-branches
 
     args = ArgParser().get_args()
