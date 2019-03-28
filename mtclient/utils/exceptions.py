@@ -9,18 +9,6 @@ class DuplicateKey(Exception):
     """
 
 
-class DoesNotExist(Exception):
-    """
-    Does not exist exception.
-    """
-    def __init__(self, message, url=None, response=None, model_class=None):
-        super(DoesNotExist, self).__init__(message)
-
-        self.url = url
-        self.response = response
-        self.model_class = model_class
-
-
 class SshException(Exception):
     """
     SSH exception.
@@ -28,57 +16,6 @@ class SshException(Exception):
     def __init__(self, message, returncode=None):
         super(SshException, self).__init__(message)
         self.returncode = returncode
-
-
-class StagingHostRefusedSshConnection(SshException):
-    """
-    Staging host refused SSH connection exception.
-    """
-
-
-class StagingHostSshPermissionDenied(SshException):
-    """
-    Staging host permission denied exception.
-    """
-
-
-class SshControlMasterLimit(SshException):
-    """
-    Reached max number of connections (or attempted connections)
-    in SSH ControlMaster (Mac OS X only).
-    This usually means there is a critical problem with SSHing
-    to the specified staging host.
-    """
-
-
-class NoActiveNetworkInterface(Exception):
-    """
-    No active network interface exception.
-    """
-
-
-class BrokenPipe(Exception):
-    """
-    Broken pipe exception.
-    """
-
-
-class IncompatibleMyTardisVersion(Exception):
-    """
-    Incompatible MyTardis version exception.
-    """
-
-
-class PrivateKeyDoesNotExist(Exception):
-    """
-    Private key does not exist exception.
-    """
-
-
-class InvalidFolderStructure(Exception):
-    """
-    Invalid folder structure exception.
-    """
 
 
 class InvalidConfig(Exception):
