@@ -40,7 +40,7 @@ class Experiment(Model):
         return "<%s: %s>" % (type(self).__name__, self.title)
 
     @staticmethod
-    def list(filters=None, limit=None, offset=None, order_by=None):
+    def list(filters=None, limit=None, offset=None, order_by="-created_time"):
         """
         Retrieve a list of experiments.
 

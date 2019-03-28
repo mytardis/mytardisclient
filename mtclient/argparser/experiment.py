@@ -58,7 +58,7 @@ def build_experiment_parser(argument_parser):
         "--offset",
         help="Skip this many records from the start of the result set.")
     experiment_command_list_parser.add_argument(
-        "--order_by",
+        "--order_by", default="-created_time",
         help="Order by this field.")
     experiment_command_list_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")
