@@ -35,7 +35,8 @@ class DatasetController(ModelCliController):
         Display dataset record.
         """
         # pylint: disable=no-self-use
-        dataset = Dataset.objects.get(id=args.dataset_id)
+        dataset = Dataset.objects.get(
+            id=args.dataset_id, include_metadata=args.metadata)
         print(render(dataset, render_format))
         if render_format == 'table':
             from mtclient.models.datafile import DataFile

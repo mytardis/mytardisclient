@@ -120,6 +120,8 @@ def build_dataset_parser(argument_parser):
     dataset_command_get_parser.add_argument("dataset_id",
                                             help="The dataset ID.")
     dataset_command_get_parser.add_argument(
+        "--metadata", action='store_true', help="Include metadata.")
+    dataset_command_get_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")
 
     dataset_create_help = "Create a dataset record."
