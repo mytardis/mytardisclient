@@ -101,6 +101,8 @@ def build_datafile_parser(argument_parser):
     datafile_command_get_parser.add_argument("datafile_id",
                                              help="The datafile ID.")
     datafile_command_get_parser.add_argument(
+        "--metadata", action='store_true', help="Include metadata.")
+    datafile_command_get_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")
 
     datafile_create_help = textwrap.dedent("""\

@@ -41,7 +41,8 @@ class DataFileController(ModelCliController):
         Display datafile record.
         """
         # pylint: disable=no-self-use
-        datafile = DataFile.objects.get(id=args.datafile_id)
+        datafile = DataFile.objects.get(
+            id=args.datafile_id, include_metadata=args.metadata)
         print(render(datafile, render_format))
 
     def create(self, args, render_format):
