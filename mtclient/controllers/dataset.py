@@ -40,7 +40,8 @@ class DatasetController(ModelCliController):
         if render_format == 'table':
             from mtclient.models.datafile import DataFile
             datafiles = DataFile.list(args.dataset_id)
-            print(render(datafiles, render_format))
+            if datafiles:
+                print(render(datafiles, render_format))
 
     def create(self, args, render_format):
         """
