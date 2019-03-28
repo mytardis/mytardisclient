@@ -120,9 +120,9 @@ class Config(object):
         :param path: The path to the config file, usually
             ~/.config/mytardisclient/mytardisclient.cfg
         """
-        self.url = ""
-        self.username = ""
-        self.apikey = ""
+        self.url = os.environ.get("MYTARDISCLIENT_URL", "")
+        self.username = os.environ.get("MYTARDISCLIENT_USERNAME", "")
+        self.apikey = os.environ.get("MYTARDISCLIENT_APIKEY", "")
 
         if path:
             self.path = path
