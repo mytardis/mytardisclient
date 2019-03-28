@@ -170,7 +170,7 @@ class Config(object):
         if parsed_url.scheme not in ('http', 'https') or \
                 parsed_url.netloc == '':
             raise LookupError("Invalid MyTardis URL found in config: %s"
-                            % self.url)
+                              % self.url)
 
     def save(self, path=None):
         """
