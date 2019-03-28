@@ -54,8 +54,8 @@ def test_schema_get():
         "hidden": False,
         "id": 1,
         "immutable": True,
-	"name": "Schema Name",
-	"namespace": "http://schema/namespace",
+        "name": "Schema Name",
+        "namespace": "http://schema/namespace",
         "resource_uri": "/api/v1/schema/1/",
         "subtype": "",
         "type": 1
@@ -73,15 +73,15 @@ def test_param_names_list():
     Test getting a list of parameter names from a schema ID
     """
     mock_pnames_list = {
-        "meta": {  
+        "meta": {
             "limit": 20,
             "next": None,
             "offset": 0,
             "previous": None,
             "total_count": 1
         },
-        "objects": [  
-            {  
+        "objects": [
+            {
                 "choices": "",
                 "comparison_type": 1,
                 "data_type": 2,
@@ -99,8 +99,8 @@ def test_param_names_list():
     }
     mock_list_response = json.dumps(mock_pnames_list)
     with requests_mock.Mocker() as mocker:
-        list_schemas_url = "%s/api/v1/parametername/?format=json" % config.url
-        mocker.get(list_schemas_url, text=mock_list_response)
+        list_pnames_url = "%s/api/v1/parametername/?format=json" % config.url
+        mocker.get(list_pnames_url, text=mock_list_response)
         param_names = ParameterName.list(schema_id=1)
         assert param_names.response_dict == mock_pnames_list
 
@@ -113,8 +113,8 @@ def test_pname_get():
         "hidden": False,
         "id": 1,
         "immutable": True,
-	"name": "Schema Name",
-	"namespace": "http://schema/namespace",
+        "name": "Schema Name",
+        "namespace": "http://schema/namespace",
         "resource_uri": "/api/v1/schema/1/",
         "subtype": "",
         "type": 1
