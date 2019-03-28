@@ -73,9 +73,9 @@ def render_datafile_as_table(datafile):
                       "Link ID"])
         for datafile_param in datafile_param_set.parameters:
             table.add_row([datafile_param.id,
-                           datafile_param.name.schema,
-                           datafile_param.name,
-                           datafile_param.string_value,
+                           datafile_param.name.schema.name,
+                           datafile_param.name.name,
+                           datafile_param.string_value or "",
                            datafile_param.numerical_value or '',
                            datafile_param.datetime_value or '',
                            datafile_param.link_id or ''])
