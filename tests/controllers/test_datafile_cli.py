@@ -184,7 +184,7 @@ def test_datafile_get_cli_json(capfd):
         df_controller = DataFileController()
         args = Namespace(
             model='datafile', command='get', datafile_id=1, json=True,
-            verbose=False)
+            metadata=False, verbose=False)
         df_controller.get(args, render_format="json")
         out, _ = capfd.readouterr()
         assert json.loads(out) == mock_datafile
@@ -205,6 +205,32 @@ def test_datafile_get_cli_table(capfd):
         "mimetype": "text/plain",
         "modification_time": None,
         "parameter_sets": [
+            {
+                "id": 1,
+                "datafile": "/api/v1/dataset_file/1/",
+                "schema": {
+                    "id": 1,
+                    "name": "Series Metadata",
+                    "namespace": "http://schema/namespace",
+                    "hidden": False,
+                    "immutable": True,
+                    "subtype": "",
+                    "type": 1
+                },
+                "parameters": [
+                    {
+                        "id": 1,
+                        "name": "/api/v1/parametername/1/",
+                        "parameterset": "/api/v1/datafileparameterset/1/",
+                        "resource_uri": "/api/v1/datafileparameter/1/",
+                        "string_value": "param value",
+                        "numerical_value": None,
+                        "datetime_value": None,
+                        "link_id": None,
+                        "value": None
+                    }
+                ]
+            }
         ],
         "replicas": [
             {
@@ -220,6 +246,32 @@ def test_datafile_get_cli_table(capfd):
         "size": 32
     }
     mock_datafile_get_response = json.dumps(mock_datafile)
+    mock_schema = {
+        "hidden": False,
+        "id": 1,
+        "immutable": True,
+        "name": "Schema Name",
+        "namespace": "http://schema/namespace",
+        "resource_uri": "/api/v1/schema/1/",
+        "subtype": "",
+        "type": 1
+    }
+    mock_schema_response = json.dumps(mock_schema)
+    mock_pname = {
+        "id": 1,
+        "choices": "",
+        "comparison_type": 1,
+        "data_type": 2,
+        "full_name": "Parameter Name",
+        "immutable": True,
+        "is_searchable": False,
+        "name": "param name",
+        "order": 1,
+        "resource_uri": "/api/v1/parametername/1/",
+        "schema": "/api/v1/schema/1/",
+        "units": ""
+    }
+    mock_pname_response = json.dumps(mock_pname)
     expected = textwrap.dedent("""
         +----------------+---------------------------------------+
         | DataFile field |                 Value                 |
@@ -242,13 +294,23 @@ def test_datafile_get_cli_table(capfd):
         +----------------+---------------------------------------+
         | MD5 Sum        | bogus                                 |
         +----------------+---------------------------------------+
+
+        +----------------------+-------------+----------------+--------------+-----------------+----------------+---------+
+        | DataFileParameter ID |   Schema    | Parameter Name | String Value | Numerical Value | Datetime Value | Link ID |
+        +======================+=============+================+==============+=================+================+=========+
+        |                    1 | Schema Name | param name     | param value  |                 |                |         |
+        +----------------------+-------------+----------------+--------------+-----------------+----------------+---------+
     """)
     with requests_mock.Mocker() as mocker:
         get_datafile_url = "%s/api/v1/dataset_file/1/?format=json" % config.url
         mocker.get(get_datafile_url, text=mock_datafile_get_response)
+        get_schema_url = "%s/api/v1/schema/1/?format=json" % config.url
+        mocker.get(get_schema_url, text=mock_schema_response)
+        get_pname_url = "%s/api/v1/parametername/1/?format=json" % config.url
+        mocker.get(get_pname_url, text=mock_pname_response)
 
         sys_argv = sys.argv
-        sys.argv = ['mytardis', 'datafile', 'get', '1']
+        sys.argv = ['mytardis', 'datafile', 'get', '1', '--metadata']
         mtclient.client.run()
         out, _ = capfd.readouterr()
         assert out.strip() == expected.strip()
