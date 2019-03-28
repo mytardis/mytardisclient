@@ -7,8 +7,6 @@ Install::
 
     pip install git+https://github.com/jameswettenhall/mytardisclient.git@master#egg=mytardisclient
 
-Documentation: https://pythonhosted.org/mytardisclient/
-
 Example
 ~~~~~~~
 
