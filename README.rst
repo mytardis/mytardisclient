@@ -35,11 +35,11 @@ Tests
 
 Tests can be run with::
 
-  pytest --cov=mtclient tests
+  pytest --cov=mtclient
 
 or::
 
-  pytest --cov=mtclient tests --cov-report=html
+  pytest --cov=mtclient --cov-report=html
 
 Building Documentation
 ~~~~~~~~~~~~~~~~~~~~~~
