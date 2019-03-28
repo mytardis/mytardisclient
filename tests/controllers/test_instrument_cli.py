@@ -1,7 +1,7 @@
 """
-test_facility_cli.py
+test_instrument_cli.py
 
-Tests for querying the MyTardis REST API's facility endpoints
+Tests for querying the MyTardis REST API's instrument endpoints
 via the command-line interface
 """
 import json
