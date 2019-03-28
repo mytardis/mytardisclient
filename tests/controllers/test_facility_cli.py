@@ -146,9 +146,9 @@ def test_facility_get_cli_json(capfd):
         assert json.loads(out) == mock_facility
 
 
-def test_api_get_cli_table(capfd):
+def test_facility_get_cli_table(capfd):
     """
-    Test getting API endpoint schema via the command-line interface,
+    Test getting facility record via the command-line interface,
     requesting output in ASCII table format
     """
     mock_facility = {
