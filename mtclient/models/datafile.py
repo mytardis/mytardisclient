@@ -570,7 +570,6 @@ class DataFile(Model):
 class DataFileParameterSet(object):
     """
     Model class for MyTardis API v1's DataFileParameterSetResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     def __init__(self, response_dict):
@@ -603,7 +602,6 @@ class DataFileParameterSet(object):
 class DataFileParameter(object):
     """
     Model class for MyTardis API v1's DataFileParameterResource.
-    See: https://github.com/mytardis/mytardis/blob/3.7/tardis/tardis_portal/api.py
     """
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
