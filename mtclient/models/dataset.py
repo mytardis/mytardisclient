@@ -29,18 +29,16 @@ class Dataset(Model):
         self.description = None
         self.instrument = None
         self.experiments = []
+        for key in self.__dict__:
+            if key in response_dict:
+                self.__dict__[key] = response_dict[key]
+        if response_dict['instrument']:
+            self.instrument = Instrument(response_dict['instrument'])
         self.parameter_sets = []
-        if response_dict:
-            for key in self.__dict__:
-                if key in response_dict:
-                    self.__dict__[key] = response_dict[key]
-            if response_dict['instrument']:
-                self.instrument = Instrument(response_dict['instrument'])
-            if include_metadata:
-                self.parameter_sets = []
-                for dataset_param_set_json in response_dict['parameter_sets']:
-                    self.parameter_sets.append(
-                        DatasetParameterSet(dataset_param_set_json))
+        if include_metadata:
+            for dataset_param_set_json in response_dict['parameter_sets']:
+                self.parameter_sets.append(
+                    DatasetParameterSet(dataset_param_set_json))
 
     def __str__(self):
         """
