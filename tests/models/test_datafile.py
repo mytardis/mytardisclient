@@ -5,6 +5,9 @@ Tests for functionality to query the DataFile model via
 the MyTardis REST API's datafile resource
 """
 import json
+import tempfile
+
+import pytest
 import requests_mock
 
 from mtclient.conf import config
@@ -29,7 +32,7 @@ def test_datafile_list():
             "id": 1,
             "created_time": "2016-11-10T13:50:25.258483",
             "dataset": "/api/v1/dataset/1/",
-            "directory": "",
+            "directory": "subdir",
             "filename": "testfile1.txt",
             "md5sum": "bogus",
             "mimetype": "text/plain",
@@ -66,7 +69,7 @@ def test_datafile_get():
         "id": 1,
         "created_time": "2016-11-10T13:50:25.258483",
         "dataset": "/api/v1/dataset/1/",
-        "directory": "",
+        "directory": "subdir",
         "filename": "testfile1.txt",
         "md5sum": "bogus",
         "mimetype": "text/plain",
@@ -92,6 +95,12 @@ def test_datafile_get():
         mocker.get(get_datafile_url, text=mock_get_response)
         datafile = DataFile.objects.get(id=1)
         assert datafile.response_dict == mock_datafile
+        assert str(datafile) == "<DataFile: subdir/testfile1.txt>"
+        with pytest.raises(NotImplementedError) as err:
+            DataFile.objects.get(invalid_key="value")
+            assert str(err) == (
+                "Only the id keyword argument is supported for DataFile get "
+                "at this stage.")
 
 
 def test_datafile_create():
@@ -141,7 +150,7 @@ def test_datafile_create():
         "id": 1,
         "created_time": "2016-11-10T13:50:25.258483",
         "dataset": "/api/v1/dataset/1/",
-        "directory": "",
+        "directory": "subdir",
         "filename": "testfile1.txt",
         "md5sum": "bogus",
         "mimetype": "text/plain",
@@ -184,3 +193,26 @@ def test_datafile_create():
             size=32,
             md5sum="bogus")
         assert datafile.response_dict == mock_new_datafile
+
+
+def test_md5_sum():
+    """
+    Test calculating the MD5 sum of a datafile
+    """
+    import os
+    import sys
+
+    from mtclient.models.datafile import md5_sum
+
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        tmpfile_name = tmpfile.name
+
+    with open(tmpfile_name, 'w') as tmpfile:
+        tmpfile.write("Hello, world!\n")
+
+    assert md5_sum(tmpfile_name) == "746308829575e17c3331bbcb00c0898b"
+
+    try:
+        os.remove(tmpfile_name)
+    except IOError as err:
+        sys.stderr.write("%s\n" % err)
