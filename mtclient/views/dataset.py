@@ -64,9 +64,9 @@ def render_dataset_as_table(dataset):
                       "Link ID"])
         for dataset_param in dataset_param_set.parameters:
             table.add_row([dataset_param.id,
-                           dataset_param.name.schema,
-                           dataset_param.name,
-                           dataset_param.string_value,
+                           dataset_param.name.schema.name,
+                           dataset_param.name.name,
+                           dataset_param.string_value or "",
                            dataset_param.numerical_value or '',
                            dataset_param.datetime_value or '',
                            dataset_param.link_id or ''])
