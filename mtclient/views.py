@@ -948,23 +948,25 @@ def render_storage_box_as_table(storage_box):
     table.add_row(["Status", storage_box.status])
     storage_box_options_attributes += table.draw() + "\n"
 
-    storage_box_options_attributes += "\n"
-    table = Texttable(max_width=0)
-    table.set_cols_align(["r", 'l'])
-    table.set_cols_valign(['m', 'm'])
-    table.header(["StorageBoxOption Key", "StorageBoxOption Value"])
-    for option in storage_box.options:
-        table.add_row([option.key, option.value])
-    storage_box_options_attributes += table.draw() + "\n"
+    if storage_box.options:
+        storage_box_options_attributes += "\n"
+        table = Texttable(max_width=0)
+        table.set_cols_align(["r", 'l'])
+        table.set_cols_valign(['m', 'm'])
+        table.header(["StorageBoxOption Key", "StorageBoxOption Value"])
+        for option in storage_box.options:
+            table.add_row([option.key, option.value])
+        storage_box_options_attributes += table.draw() + "\n"
 
-    storage_box_options_attributes += "\n"
-    table = Texttable(max_width=0)
-    table.set_cols_align(["r", 'l'])
-    table.set_cols_valign(['m', 'm'])
-    table.header(["StorageBoxAttribute Key", "StorageBoxAttribute Value"])
-    for attribute in storage_box.attributes:
-        table.add_row([attribute.key, attribute.value])
-    storage_box_options_attributes += table.draw() + "\n"
+    if storage_box.attributes:
+        storage_box_options_attributes += "\n"
+        table = Texttable(max_width=0)
+        table.set_cols_align(["r", 'l'])
+        table.set_cols_valign(['m', 'm'])
+        table.header(["StorageBoxAttribute Key", "StorageBoxAttribute Value"])
+        for attribute in storage_box.attributes:
+            table.add_row([attribute.key, attribute.value])
+        storage_box_options_attributes += table.draw() + "\n"
 
     return storage_box_options_attributes
 
