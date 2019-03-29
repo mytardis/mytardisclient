@@ -1,7 +1,7 @@
 # requirements.txt
 
 clint==0.5.1
-configparser==3.7.3
+configparser==3.7.4
 ndg-httpsclient==0.5.1
 pyasn1==0.4.5
 pyopenssl==19.0.0
