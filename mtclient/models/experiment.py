@@ -17,16 +17,15 @@ class Experiment(Model):
     """
     Model class for MyTardis API v1's ExperimentResource.
     """
-    def __init__(self, response_dict=None, include_metadata=False):
+    def __init__(self, response_dict, include_metadata=False):
         self.response_dict = response_dict
         self.id = None  # pylint: disable=invalid-name
         self.title = None
         self.description = None
         self.institution_name = None
-        if response_dict:
-            for key in self.__dict__:
-                if key in response_dict:
-                    self.__dict__[key] = response_dict[key]
+        for key in self.__dict__:
+            if key in response_dict:
+                self.__dict__[key] = response_dict[key]
         self.parameter_sets = []
         if include_metadata:
             for exp_param_set_json in response_dict['parameter_sets']:
@@ -87,8 +86,7 @@ class Experiment(Model):
         url = "%s/api/v1/experiment/%s/?format=json" % (config.url, exp_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        return Experiment(response_dict=response.json(),
-                          include_metadata=include_metadata)
+        return Experiment(response.json(), include_metadata=include_metadata)
 
     @staticmethod
     def create(title, description="", institution=None, params_file_json=None):
