@@ -66,9 +66,9 @@ def render_experiment_as_table(experiment):
                       "Link ID"])
         for exp_param in exp_param_set.parameters:
             table.add_row([exp_param.id,
-                           exp_param.name.schema,
-                           exp_param.name,
-                           exp_param.string_value,
+                           exp_param.name.schema.name,
+                           exp_param.name.name,
+                           exp_param.string_value or '',
                            exp_param.numerical_value or '',
                            exp_param.datetime_value or '',
                            exp_param.link_id or ''])
