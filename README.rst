@@ -2,11 +2,11 @@ mytardisclient
 --------------
 |travis| |codecov| |readthedocs|
 
-.. |travis| image:: https://travis-ci.org/jameswettenhall/mytardisclient.svg?branch=master
-    :target: https://travis-ci.org/jameswettenhall/mytardisclient
- 
-.. |codecov| image:: https://codecov.io/gh/jameswettenhall/mytardisclient/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/jameswettenhall/mytardisclient
+ .. |travis| image:: https://travis-ci.org/mytardis/mytardisclient.svg?branch=master
+    :target: https://travis-ci.org/mytardis/mytardisclient
+    
+.. |codecov| image:: https://codecov.io/gh/mytardis/mytardisclient/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/mytardis/mytardisclient
 
 .. |readthedocs| image:: https://readthedocs.org/projects/mytardisclient/badge/?version=latest
   :target: https://mytardisclient.readthedocs.io/en/latest/?badge=latest
