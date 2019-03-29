@@ -34,20 +34,7 @@ class ArgParser(object):
         Builds argument parser and retrieves arguments.
         """
         self.build_parser()
-        args = self.parser.parse_args()
-
-        if args.model not in ('api', 'config', 'version',
-                              'facility', 'instrument',
-                              'experiment', 'dataset', 'datafile',
-                              'storagebox', 'schema') and \
-                not args.version:
-            self.parser.error(
-                "model should be one of 'api', 'config', 'version', "
-                "'facility', 'instrument', "
-                "'experiment', 'dataset', 'datafile', 'storagebox', "
-                "'schema'.")
-
-        return args
+        return self.parser.parse_args()
 
     def build_parser(self):
         """
