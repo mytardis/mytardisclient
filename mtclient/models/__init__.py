@@ -1,3 +1,3 @@
 """
-mytardisclient/models/__init__.py
+mtclient/models/__init__.py
 """

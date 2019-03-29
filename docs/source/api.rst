@@ -4,109 +4,109 @@ MyTardis Client API
 MyTardis Client provides various Python classes for interacting
 with MyTardis's REST API.
 
-mytardisclient.models.api
-^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.api
+^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.api
+.. automodule:: mtclient.models.api
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.config
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.config
+^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.config
+.. automodule:: mtclient.models.config
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.facility
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.facility
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.facility
+.. automodule:: mtclient.models.facility
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.instrument
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.instrument
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.instrument
+.. automodule:: mtclient.models.instrument
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.experiment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.experiment
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.experiment
+.. automodule:: mtclient.models.experiment
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.dataset
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.dataset
+^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.dataset
+.. automodule:: mtclient.models.dataset
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.datafile
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.datafile
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.datafile
+.. automodule:: mtclient.models.datafile
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.schema
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.schema
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.schema
+.. automodule:: mtclient.models.schema
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.storagebox
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.storagebox
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.storagebox
+.. automodule:: mtclient.models.storagebox
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.models.resultset
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mtclient.models.resultset
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.models.resultset
+.. automodule:: mtclient.models.resultset
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.views
-^^^^^^^^^^^^^^^^^^^^
+mtclient.views
+^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.views
+.. automodule:: mtclient.views
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
 
-mytardisclient.conf
-^^^^^^^^^^^^^^^^^^^^
+mtclient.conf
+^^^^^^^^^^^^^^
 
-.. automodule:: mytardisclient.conf.__init__
+.. automodule:: mtclient.conf.__init__
     :members:
     :undoc-members:
     :inherited-members:
