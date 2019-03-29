@@ -1,6 +1,6 @@
 mytardisclient
 --------------
-|travis| |codecov| |readthedocs| |python3|
+|travis| |codecov| |readthedocs| |pyup| |python3|
 
  .. |travis| image:: https://travis-ci.org/mytardis/mytardisclient.svg?branch=master
     :target: https://travis-ci.org/mytardis/mytardisclient
@@ -12,6 +12,10 @@ mytardisclient
   :target: https://mytardisclient.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
 
+.. |pyup| image:: https://pyup.io/repos/github/mytardis/mytardisclient/shield.svg
+     :target: https://pyup.io/repos/github/mytardis/mytardisclient/
+     :alt: Updates
+     
 .. |python3| image:: https://pyup.io/repos/github/mytardis/mytardisclient/python-3-shield.svg
      :target: https://pyup.io/repos/github/mytardis/mytardisclient/
      :alt: Python 3
