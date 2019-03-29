@@ -6,7 +6,7 @@ mytardisclient
     :target: https://travis-ci.org/mytardis/mytardisclient
     
 .. |codecov| image:: https://codecov.io/gh/mytardis/mytardisclient/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/mytardis/mytardisclient
+  :target: https://codecov.io/gh/mytardis/mytardisclient/commits
 
 .. |readthedocs| image:: https://readthedocs.org/projects/mytardisclient/badge/?version=latest
   :target: https://mytardisclient.readthedocs.io/en/latest/?badge=latest
