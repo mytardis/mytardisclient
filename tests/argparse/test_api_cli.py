@@ -1,5 +1,5 @@
 """
-test/argparse/test_api_cli.py
+tests/argparse/test_api_cli.py
 """
 import sys
 
