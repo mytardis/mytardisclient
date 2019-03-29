@@ -1,6 +1,6 @@
 mytardisclient
 --------------
-|travis| |codecov| |readthedocs|
+|travis| |codecov| |readthedocs| |python3|
 
  .. |travis| image:: https://travis-ci.org/mytardis/mytardisclient.svg?branch=master
     :target: https://travis-ci.org/mytardis/mytardisclient
@@ -11,6 +11,10 @@ mytardisclient
 .. |readthedocs| image:: https://readthedocs.org/projects/mytardisclient/badge/?version=latest
   :target: https://mytardisclient.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
+
+.. |python3| image:: https://pyup.io/repos/github/mytardis/mytardisclient/python-3-shield.svg
+     :target: https://pyup.io/repos/github/mytardis/mytardisclient/
+     :alt: Python 3
 
 Command Line Interface and Python classes for interacting with MyTardis's REST API.
 
