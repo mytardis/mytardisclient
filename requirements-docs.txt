@@ -1,5 +1,7 @@
 # requirements-docs.txt
 
+-r requirements.txt
+
 Sphinx==1.8.5
 sphinx-argparse==0.2.5
 sphinx-rtd-theme==0.4.3
