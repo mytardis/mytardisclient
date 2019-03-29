@@ -2,14 +2,13 @@
 Model class for the configuration,
 usually stored in ~/.config/mytardisclient/mytardisclient.cfg
 """
-
-# pylint: disable=missing-docstring
-
 import os
 import json
 
 from configparser import ConfigParser
 from six.moves import urllib
+
+from ..utils.exceptions import InvalidConfig
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.config',
                                    'mytardisclient', 'mytardisclient.cfg')
@@ -86,6 +85,8 @@ class Config(object):
 
     def __unicode__(self):
         attrs = dict(path=self.path,
+                     logfile_path=self.logfile_path,
+                     logging_config_path=self.logging_config_path,
                      url=self.url,
                      username=self.username,
                      apikey=self.apikey,
@@ -100,13 +101,18 @@ class Config(object):
 
     @property
     def hostname(self):
+        """
+        Determine the MyTardis hostname from the MyTardis URL
+        """
         parsed_url = urllib.parse.urlparse(self.url)
         return parsed_url.netloc
 
     @property
     def datasets_path(self):
-        #: Location to create symlinks to dataset folders.
-        #: Default: ~/.config/mytardisclient/servers/[mytardis_hostname]/
+        """
+        Location to create symlinks to dataset folders.
+        Default: ~/.config/mytardisclient/servers/[mytardis_hostname]/
+        """
         datasets_path = os.path.join(DATASETS_PATH_PREFIX, self.hostname)
         if not os.path.exists(datasets_path):
             os.makedirs(datasets_path)
@@ -161,16 +167,17 @@ class Config(object):
         API key and MyTardis URL.
         """
         if self.username == "":
-            raise LookupError("MyTardis username is missing from config.")
+            raise InvalidConfig("MyTardis username is missing from config.")
         if self.apikey == "":
-            raise LookupError("MyTardis API key is missing from config.")
+            raise InvalidConfig("MyTardis API key is missing from config.")
         if self.url == "":
-            raise LookupError("MyTardis URL is missing from config.")
+            raise InvalidConfig("MyTardis URL is missing from config.")
         parsed_url = urllib.parse.urlparse(self.url)
         if parsed_url.scheme not in ('http', 'https') or \
                 parsed_url.netloc == '':
-            raise LookupError("Invalid MyTardis URL found in config: %s"
-                              % self.url)
+            raise InvalidConfig("Invalid MyTardis URL found in config: %s"
+                                % self.url)
+        return True
 
     def save(self, path=None):
         """
