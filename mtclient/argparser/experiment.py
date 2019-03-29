@@ -104,6 +104,8 @@ def build_experiment_parser(argument_parser):
     experiment_command_get_parser.add_argument("experiment_id",
                                                help="The experiment ID.")
     experiment_command_get_parser.add_argument(
+        "--metadata", action='store_true', help="Include metadata.")
+    experiment_command_get_parser.add_argument(
         "--json", action='store_true', help="Display results in JSON format.")
 
     experiment_create_help = "Create an experiment record."

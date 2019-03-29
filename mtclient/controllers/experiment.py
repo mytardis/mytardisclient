@@ -36,7 +36,8 @@ class ExperimentController(ModelCliController):
         Display experiment record.
         """
         # pylint: disable=no-self-use
-        experiment = Experiment.objects.get(id=args.experiment_id)
+        experiment = Experiment.objects.get(
+            id=args.experiment_id, include_metadata=args.metadata)
         print(render(experiment, render_format))
         if render_format == 'table':
             datasets = Dataset.list(experiment_id=args.experiment_id)
