@@ -5,6 +5,8 @@ Tests for functionality to query the Schema model via
 the MyTardis REST API's facility resource
 """
 import json
+
+import pytest
 import requests_mock
 
 from mtclient.conf import config
@@ -64,6 +66,12 @@ def test_schema_get():
         mocker.get(get_schema_url, text=mock_get_response)
         schema = Schema.objects.get(id=1)
         assert schema.response_dict == mock_schema
+        assert str(schema) == "<Schema: Schema Name>"
+        with pytest.raises(NotImplementedError) as err:
+            Schema.objects.get(invalid_key="value")
+            assert str(err) == (
+                "Only the id keyword argument is supported for Schema get "
+                "at this stage.")
 
 
 def test_param_names_list():
@@ -140,3 +148,9 @@ def test_pname_get():
         mocker.get(get_pname_url, text=mock_pname_response)
         pname = ParameterName.objects.get(id=1)
         assert pname.response_dict == mock_pname
+        assert str(pname) == "<ParameterName: Parameter Name>"
+        with pytest.raises(NotImplementedError) as err:
+            ParameterName.objects.get(invalid_key="value")
+            assert str(err) == (
+                "Only the id keyword argument is supported for ParameterName get "
+                "at this stage.")
