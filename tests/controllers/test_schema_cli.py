@@ -170,6 +170,18 @@ def test_schema_get_cli_table(capfd):
         },
         "objects": [
             {
+                "id": 1,
+                "name": "param-name1",
+                "full_name": "Parameter Name1",
+                "choices": "",
+                "comparison_type": 8,
+                "data_type": 7,
+                "immutable": False,
+                "is_searchable": False,
+                "order": 1,
+                "resource_uri": "/api/v1/parametername/1/",
+                "schema": "/api/v1/schema/1/",
+                "units": ""
             }
         ]
     }
@@ -192,6 +204,12 @@ def test_schema_get_cli_table(capfd):
         +--------------+---------------------------+
         | Hidden       | True                      |
         +--------------+---------------------------+
+
+        +------------------+-----------------+-------------+-------------+-------+-----------+---------------+-------+---------+-----------------+
+        | ParameterName ID |    Full Name    |    Name     |  Data Type  | Units | Immutable | Is Searchable | Order | Choices | Comparison Type |
+        +==================+=================+=============+=============+=======+===========+===============+=======+=========+=================+
+        |                1 | Parameter Name1 | param-name1 | Long String |       | False     | False         | 1     |         | Contains        |
+        +------------------+-----------------+-------------+-------------+-------+-----------+---------------+-------+---------+-----------------+
     """)
     with requests_mock.Mocker() as mocker:
         get_schema_url = "%s/api/v1/schema/1/?format=json" % config.url
@@ -200,7 +218,7 @@ def test_schema_get_cli_table(capfd):
         mocker.get(pnames_url, text=mock_pnames_response)
 
         sys_argv = sys.argv
-        sys.argv = ['mytardis', 'schema', 'get', '1']
+        sys.argv = ['mytardis', 'schema', 'get', '1', '--params']
         mtclient.client.run()
         out, _ = capfd.readouterr()
         assert out.strip() == expected.strip()
