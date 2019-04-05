@@ -414,12 +414,14 @@ class DataFile(Model):
                 return
         with open(filename, 'wb') as fileobj:
             total_length = int(response.headers.get('content-length'))
+            # Hide progress bar for small files:
             hide = total_length < 10000000  # 10 MB
+            chunk_size = 1000000
             for chunk in progress.bar(
-                    response.iter_content(chunk_size=1024),
+                    response.iter_content(chunk_size=chunk_size),
                     hide=hide,
                     label="Downloading: %s " % filename,
-                    expected_size=(total_length / 1024) + 1):
+                    expected_size=(total_length / chunk_size) + 1):
                 # filter out keep-alive new chunks:
                 if chunk:
                     fileobj.write(chunk)
