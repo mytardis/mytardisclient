@@ -31,17 +31,14 @@ class QuerySet(object):
         # internal self._offset (which will be added to the user-requested
         # self.offset) will be incremented after each page of results has
         # been retrieved from the REST API.
-        self._offset = 0
+        self._offset = offset or 0
 
     def _execute_query(self):
         """
         The user has requested something which requires evaluating the query
         """
-        #self._result_set = self.model.list(
-            #filters=self.filters, limit=self.limit, offset=self.offset,
-            #order_by=self.order_by)
         self._result_set = self.model.list(
-            filters=self.filters, limit=self.limit, offset=self.offset,
+            filters=self.filters, limit=self.limit, offset=self._offset,
             order_by=self.order_by)
 
     def __repr__(self):
@@ -68,10 +65,9 @@ class QuerySet(object):
         """
         if not self._result_set:
             self._execute_query()
-        #for index in range(0, min(self._result_set.total_count, self._result_set.limit)):
         for index in range(0, self._result_set.total_count):
             if index == self._result_set.offset + self._result_set.limit:
-                self._execute_query()
                 self._offset += self._result_set.limit
+                self._execute_query()
             response_dict = self._result_set.response_dict['objects'][index - self._offset]
             yield self.model(response_dict)
