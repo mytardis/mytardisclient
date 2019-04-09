@@ -25,6 +25,7 @@ class ResultSet(object):
         self.total_count = self.response_dict['meta']['total_count']
         self.limit = self.response_dict['meta']['limit']
         self.offset = self.response_dict['meta']['offset']
+        self.next = self.response_dict['meta']['next']
         self._objects = None
 
     def __repr__(self):
