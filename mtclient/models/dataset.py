@@ -165,13 +165,8 @@ class Dataset(Model):
         else:
             os.makedirs(path)
         print("Downloading to: %s/" % path)
-        working_dir = os.getcwd()
-        os.chdir(path)
-        try:
-            for datafile in DataFile.objects.filter(dataset__id=dataset_id):
-                DataFile.download(datafile.id)
-        finally:
-            os.chdir(working_dir)
+        for datafile in DataFile.objects.filter(dataset__id=dataset_id).order_by('id'):
+            DataFile.download(datafile.id, basedir=path)
         print("Downloaded to: %s/" % path)
 
 

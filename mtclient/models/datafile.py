@@ -368,11 +368,14 @@ class DataFile(Model):
         return None
 
     @staticmethod
-    def download(datafile_id):
+    def download(datafile_id, basedir=None):
         """
         Download datafile with id datafile_id
 
         :param datafile_id: The ID of a datafile to download.
+        :param basedir: If specified, the datafile will be downloaded to
+                        the path obtained by joining basedir with the
+                        DataFile's directory field.
         """
         from clint.textui import progress  # pylint: disable=import-error
 
@@ -383,6 +386,7 @@ class DataFile(Model):
                                                config.apikey)}
         response = requests.get(url=url, headers=headers, stream=True)
         response.raise_for_status()
+        datafile = DataFile.objects.get(id=datafile_id)
         try:
             _, params = cgi.parse_header(
                 response.headers.get('Content-Disposition', ''))
@@ -392,16 +396,21 @@ class DataFile(Model):
                 # If the download request is redirected to S3,
                 # we may not have a filename header in the response,
                 # so we can look up the datafile's filename instead:
-                datafile = DataFile.objects.get(id=datafile_id)
                 filename = datafile.filename
         except KeyError:
             print("response.headers: %s" % response.headers)
             raise
-        if os.path.exists(filename):
+        filepath = filename
+        if basedir:
+            path = os.path.join(basedir, datafile.directory)
+            if not os.path.exists(path):
+                os.makedirs(path)
+            filepath = os.path.join(path, datafile.filename)
+        if os.path.exists(filepath):
             from ..utils.confirmation import query_yes_no
-            if not query_yes_no("Overwrite '%s'?" % filename):
+            if not query_yes_no("Overwrite '%s'?" % filepath):
                 return
-        with open(filename, 'wb') as fileobj:
+        with open(filepath, 'wb') as fileobj:
             total_length = int(response.headers.get('content-length'))
             # Hide progress bar for small files:
             hide = total_length < 10000000  # 10 MB
@@ -409,13 +418,13 @@ class DataFile(Model):
             for chunk in progress.bar(
                     response.iter_content(chunk_size=chunk_size),
                     hide=hide,
-                    label="Downloading: %s " % filename,
+                    label="Downloading: %s " % filepath,
                     expected_size=(total_length / chunk_size) + 1):
                 # filter out keep-alive new chunks:
                 if chunk:
                     fileobj.write(chunk)
                     fileobj.flush()
-        print("Downloaded: %s" % filename)
+        print("Downloaded: %s" % filepath)
 
     @staticmethod
     def upload(dataset_id, storagebox, dataset_path, file_path):
