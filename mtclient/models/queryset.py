@@ -20,26 +20,27 @@ class QuerySet(object):
         represented as an object of class model
         """
         self.model = model
-        self.filters = filters
-        self.limit = limit
-        self.offset = offset
-        self.order_by = order_by
+        self._filters = filters
+        self._limit = limit
+        self._offset = offset or 0
+        self._order_by = order_by
 
         self._result_set = None
-        # The user-requested offset (self.offset) is not expected to change
-        # during the life of this QuerySet instance, but the instance's
-        # internal self._offset (which will be added to the user-requested
-        # self.offset) will be incremented after each page of results has
-        # been retrieved from the REST API.
-        self._offset = offset or 0
+
+    def order_by(self, order_by):
+        """
+        Populate the self._order_by instance attribute
+        """
+        self._order_by = order_by
+        return self
 
     def _execute_query(self):
         """
         The user has requested something which requires evaluating the query
         """
         self._result_set = self.model.list(
-            filters=self.filters, limit=self.limit, offset=self._offset,
-            order_by=self.order_by)
+            filters=self._filters, limit=self._limit, offset=self._offset,
+            order_by=self._order_by)
 
     def __repr__(self):
         """
@@ -65,9 +66,15 @@ class QuerySet(object):
         """
         if not self._result_set:
             self._execute_query()
-        for index in range(0, self._result_set.total_count):
-            if index == self._result_set.offset + self._result_set.limit:
-                self._offset += self._result_set.limit
-                self._execute_query()
-            response_dict = self._result_set.response_dict['objects'][index - self._offset]
+        for index in range(0, len(self._result_set)):
+            response_dict = \
+                self._result_set.response_dict['objects'][index]
             yield self.model(response_dict)
+
+        while self._result_set.next:
+            self._offset += self._result_set.limit
+            self._execute_query()
+            for index in range(0, len(self._result_set)):
+                response_dict = \
+                    self._result_set.response_dict['objects'][index]
+                yield self.model(response_dict)
