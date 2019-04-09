@@ -43,7 +43,8 @@ def test_facility_list():
         list_facilities_url = "%s/api/v1/facility/?format=json" % config.url
         mocker.get(list_facilities_url, text=mock_list_response)
         facilities = Facility.objects.all()
-        assert facilities.response_dict == mock_facility_list
+        facilities._execute_query()
+        assert facilities._result_set.response_dict == mock_facility_list
 
 
 def test_facility_get():

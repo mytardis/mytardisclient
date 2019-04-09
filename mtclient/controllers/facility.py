@@ -28,5 +28,6 @@ class FacilityController(ModelCliController):
         """
         super(FacilityController, self).get(args, render_format)
         if render_format == 'table':
-            instruments = Instrument.list(args.facility_id)
+            instruments = Instrument.list(
+                filters="facility__id=%s" % args.facility_id)
             print(render(instruments, render_format))

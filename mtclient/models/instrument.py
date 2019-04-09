@@ -33,11 +33,11 @@ class Instrument(Model):
         return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
-    def list(facility_id=None, limit=None, offset=None, order_by=None):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
-        Retrieve a list of instruments in a facility with ID facility_id.
+        Retrieve a list of instruments
 
-        :param facility_id: The ID of a facility to retrieve instruments from.
+        :param filters: Filters, e.g. "id=123" or "facility__id=45"
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
@@ -45,11 +45,10 @@ class Instrument(Model):
         :return: A list of :class:`Instrument` records, encapsulated in a
             ResultSet object.
         """
-        from ..utils import extend_url
+        from ..utils import add_filters, extend_url
 
         url = "%s/api/v1/instrument/?format=json" % config.url
-        if facility_id:
-            url += "&facility__id=%s" % facility_id
+        url = add_filters(url, filters)
         url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
@@ -96,7 +95,7 @@ class Instrument(Model):
             "name": name,
             "facility": "/api/v1/facility/%s/" % facility_id
         }
-        url = config.url + "/api/v1/instrument/"
+        url = "%s/api/v1/instrument/" % config.url
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_instrument_json))
         response.raise_for_status()

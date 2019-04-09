@@ -26,8 +26,14 @@ class DatasetController(ModelCliController):
         Display list of dataset records.
         """
         # pylint: disable=no-self-use
+        if args.exp:
+            filters = "experiments__id=%s" % args.exp
+        else:
+            filters = ""
+        if args.filter:
+            filters += "&%s" % args.filter
         datasets = Dataset.list(
-            args.exp, args.filter, args.limit, args.offset, args.order_by)
+            filters, args.limit, args.offset, args.order_by)
         print(render(datasets, render_format))
 
     def get(self, args, render_format):
@@ -40,7 +46,7 @@ class DatasetController(ModelCliController):
         print(render(dataset, render_format))
         if render_format == 'table':
             from mtclient.models.datafile import DataFile
-            datafiles = DataFile.list(args.dataset_id)
+            datafiles = DataFile.list("dataset__id=%s" % args.dataset_id)
             if datafiles:
                 print(render(datafiles, render_format))
 

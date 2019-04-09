@@ -40,7 +40,7 @@ class ExperimentController(ModelCliController):
             id=args.experiment_id, include_metadata=args.metadata)
         print(render(experiment, render_format))
         if render_format == 'table':
-            datasets = Dataset.list(experiment_id=args.experiment_id)
+            datasets = Dataset.list(filters="experiments__id=%s" % args.experiment_id)
             if datasets:
                 print(render(datasets, render_format, display_heading=False))
 

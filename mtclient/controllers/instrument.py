@@ -27,8 +27,11 @@ class InstrumentController(ModelCliController):
         """
         # pylint: disable=no-self-use
         facility_id = getattr(args, "facility_id", getattr(args, "facility", None))
-        instruments = Instrument.list(facility_id,
-                                      args.limit, args.offset, args.order_by)
+        filters = ""
+        if facility_id:
+            filters = "facility__id=%s" % facility_id
+        instruments = Instrument.list(
+            filters, args.limit, args.offset, args.order_by)
         print(render(instruments, render_format))
 
     def get(self, args, render_format):

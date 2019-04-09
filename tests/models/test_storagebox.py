@@ -53,7 +53,8 @@ def test_storagebox_list():
         list_storageboxes_url = "%s/api/v1/storagebox/?format=json" % config.url
         mocker.get(list_storageboxes_url, text=mock_list_response)
         boxes = StorageBox.objects.all()
-        assert boxes.response_dict == mock_storagebox_list
+        boxes._execute_query()
+        assert boxes._result_set.response_dict == mock_storagebox_list
 
 
 def test_storagebox_get():

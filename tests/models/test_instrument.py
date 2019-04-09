@@ -49,7 +49,7 @@ def test_instrument_list():
     with requests_mock.Mocker() as mocker:
         list_instruments_url = "%s/api/v1/instrument/?format=json&facility__id=1" % config.url
         mocker.get(list_instruments_url, text=mock_list_response)
-        instruments = Instrument.list(facility_id=1)
+        instruments = Instrument.list(filters="facility__id=1")
         assert instruments.response_dict == mock_instrument_list
 
 

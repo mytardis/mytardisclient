@@ -60,7 +60,7 @@ def test_dataset_list():
     with requests_mock.Mocker() as mocker:
         list_datasets_url = "%s/api/v1/dataset/?format=json&experiments__id=1" % config.url
         mocker.get(list_datasets_url, text=mock_list_response)
-        datasets = Dataset.list(experiment_id=1)
+        datasets = Dataset.list(filters="experiments__id=1")
         assert datasets.response_dict == mock_dataset_list
 
 

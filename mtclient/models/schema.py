@@ -4,10 +4,12 @@ Model class for MyTardis API v1's SchemaResource.
 from __future__ import print_function
 
 import logging
+import re
+
 import requests
 
 from ..conf import config
-from ..utils import extend_url
+from ..utils import extend_url, add_filters
 from .model import Model
 from .resultset import ResultSet
 
@@ -33,7 +35,8 @@ class Schema(Model):
         self.subtype = response_dict['subtype']
 
         if param_names:
-            self.parameter_names = ParameterName.list(schema_id=self.id)
+            self.parameter_names = ParameterName.list(
+                filters="schema__id=%s" % self.id)
         else:
             self.parameter_names = ResultSet.empty(ParameterName)
 
@@ -44,10 +47,11 @@ class Schema(Model):
         return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
-    def list(limit=None, offset=None, order_by=None):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
         Retrieve a list of schemas.
 
+        :param filters: Filters, e.g. "id=123" or "namespace=NameSpace"
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
@@ -56,6 +60,7 @@ class Schema(Model):
             `ResultSet` object`.
         """
         url = "%s/api/v1/schema/?format=json" % config.url
+        url = add_filters(url, filters)
         url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
@@ -124,44 +129,57 @@ class ParameterName(Model):
         return "<%s: %s>" % (type(self).__name__, self.full_name)
 
     @staticmethod
-    def list(schema_id):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
-        Retrieve the list of parameter name records in a schema.
+        Retrieve a list of parameter names.
 
-        :param schema_id: The ID of the schema to retrieve parameter names for.
+        :param filters: Filters, e.g. "schema__id=123" or "name=ParamName"
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
 
         :return: A list of :class:`ParameterName` records,
             encapsulated in a `ResultSet` object`.
         """
-        url = "%s/api/v1/parametername/?format=json&schema__id=%s" \
-            % (config.url, schema_id)
+        url = "%s/api/v1/parametername/?format=json" % config.url
+        url = add_filters(url, filters)
+        url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
-        parameter_names_json = response.json()
-        num_records = len(parameter_names_json['objects'])
+        parameter_names_dict = response.json()
+        num_records = len(parameter_names_dict['objects'])
+
+        schema_id = None
+        filter_components = filters.split("&")
+        for filter_component in filter_components:
+            match = re.search(r"schema__id=([0-9]+)", filter_component)
+            if match:
+                schema_id = match.groups()[0]
+        if not schema_id:
+            return ResultSet(ParameterName, url, parameter_names_dict)
 
         schema_resource_uri = "/api/v1/schema/%s/" % schema_id
-        parameter_names_json['objects'] = \
-            [pn for pn in parameter_names_json['objects']
+        parameter_names_dict['objects'] = \
+            [pn for pn in parameter_names_dict['objects']
              if pn['schema'] == schema_resource_uri]
 
         offset = 0
-        limit = parameter_names_json['meta']['limit']
-        total_count = parameter_names_json['meta']['total_count']
+        limit = parameter_names_dict['meta']['limit']
+        total_count = parameter_names_dict['meta']['total_count']
         while num_records < total_count:
             offset += limit
             url = "%s/api/v1/parametername/?format=json" % config.url
             url += "&offset=%s" % offset
             response = requests.get(url=url, headers=config.default_headers)
             response.raise_for_status()
-            parameter_names_page_json = response.json()
-            num_records += len(parameter_names_page_json['objects'])
-            parameter_names_page_json['objects'] = \
-                [pn for pn in parameter_names_page_json['objects']
+            parameter_names_page_dict = response.json()
+            num_records += len(parameter_names_page_dict['objects'])
+            parameter_names_page_dict['objects'] = \
+                [pn for pn in parameter_names_page_dict['objects']
                  if pn['schema'] == schema_resource_uri]
-            parameter_names_json['objects'].extend(parameter_names_page_json['objects'])
+            parameter_names_dict['objects'].extend(parameter_names_page_dict['objects'])
 
-        return ResultSet(ParameterName, url, parameter_names_json)
+        return ResultSet(ParameterName, url, parameter_names_dict)
 
     @staticmethod
     def get(**kwargs):

@@ -55,7 +55,7 @@ def test_datafile_list():
     with requests_mock.Mocker() as mocker:
         list_datafiles_url = "%s/api/v1/dataset_file/?format=json&dataset__id=1" % config.url
         mocker.get(list_datafiles_url, text=mock_list_response)
-        datafiles = DataFile.list(dataset_id=1)
+        datafiles = DataFile.list(filters="dataset__id=1")
         assert datafiles.response_dict == mock_datafile_list
 
 

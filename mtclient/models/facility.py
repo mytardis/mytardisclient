@@ -30,10 +30,11 @@ class Facility(Model):
         return "<%s: %s>" % (type(self).__name__, self.name)
 
     @staticmethod
-    def list(limit=None, offset=None, order_by=None):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
         Retrieve a list of facilities.
 
+        :param filters: Filters, e.g. "id=123" or "name=Test Facility"
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
@@ -41,10 +42,11 @@ class Facility(Model):
         :return: A list of :class:`Facility` records, encapsulated in a
             `ResultSet` object`.
         """
-        from ..utils import extend_url
+        from ..utils import add_filters, extend_url
         from .resultset import ResultSet
 
-        url = config.url + "/api/v1/facility/?format=json"
+        url = "%s/api/v1/facility/?format=json" % config.url
+        url = add_filters(url, filters)
         url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()

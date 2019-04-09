@@ -4,6 +4,7 @@ Base class for models to inherit from
 import six
 from six import with_metaclass
 
+from .queryset import QuerySet
 
 class Manager(object):
     """
@@ -64,18 +65,26 @@ class ModelMetaclass(type):
         if hasattr(cls, "create"):
             setattr(cls._objects, "create", getattr(cls, "create"))
 
-        list_method = getattr(cls, "list")
-        setattr(cls._objects, "all", list_method)
+        def all_method():
+            return QuerySet(cls)
+
+        setattr(cls._objects, "all", all_method)
+
+        def filter_method(filters):
+            return QuerySet(cls, filters=filters)
 
         def _filter(**kwargs):
             filter_str = "&".join(
                 "%s=%s" % (key, value) for key, value in six.iteritems(kwargs))
-            return list_method(filters=filter_str)
+            return filter_method(filters=filter_str)
 
         setattr(cls._objects, "filter", _filter)
 
+        def order_by_method(order_by):
+            return QuerySet(cls, order_by=order_by)
+
         def _order_by(order_by):
-            return list_method(order_by=order_by)
+            return order_by_method(order_by=order_by)
 
         setattr(cls._objects, "order_by", _order_by)
 

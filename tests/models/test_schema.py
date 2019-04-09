@@ -43,7 +43,8 @@ def test_schema_list():
         list_schemas_url = "%s/api/v1/schema/?format=json" % config.url
         mocker.get(list_schemas_url, text=mock_list_response)
         schemas = Schema.objects.all()
-        assert schemas.response_dict == mock_schema_list
+        schemas._execute_query()
+        assert schemas._result_set.response_dict == mock_schema_list
 
 
 def test_schema_get():
@@ -107,7 +108,7 @@ def test_param_names_list():
     with requests_mock.Mocker() as mocker:
         list_pnames_url = "%s/api/v1/parametername/?format=json" % config.url
         mocker.get(list_pnames_url, text=mock_list_response)
-        param_names = ParameterName.list(schema_id=1)
+        param_names = ParameterName.list(filters="schema__id=1")
         assert param_names.response_dict == mock_pnames_list
 
 

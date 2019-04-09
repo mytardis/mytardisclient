@@ -8,7 +8,9 @@ import logging
 import requests
 
 from ..conf import config
+from ..utils import extend_url, add_filters
 from .model import Model
+from .resultset import ResultSet
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -51,9 +53,6 @@ class Experiment(Model):
         :return: A list of :class:`Experiment` records, encapsulated in a
             `ResultSet` object.
         """
-        from ..utils import extend_url, add_filters
-        from .resultset import ResultSet
-
         url = "%s/api/v1/experiment/?format=json" % config.url
         url = add_filters(url, filters)
         url = extend_url(url, limit, offset, order_by)
@@ -155,21 +154,18 @@ class ExperimentParameterSet(object):
             self.parameters.append(ExperimentParameter(exp_param_json))
 
     @staticmethod
-    def list(experiment_id):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
-        List experiment parameter sets associated with experiment ID
-        experiment_id.
+        Retrieve a list of experiment parameters.
 
-        :param experiment_id: The ID of the experiment to retrieve parameter
-            sets for.
+        :param filters: Filters, e.g. "experiments__id=123"
 
         :return: A list of :class:`ExperimentParameterSet` records,
             encapsulated in a `ResultSet` object`.
         """
-        from .resultset import ResultSet
-
         url = "%s/api/v1/experimentparameterset/?format=json" % config.url
-        url += "&experiments__id=%s" % experiment_id
+        url = add_filters(url, filters)
+        url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ResultSet(ExperimentParameterSet, url, response.json())
@@ -194,7 +190,7 @@ class ExperimentParameter(object):
         self.value = response_dict['value']
 
     @staticmethod
-    def list(exp_param_set):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
         List experiment parameter records in parameter set.
         """

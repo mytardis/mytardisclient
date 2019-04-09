@@ -83,29 +83,18 @@ class DataFile(Model):
         return True
 
     @staticmethod
-    def list(dataset_id=None, directory="", filename=None, filters=None,
-             limit=None, offset=None, order_by=None):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
         Retrieve a list of datafiles.
 
-        :param dataset_id: The ID of a dataset to retrieve datafiles from.
-        :param directory: The subdirectory within the dataset.
-        :param filename: The datafile's name.
-        :param filters: Filters, e.g. "filename=file1.txt"
+        :param filters: Filters, e.g. "dataset__id=123&filename=file1.txt"
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
 
         :return: A list of :class:`DataFile` records.
         """
-        # pylint: disable=too-many-arguments
         url = "%s/api/v1/dataset_file/?format=json" % config.url
-        if dataset_id:
-            url += "&dataset__id=%s" % dataset_id
-        if directory:
-            url += "&directory=%s" % directory
-        if filename:
-            url += "&filename=%s" % urllib.parse.quote(filename)
         url = add_filters(url, filters)
         url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
@@ -584,18 +573,21 @@ class DataFileParameterSet(object):
             self.parameters.append(DataFileParameter(datafile_param_json))
 
     @staticmethod
-    def list(datafile_id):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
-        List datafile parameter sets associated with datafile ID
-        datafile_id.
+        Retrieve a list of datafile parameter sets
 
-        :param datafile_id: The ID of a datafile to list parameter sets for.
+        :param filters: Filters, e.g. "datafiles__id=12345"
+        :param limit: Maximum number of results to return.
+        :param offset: Skip this many records from the start of the result set.
+        :param order_by: Order by this field.
 
         :return: A list of :class:`DatasetParameterSet` records,
             encapsulated in a `ResultSet` object`.
         """
         url = "%s/api/v1/datafileparameterset/?format=json" % config.url
-        url += "&datafiles__id=%s" % datafile_id
+        url = add_filters(url, filters)
+        url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ResultSet(DataFileParameterSet, url, response.json())
@@ -619,7 +611,7 @@ class DataFileParameter(object):
         self.value = response_dict['value']
 
     @staticmethod
-    def list(datafile_param_set):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
         List datafile parameter records in parameter set.
 

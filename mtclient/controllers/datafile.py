@@ -31,9 +31,18 @@ class DataFileController(ModelCliController):
         Display list of datafile records.
         """
         # pylint: disable=no-self-use
+        if args.dataset:
+            filters = "dataset__id=%s" % args.dataset
+        else:
+            filters = ""
+        if args.directory:
+            filters += "&directory=%s" % args.directory
+        if args.filename:
+            filters += "&filename=%s" % args.filename
+        if args.filter:
+            filters += "&%s" % args.filter
         datafiles = DataFile.list(
-            args.dataset, args.directory, args.filename, args.filter,
-            args.limit, args.offset, args.order_by)
+            filters, args.limit, args.offset, args.order_by)
         print(render(datafiles, render_format))
 
     def get(self, args, render_format):

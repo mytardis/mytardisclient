@@ -9,11 +9,12 @@ import requests
 from six.moves import urllib
 
 from ..conf import config
+from ..utils import extend_url, add_filters
+
 from .resultset import ResultSet
 from .schema import Schema
 from .schema import ParameterName
 from .instrument import Instrument
-
 from .model import Model
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -47,13 +48,11 @@ class Dataset(Model):
         return "<%s: %s>" % (type(self).__name__, self.description)
 
     @staticmethod
-    def list(experiment_id=None, filters=None,
-             limit=None, offset=None, order_by=None):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
         Retrieve a list of datasets.
 
-        :param experiment_id: The ID of an experiment to retrieve datasets from.
-        :param filters: Filters, e.g. "description=Dataset Description"
+        :param filters: Filters, e.g. "experiments__id=123&description=Dataset Description"
         :param limit: Maximum number of results to return.
         :param offset: Skip this many records from the start of the result set.
         :param order_by: Order by this field.
@@ -61,12 +60,8 @@ class Dataset(Model):
         :return: A list of :class:`Dataset` records, encapsulated in a
             `ResultSet` object.
         """
-        from ..utils import extend_url, add_filters
-
         url = "%s/api/v1/dataset/?format=json" % config.url
 
-        if experiment_id:
-            url += "&experiments__id=%s" % experiment_id
         url = add_filters(url, filters)
         url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
@@ -95,7 +90,7 @@ class Dataset(Model):
                 "Only the id keyword argument is supported for Dataset get "
                 "at this stage.")
         include_metadata = kwargs.get("include_metadata", False)
-        url = config.url + "/api/v1/dataset/%s/?format=json" % dataset_id
+        url = "%s/api/v1/dataset/%s/?format=json" % (config.url, dataset_id)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return Dataset(response_dict=response.json(),
@@ -131,7 +126,7 @@ class Dataset(Model):
             assert os.path.exists(params_file_json)
             with open(params_file_json) as params_file:
                 new_dataset_json['parameter_sets'] = json.load(params_file)
-        url = config.url + "/api/v1/dataset/"
+        url = "%s/api/v1/dataset/" % config.url
         response = requests.post(headers=config.default_headers, url=url,
                                  data=json.dumps(new_dataset_json))
         response.raise_for_status()
@@ -195,19 +190,18 @@ class DatasetParameterSet(object):
             self.parameters.append(DatasetParameter(dataset_param_json))
 
     @staticmethod
-    def list(dataset_id):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
-        List dataset parameter sets associated with dataset ID
-        dataset_id.
+        Retrieve a list of dataset parameters.
 
-        :param dataset_id: The ID of the dataset to retrieve parameter
-            sets for.
+        :param filters: Filters, e.g. "datasets__id=123"
 
         :return: A list of :class:`DatasetParameterSet` records,
             encapsulated in a `ResultSet` object`.
         """
         url = "%s/api/v1/datasetparameterset/?format=json" % config.url
-        url += "&datasets__id=%s" % dataset_id
+        url = add_filters(url, filters)
+        url = extend_url(url, limit, offset, order_by)
         response = requests.get(url=url, headers=config.default_headers)
         response.raise_for_status()
         return ResultSet(DatasetParameterSet, url, response.json())
@@ -231,7 +225,7 @@ class DatasetParameter(object):
         self.value = response_dict['value']
 
     @staticmethod
-    def list(dataset_param_set):
+    def list(filters=None, limit=None, offset=None, order_by=None):
         """
         List dataset parameter records in parameter set.
         """
