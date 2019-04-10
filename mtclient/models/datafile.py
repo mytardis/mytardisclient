@@ -407,6 +407,11 @@ class DataFile(Model):
                 os.makedirs(path)
             filepath = os.path.join(path, datafile.filename)
         if os.path.exists(filepath):
+            if os.path.getsize(filepath) == datafile.size:
+                logger.warning(
+                    "Not re-downloading %s because its size is correct.",
+                    filepath)
+                return
             from ..utils.confirmation import query_yes_no
             if not query_yes_no("Overwrite '%s'?" % filepath):
                 return
