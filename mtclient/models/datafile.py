@@ -418,7 +418,10 @@ class DataFile(Model):
         with open(filepath, 'wb') as fileobj:
             total_length = int(response.headers.get('content-length'))
             # Hide progress bar for small files:
-            hide = total_length < 10000000  # 10 MB
+            if total_length < 10000000:  # 10 MB
+                hide = True
+            else:
+                hide = None  # Leave it up to client.textui.progress
             chunk_size = 1000000
             for chunk in progress.bar(
                     response.iter_content(chunk_size=chunk_size),
@@ -429,7 +432,8 @@ class DataFile(Model):
                 if chunk:
                     fileobj.write(chunk)
                     fileobj.flush()
-        print("Downloaded: %s" % filepath)
+            if hide:
+                print("Downloaded: %s" % filepath)
 
     @staticmethod
     def upload(dataset_id, storagebox, dataset_path, file_path):
