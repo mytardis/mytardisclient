@@ -368,7 +368,8 @@ class DataFile(Model):
         return None
 
     @staticmethod
-    def download(datafile_id, basedir=None):
+    def download(datafile_id, basedir=None, overwrite=False,
+                 force_overwrite=False):
         """
         Download datafile with id datafile_id
 
@@ -376,6 +377,13 @@ class DataFile(Model):
         :param basedir: If specified, the datafile will be downloaded to
                         the path obtained by joining basedir with the
                         DataFile's directory field.
+        :param overwrite: If set to True, existing files will be re-downloaded
+                          and overwritten without asking for confirmation if
+                          their file size is wrong.
+        :param force_overwrite: If set to True, existing files will be
+                                re-downloaded and overwritten without asking
+                                for confirmation, even if their file size is
+                                correct.
         """
         from clint.textui import progress  # pylint: disable=import-error
 
@@ -406,15 +414,16 @@ class DataFile(Model):
             if not os.path.exists(path):
                 os.makedirs(path)
             filepath = os.path.join(path, datafile.filename)
-        if os.path.exists(filepath):
+        if os.path.exists(filepath) and not force_overwrite:
             if os.path.getsize(filepath) == datafile.size:
                 logger.warning(
                     "Not re-downloading %s because its size is correct.",
                     filepath)
                 return
-            from ..utils.confirmation import query_yes_no
-            if not query_yes_no("Overwrite '%s'?" % filepath):
-                return
+            if not overwrite:
+                from ..utils.confirmation import query_yes_no
+                if not query_yes_no("Overwrite '%s'?" % filepath):
+                    return
         with open(filepath, 'wb') as fileobj:
             total_length = int(response.headers.get('content-length'))
             # Hide progress bar for small files:

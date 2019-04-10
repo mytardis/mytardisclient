@@ -166,7 +166,7 @@ class Dataset(Model):
             os.makedirs(path)
         print("Downloading to: %s/" % path)
         for datafile in DataFile.objects.filter(dataset__id=dataset_id).order_by('id'):
-            DataFile.download(datafile.id, basedir=path)
+            DataFile.download(datafile.id, basedir=path, overwrite=True)
         print("Downloaded to: %s/" % path)
 
 
