@@ -2,6 +2,6 @@
 
 coverage==4.5.3
 pytest==4.4.1
-pytest-cov==2.6.1
+pytest-cov==2.7.1
 pytest-env==0.6.2
 requests-mock==1.6.0
