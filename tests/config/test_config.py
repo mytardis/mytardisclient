@@ -21,35 +21,35 @@ def test_validation():
 
     config_url = config.url
     config.url = ""
-    with pytest.raises(InvalidConfig) as err:
+    with pytest.raises(InvalidConfig) as excinfo:
         config.validate()
     config.url = config_url
-    assert err.type == InvalidConfig
-    assert "MyTardis URL is missing from config" in str(err)
+    assert excinfo.type == InvalidConfig
+    assert "MyTardis URL is missing from config" in str(excinfo.value)
 
     config_url = config.url
     config.url = "invalid://example.com"
-    with pytest.raises(InvalidConfig) as err:
+    with pytest.raises(InvalidConfig) as excinfo:
         config.validate()
     config.url = config_url
-    assert err.type == InvalidConfig
-    assert "Invalid MyTardis URL found in config" in str(err)
+    assert excinfo.type == InvalidConfig
+    assert "Invalid MyTardis URL found in config" in str(excinfo.value)
 
     config_username = config.username
     config.username = ""
-    with pytest.raises(InvalidConfig) as err:
+    with pytest.raises(InvalidConfig) as excinfo:
         config.validate()
     config.username = config_username
-    assert err.type == InvalidConfig
-    assert "MyTardis username is missing from config" in str(err)
+    assert excinfo.type == InvalidConfig
+    assert "MyTardis username is missing from config" in str(excinfo.value)
 
     config_apikey = config.apikey
     config.apikey = ""
-    with pytest.raises(InvalidConfig) as err:
+    with pytest.raises(InvalidConfig) as excinfo:
         config.validate()
     config.apikey = config_apikey
-    assert err.type == InvalidConfig
-    assert "MyTardis API key is missing from config" in str(err)
+    assert excinfo.type == InvalidConfig
+    assert "MyTardis API key is missing from config" in str(excinfo.value)
 
 def test_string_repr():
     """
