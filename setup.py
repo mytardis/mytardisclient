@@ -5,7 +5,11 @@ Build docs:
   python setup.py build_sphinx
 
 Upload source distribution:
-    python setup.py sdist upload
+    # Put credentials in ~/.pypirc
+    rm dist/*
+    python setup.py sdist
+    pip install twine
+    twine upload dist/*
 """
 from setuptools import setup
 from setuptools import find_packages
