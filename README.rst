@@ -2,23 +2,23 @@ mytardisclient
 --------------
 |travis| |codecov| |readthedocs| |pyup| |python3|
 
- .. |travis| image:: https://travis-ci.org/mytardis/mytardisclient.svg?branch=master
-    :target: https://travis-ci.org/mytardis/mytardisclient
+.. |travis| image:: https://travis-ci.org/mytardis/mytardisclient.svg?branch=master
+   :target: https://travis-ci.org/mytardis/mytardisclient
     
 .. |codecov| image:: https://codecov.io/gh/mytardis/mytardisclient/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/mytardis/mytardisclient/commits
+   :target: https://codecov.io/gh/mytardis/mytardisclient/commits
 
 .. |readthedocs| image:: https://readthedocs.org/projects/mytardisclient/badge/?version=latest
-  :target: https://mytardisclient.readthedocs.io/en/latest/?badge=latest
-  :alt: Documentation Status
+   :target: https://mytardisclient.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 .. |pyup| image:: https://pyup.io/repos/github/mytardis/mytardisclient/shield.svg
-     :target: https://pyup.io/repos/github/mytardis/mytardisclient/
-     :alt: Updates
+   :target: https://pyup.io/repos/github/mytardis/mytardisclient/
+   :alt: Updates
      
 .. |python3| image:: https://pyup.io/repos/github/mytardis/mytardisclient/python-3-shield.svg
-     :target: https://pyup.io/repos/github/mytardis/mytardisclient/
-     :alt: Python 3
+   :target: https://pyup.io/repos/github/mytardis/mytardisclient/
+   :alt: Python 3
 
 Command Line Interface and Python classes for interacting with MyTardis's REST API.
 
