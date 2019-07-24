@@ -1,9 +1,8 @@
 """
-setup.py for mtclient
+setup.py for mytardisclient
 
-Update and upload docs:
+Build docs:
   python setup.py build_sphinx
-  python setup.py upload_sphinx
 
 Upload source distribution:
     python setup.py sdist upload
