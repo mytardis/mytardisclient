@@ -145,5 +145,5 @@ class ApiEndpoints(object):
         Iterate the :class:`ApiEndpoints` set.
         """
         for index in range(0, len(self)):
-            model = list(self.response_dict.keys())[index]
+            model = sorted(list(self.response_dict.keys()))[index]
             yield ApiEndpoint(model, self.response_dict[model])
