@@ -24,6 +24,10 @@ Command Line Interface and Python classes for interacting with MyTardis's REST A
 
 Install::
 
+    pip install mytardisclient
+
+Install latest development version::
+
     pip install git+https://github.com/mytardis/mytardisclient.git@master#egg=mytardisclient
 
 Example
