@@ -15,7 +15,7 @@ import os
 from setuptools import setup
 from setuptools import find_packages
 
-import mtclient
+from mtclient.version import VERSION
 
 # read the contents of your README file
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -24,7 +24,7 @@ with open(os.path.join(THIS_DIR, 'README.rst')) as readme:
 
 setup(name='mytardisclient',
       packages=find_packages(),
-      version=mtclient.__version__,
+      version=VERSION,
       description="Command Line Interface and Python classes "
       "for interacting with MyTardis's REST API.",
       long_description=LONG_DESCRIPTION,
@@ -33,7 +33,7 @@ setup(name='mytardisclient',
       author_email='james.wettenhall@monash.edu',
       url='http://github.com/mytardis/mytardisclient',
       download_url='https://github.com/mytardis/mytardisclient'
-      '/archive/%s.tar.gz' % mtclient.__version__,
+      '/archive/%s.tar.gz' % VERSION,
       keywords=['mytardis', 'REST'], # arbitrary keywords
       classifiers=[],
       license='GPL',

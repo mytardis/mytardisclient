@@ -2,5 +2,4 @@
 ___init__.py
 """
 from . import conf  # noqa
-
-__version__ = "0.3.2"
+from .version import VERSION as __version__  # noqa
