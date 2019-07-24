@@ -19,7 +19,7 @@ import mtclient
 
 # read the contents of your README file
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(THIS_DIR, 'README.rst'), encoding='utf-8') as readme:
+with open(os.path.join(THIS_DIR, 'README.rst')) as readme:
     LONG_DESCRIPTION = readme.read()
 
 setup(name='mytardisclient',
