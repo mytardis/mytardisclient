@@ -1,6 +1,8 @@
 """
 Controller base class for running commands (list, get, create, update)
 """
+from __future__ import print_function
+
 from ..utils import get_render_format
 from ..views import render
 

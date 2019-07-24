@@ -2,7 +2,7 @@
 Test for command-line yes/no confirmation
 """
 import sys
-from io import StringIO
+from six import StringIO
 
 import pytest
 
