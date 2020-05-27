@@ -2,6 +2,6 @@
 
 -r requirements.txt
 
-Sphinx==2.2.2
+Sphinx==3.0.4
 sphinx-argparse==0.2.5
 sphinx-rtd-theme==0.4.3
